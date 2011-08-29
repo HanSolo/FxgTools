@@ -71,6 +71,7 @@ class FxgRichText extends FxgShape{
                 code.append("G2.setFont(${name}_Font);\n")
                 code.append("float ${name}_offsetY = (float)(${y / referenceHeight} * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
                 code.append("G2.drawString(${name}.getIterator(), (float)(${x / referenceWidth} * IMAGE_WIDTH), ${name}_offsetY);\n")
+                code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
@@ -85,6 +86,7 @@ class FxgRichText extends FxgShape{
                 code.append("${name}.setY(${y / referenceHeight} * IMAGE_HEIGHT);\n")
                 code.append(lineThrough ? "${name}.setStrikeThrough(true);\n" : "\n")
                 code.append(underline ? "${name}.setUnderline(true);\n" : "\n")
+                code.append("\n")
                 return code.toString()
 
             case Language.GWT:

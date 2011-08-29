@@ -36,6 +36,7 @@ class FxgRectangle extends FxgShape {
                     appendJavaStroke(code)
                     code.append("G2.draw(${name});\n")
                 }
+                code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
@@ -47,6 +48,7 @@ class FxgRectangle extends FxgShape {
                     code.append("${name}.setArcHeight(${radiusY / referenceHeight} * IMAGE_HEIGHT);\n")
                 }
                 appendJavaFxFill(code, name)
+                code.append("\n")
                 return code.toString()
 
             case Language.GWT:

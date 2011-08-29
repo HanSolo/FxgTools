@@ -23,7 +23,7 @@ class FxgPath extends FxgShape {
             case Language.JAVA:
                 code.append("GeneralPath $name = new GeneralPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule = Path2D.WIND_EVEN_ODD ? "${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
@@ -48,12 +48,13 @@ class FxgPath extends FxgShape {
 
                 if (filled) {
                     appendJavaPaint(code)
-                    code.append("G2.fill($name);")
+                    code.append("G2.fill($name);\n")
                 }
                 if (stroked) {
                     appendJavaStroke(code)
-                    code.append("G2.draw($name);")
+                    code.append("G2.draw($name);\n")
                 }
+                code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
@@ -83,6 +84,7 @@ class FxgPath extends FxgShape {
                     PATH_ITERATOR.next();
                 }
                 appendJavaFxFill(code, name)
+                code.append("\n")
                 return code.toString()
 
             case Language.GWT:

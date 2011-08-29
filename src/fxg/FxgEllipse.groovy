@@ -48,6 +48,7 @@ class FxgEllipse extends FxgShape {
                     appendJavaStroke(code)
                     code.append("G2.draw($name);\n")
                 }
+                code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
@@ -57,6 +58,7 @@ class FxgEllipse extends FxgShape {
                     code.append("Ellipse ${name} = new Ellipse(${getCenter().x / referenceWidth} * IMAGE_WIDTH, ${getCenter().y / referenceHeight} * IMAGE_HEIGHT, ${getRadiusX() / referenceWidth} * IMAGE_WIDTH, ${getRadiusY() / referenceHeight} * IMAGE_HEIGHT;\n")
                 }
                 appendJavaFxFill(code, name)
+                code.append("\n")
                 return code.toString()
 
             case Language.GWT:

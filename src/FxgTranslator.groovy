@@ -50,38 +50,38 @@ class FxgTranslator {
 
     // JAVA
     private String javaTemplateHeader() {
-        return "JavaHeader"
+        return "JavaHeader\n"
     }
 
     private String javaTemplateFooter() {
-        return "JavaFooter"
+        return "JavaFooter\n"
     }
 
     // JAVAFX
     private String javaFxTemplateHeader() {
-        return "JavaFxHEader"
+        return "JavaFxHeader\n"
     }
 
     private String javaFxTemplateFooter() {
-        return "JavaFxFooter"
+        return "JavaFxFooter\n"
     }
 
     // GWT
     private String gwtTemplateHeader() {
-        return "GwtHeader"
+        return "GwtHeader\n"
     }
 
     private String gwtTemplateFooter() {
-        return "GwtFooter"
+        return "GwtFooter\n"
     }
 
     // CANVAS
     private String canvasTemplateHeader() {
-        return "CanvasHeader"
+        return "CanvasHeader\n"
     }
 
     private String canvasTemplateFooter() {
-        return "CanvasFooter"
+        return "CanvasFooter\n"
     }
 
     // CODE

@@ -5,7 +5,6 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import fxg.FxgElement
-import fxg.FxgShape
 
 
 fxgFile = "/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/gradients2.fxg"
@@ -14,18 +13,13 @@ selectedLayer = "Layer_1"
 keepAspect = true
 width = 400
 height = 400
-//Map<String, BufferedImage> allLayerImages = FxgParserEnum.INSTANCE.parse(fxg, width, height, keepAspect)
+
 parser = new FxgParser()
 Map<String, BufferedImage> allLayerImages = parser.parse(fxg, width, height, keepAspect)
-//BufferedImage singleLayerImage = FxgParserEnum.INSTANCE.parseLayer(fxgFile, selectedLayer, width, height, keepAspect)
 
-
-Map<String, List<FxgElement>> allLayers = parser.getElements(fxg)
-for (String layer : allLayers.keySet()) {
-    for (FxgElement element : allLayers[layer]) {
-        println element.shape.translateTo(fxg.Language.JAVAFX)
-    }
-}
+Map<String, List<FxgElement>> layerMap = parser.getElements(fxg)
+translator = new FxgTranslator()
+translator.translate("Test.txt", layerMap, fxg.Language.JAVA)
 
 
 

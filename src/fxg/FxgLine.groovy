@@ -34,11 +34,13 @@ class FxgLine extends FxgShape {
                     appendJavaStroke(code)
                     code.append("G2.draw($name);\n")
                 }
+                code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
                 code.append("Line ${name} = new Line(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 appendJavaFxFill(code, name)
+                code.append("\n")
                 return code.toString()
 
             case Language.GWT:
