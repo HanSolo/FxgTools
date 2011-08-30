@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FxgParser.groovy" afterPath="$PROJECT_DIR$/src/FxgParser.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/FxgTranslator.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test.groovy" afterPath="$PROJECT_DIR$/src/test.groovy" />
-    </list>
+    <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="" />
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -72,7 +67,7 @@
       <file leaf-file-name="FxgParser.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="4" selection-start="1986" selection-end="1986" vertical-scroll-proportion="0.0">
+            <state line="729" column="29" selection-start="33010" selection-end="33010" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -81,16 +76,7 @@
       <file leaf-file-name="test.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="31" selection-start="448" selection-end="448" vertical-scroll-proportion="0.2670157">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/FxgTranslator.groovy">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="122" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0">
+            <state line="9" column="106" selection-start="326" selection-end="326" vertical-scroll-proportion="0.18523003">
               <folding />
             </state>
           </provider>
@@ -116,13 +102,15 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/fxg/FxgEllipse.groovy" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgLine.groovy" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgPath.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgRectangle.groovy" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgRichText.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgPath.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgEllipse.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgShape.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgLinearGradient.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgRadialGradient.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgLine.groovy" />
         <option value="$PROJECT_DIR$/src/FxgParser.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgRichText.groovy" />
         <option value="$PROJECT_DIR$/src/FxgTranslator.groovy" />
         <option value="$PROJECT_DIR$/src/test.groovy" />
       </list>
@@ -174,35 +162,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="FxgTools">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="FxgTools">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -237,7 +196,36 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
       <pane id="PackagesPane" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="FxgTools">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="FxgTools">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -253,9 +241,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -422,20 +410,20 @@
       <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32971016" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="J2D Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39975476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18638872" sideWeight="0.7037471" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29625294" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18638872" sideWeight="0.70140517" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29859486" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3293124" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -490,54 +478,72 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgElement.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="6" selection-start="171" selection-end="171" vertical-scroll-proportion="0.08931699" />
+        <state line="9" column="6" selection-start="171" selection-end="171" vertical-scroll-proportion="0.06174334" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgFill.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="15" selection-start="180" selection-end="180" vertical-scroll-proportion="0.092057765" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgStroke.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="6" selection-start="217" selection-end="217" vertical-scroll-proportion="0.1534296" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgEllipse.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="33" selection-start="1655" selection-end="1655" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgLine.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="29" selection-start="1294" selection-end="1294" vertical-scroll-proportion="0.0" />
+        <state line="72" column="55" selection-start="2905" selection-end="2905" vertical-scroll-proportion="1.4014337" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgPath.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="41" selection-start="3324" selection-end="3324" vertical-scroll-proportion="0.0" />
+        <state line="118" column="55" selection-start="7635" selection-end="7635" vertical-scroll-proportion="0.48207885" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgRectangle.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="38" selection-start="2668" selection-end="2668" vertical-scroll-proportion="0.0" />
+        <state line="82" column="17" selection-start="5930" selection-end="5930" vertical-scroll-proportion="0.45698926" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRichText.groovy">
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgLinearGradient.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="37" selection-start="3357" selection-end="3357" vertical-scroll-proportion="0.0" />
+        <state line="14" column="50" selection-start="345" selection-end="345" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRadialGradient.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="50" selection-start="345" selection-end="345" vertical-scroll-proportion="0.17863397" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgLine.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="63" column="58" selection-start="2555" selection-end="2555" vertical-scroll-proportion="0.6738351" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgShape.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="37" selection-start="1447" selection-end="1447" vertical-scroll-proportion="0.0" />
+        <state line="153" column="75" selection-start="6702" selection-end="6758" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRichText.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="48" selection-start="1298" selection-end="1298" vertical-scroll-proportion="0.6252189" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/FxgTranslator.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="122" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="153" column="98" selection-start="8393" selection-end="8393" vertical-scroll-proportion="0.57347673" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="4" selection-start="1986" selection-end="1986" vertical-scroll-proportion="0.0" />
+        <state line="729" column="29" selection-start="33010" selection-end="33010" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="31" selection-start="448" selection-end="448" vertical-scroll-proportion="0.2670157">
+        <state line="9" column="106" selection-start="326" selection-end="326" vertical-scroll-proportion="0.18523003">
           <folding />
         </state>
       </provider>
