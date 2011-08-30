@@ -23,7 +23,7 @@ class FxgEllipse extends FxgShape {
         }
 
     Point2D getCenter() {
-        return new Point2D.Double((width - x) / 2, (height - y) / 2)
+        return new Point2D.Double((width / 2) + x, (height / 2) + y)
     }
 
     double getRadiusX() {
@@ -65,7 +65,22 @@ class FxgEllipse extends FxgShape {
                 return "GWT"
 
             case Language.CANVAS:
-                return "CANVAS"
+                code.append("        //${name}\n")
+                code.append("        ctx.save();\n")
+                code.append("        ctx.scale(${width / height}, 1);\n")
+                code.append("        ctx.beginPath();\n")
+                code.append("        ctx.arc(${getCenter().x / referenceWidth / (width / height)} * imageWidth, ${getCenter().y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth / (width / height)} * imageWidth, 0, 2 * Math.PI, false);\n")
+                code.append("        ctx.restore();\n")
+                if (filled) {
+                    appendCanvasFill(code, name)
+                    code.append("        ctx.fill();\n")
+                }
+                if (stroked) {
+                    appendCanvasStroke(code, name)
+                    code.append("        ctx.stroke();\n")
+                }
+                code.append("\n")
+                return code.toString()
 
             default:
                 return "NOT SUPPORTED"

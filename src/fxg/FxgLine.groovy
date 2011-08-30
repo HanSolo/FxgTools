@@ -47,7 +47,23 @@ class FxgLine extends FxgShape {
                 return "GWT"
 
             case Language.CANVAS:
-                return "CANVAS"
+                code.append("        //${name}\n")
+                code.append("        ctx.save();\n")
+                code.append("        ctx.beginPath();\n")
+                code.append("        ctx.moveTo(${x1 / referenceWidth} * imageWidth, ${y1 / referenceHeight} * imageHeight);\n")
+                code.append("        ctx.lineTo(${x2 / referenceWidth} * imageWidth, ${y2 / referenceHeight} * imageHeight);\n")
+                code.append("        ctx.closePath();\n")
+                code.append("        ctx.restore();\n")
+                code.append("\n")
+                if (filled) {
+                    appendCanvasFill(code, name)
+                    code.append("        ctx.fill();\n")
+                }
+                if (stroked) {
+                    appendCanvasStroke(code, name)
+                    code.append("        ctx.stroke();\n")
+                }
+                return code.toString()
 
             default:
                 return "NOT SUPPORTED"

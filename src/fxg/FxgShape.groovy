@@ -38,14 +38,14 @@ abstract class FxgShape {
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
-                break;
+                break
             case FxgFillType.RADIAL_GRADIENT:
                 code.append("        G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
                 code.append("(float)(${fill.radius / referenceWidth} * IMAGE_WIDTH), ")
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
-                break;
+                break
         }
     }
 
@@ -95,38 +95,38 @@ abstract class FxgShape {
                 code.append("true, CycleMethod.No_CYCLE, ")
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
-                break;
+                break
             case FxgFillType.RADIAL_GRADIENT:
                 code.append("${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT, ")
                 code.append("${fill.radius / referenceWidth} * IMAGE_WIDTH, ")
                 code.append("true, CycleMethod.No_CYCLE, ")
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
-                break;
+                break
         }
         if (stroked) {
             code.append("${elementName}.setStrokeType(StrokeType.CENTERED);\n")
             switch (stroke.stroke.endCap) {
                 case BasicStroke.CAP_BUTT:
                     code.append("${elementName}.setStrokeLineCap(StrokeLineCap.BUTT);\n")
-                    break;
+                    break
                 case BasicStroke.CAP_ROUND:
                     code.append("${elementName}.setStrokeLineCap(StrokeLineCap.ROUND);\n")
-                    break;
+                    break
                 case BasicStroke.CAP_SQUARE:
                     code.append("${elementName}.setStrokeLineCap(StrokeLineCap.SQUARE);\n")
-                    break;
+                    break
             }
             switch (stroke.stroke.lineJoin) {
                 case BasicStroke.JOIN_BEVEL:
                     code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.BEVEL);\n")
-                    break;
+                    break
                 case BasicStroke.JOIN_ROUND:
                     code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.ROUND);\n")
-                    break;
+                    break
                 case BasicStroke.JOIN_MITER:
                     code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.MITER);\n")
-                    break;
+                    break
             }
             code.append("${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH);\n")
         }
@@ -145,5 +145,78 @@ abstract class FxgShape {
             }
         }
         code.append("}")
+    }
+
+    // GWT
+
+
+    // CANVAS
+    protected void appendCanvasFill(StringBuilder code, String elementName) {
+        switch(fill.type) {
+            case FxgFillType.SOLID_COLOR:
+                code.append("        ctx.fillStyle = ")
+                appendCanvasColor(code, fill.color)
+                code.append(";\n")
+                break
+            case FxgFillType.LINEAR_GRADIENT:
+                code.append("        var ${elementName}_Fill = ctx.createLinearGradient((${(fill.start.x) / referenceWidth} * imageWidth), (${(fill.start.y) / referenceHeight} * imageHeight), ((${(fill.stop.x) / referenceWidth}) * imageWidth), ((${(fill.stop.y) / referenceHeight}) * imageHeight));\n")
+                appendCanvasStops(code, fill.fractions, fill.colors, elementName)
+                code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
+                break
+            case FxgFillType.RADIAL_GRADIENT:
+                code.append("        var ${elementName}_Fill = ctx.createRadialGradient((${fill.center.x / referenceWidth}) * imageWidth, ((${fill.center.y / referenceHeight}) * imageHeight), 0, ((${fill.center.x / referenceWidth}) * imageWidth), ((${fill.center.y / referenceHeight}) * imageHeight), ${fill.radius / referenceWidth} * imageWidth);\n")
+                appendCanvasStops(code, fill.fractions, fill.colors, elementName)
+                code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
+                break
+        }
+    }
+
+    protected void appendCanvasStroke(StringBuilder code, String elementName) {
+            switch (stroke.stroke.endCap) {
+                case BasicStroke.CAP_BUTT:
+                    code.append("        ctx.lineCap = 'butt';\n")
+                    break
+                case BasicStroke.CAP_ROUND:
+                    code.append("        ctx.lineCap = 'round';\n")
+                    break
+                case BasicStroke.CAP_SQUARE:
+                    code.append("        ctx.lineCap = 'square';\n")
+                    break
+            }
+            switch (stroke.stroke.lineJoin) {
+                case BasicStroke.JOIN_BEVEL:
+                    code.append("        ctx.lineJoin = 'bevel';\n")
+                    break
+                case BasicStroke.JOIN_ROUND:
+                    code.append("        ctx.lineJoin = 'round';\n")
+                    break
+                case BasicStroke.JOIN_MITER:
+                    code.append("        ctx.lineJoin = 'miter';\n")
+                    break
+            }
+            code.append("        ctx.lineWidth = ${stroke.stroke.lineWidth / referenceWidth} * imageWidth;\n")
+            code.append("        ctx.strokeStyle = ")
+            appendCanvasColor(code, stroke.color)
+            code.append(";\n")
+    }
+
+    private void appendCanvasColor(StringBuilder code, Color color) {
+        if (color.getAlpha().compareTo(255) == 0) {
+            code.append("'rgb(${color.getRed()}, ${color.getGreen()}, ${color.getBlue()})'")
+        } else {
+            code.append("'rgba(${color.getRed()}, ${color.getGreen()}, ${color.getBlue()}, ${color.getAlpha() / 255})'")
+        }
+    }
+
+    private void appendCanvasStops(StringBuilder code, float[] fractions, Color[] colors, String elementName) {
+        fill.colors.eachWithIndex { color, i ->
+            code.append("        ${elementName}_Fill.addColorStop(${fractions[i]}, ")
+            if (colors[i].getAlpha().compareTo(255) == 0) {
+                code.append("'rgb(${colors[i].getRed()}, ${colors[i].getGreen()}, ${colors[i].getBlue()})'")
+            } else {
+                code.append("'rgba(${colors[i].getRed()}, ${colors[i].getGreen()}, ${colors[i].getBlue()}, ${colors[i].getAlpha() / 255})'")
+            }
+            code.append(");\n")
+        }
     }
 }

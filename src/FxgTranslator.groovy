@@ -11,7 +11,7 @@ import fxg.Language
 class FxgTranslator {
 
 
-    public void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE, final String WIDTH, final String HEIGHT) {
+    public void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf(".")) : FILE_NAME
         final String USER_HOME = System.getProperties().getProperty("user.home")
         StringBuilder exportFileName = new StringBuilder()
@@ -20,8 +20,8 @@ class FxgTranslator {
         StringBuilder codeToExport = new StringBuilder();
 
         // Export the header of the language specific template
-        switch(TO_LANGUAGE) {
-            case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, TO_LANGUAGE))
+        switch(LANGUAGE) {
+            case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append(".java")
                                     break;
             case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME))
@@ -30,7 +30,8 @@ class FxgTranslator {
             case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME))
                                     exportFileName.append(".java")
                                     break;
-            case Language.CANVAS:   codeToExport.append(canvasTemplate(CLASS_NAME))
+            case Language.CANVAS:   writeToFile(exportFileName + ".html", htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                                    codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append(".js")
                                     break;
             default: throw new Exception("Language not supported...")
@@ -40,7 +41,7 @@ class FxgTranslator {
     }
 
     // JAVA
-    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE) {
+    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = new File('./resources/java.txt')
         String codeToExport = template.text
 
@@ -66,7 +67,7 @@ class FxgTranslator {
         codeToExport = codeToExport.replace("\$imageInitialization", imageInitialization.toString())
         codeToExport = codeToExport.replace("\$imageCreation", imageCreation.toString())
         codeToExport = codeToExport.replace("\$drawImage", drawImage.toString())
-        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, TO_LANGUAGE))
+        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
 
         return codeToExport
     }
@@ -101,46 +102,95 @@ class FxgTranslator {
 
     // JAVAFX
     private String javaFxTemplate(final String CLASS_NAME) {
-        return "JavaFxHeader\n"
+        return "JavaFxTemplate\n"
     }
 
     // GWT
     private String gwtTemplate(final String CLASS_NAME) {
-        return "GwtHeader\n"
+        return "GwtTemplate\n"
     }
 
     // CANVAS
-    private String canvasTemplate(final String CLASS_NAME) {
-        return "CanvasHeader\n"
+    private String canvasTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = new File('./resources/canvas.txt')
+        String codeToExport = template.text
+
+        StringBuilder createBuffers = new StringBuilder()
+        StringBuilder drawImagesToBuffer = new StringBuilder()
+        StringBuilder drawImagesToCanvas = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
+            createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
+            createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
+            createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n\n")
+            drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n\n")
+            drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n\n")
+        }
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$createBuffers", createBuffers.toString())
+        codeToExport = codeToExport.replace("\$drawImagesToBuffer", drawImagesToBuffer.toString())
+        codeToExport = codeToExport.replace("\$drawImagesToCanvas", drawImagesToCanvas.toString())
+        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
+
+        return codeToExport
     }
 
+    private String canvasImageMethodStart(final String LAYER_NAME) {
+        StringBuilder imageCode = new StringBuilder()
+        imageCode.append("    var draw_${LAYER_NAME}_Image = function(ctx) {\n")
+        imageCode.append("        ctx.save();\n\n")
+        return imageCode.toString()
+    }
+
+    private String canvasImageMethodStop() {
+        StringBuilder imageCode = new StringBuilder()
+        imageCode.append("        ctx.restore();\n")
+        imageCode.append("    }\n\n")
+        return imageCode.toString()
+    }
+
+    private String htmlTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = new File('./resources/html.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$jsFileName", CLASS_NAME + ".js")
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
+
+        return codeToExport
+    }
+
+
     // CODE
-    private String code(Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE) {
+    private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
         layerMap.keySet().each {String layer->
-            switch(TO_LANGUAGE) {
+            switch(LANGUAGE) {
                 case Language.JAVA: code.append(javaImageMethodStart(layer))
                     break;
                 case Language.JAVAFX:
                     break;
                 case Language.GWT:
                     break;
-                case Language.CANVAS:
+                case Language.CANVAS: code.append(canvasImageMethodStart(layer))
                     break;
             }
 
             layerMap[layer].each {FxgElement element ->
-                code.append(element.shape.translateTo(TO_LANGUAGE))
+                code.append(element.shape.translateTo(LANGUAGE))
             }
 
-            switch(TO_LANGUAGE) {
+            switch(LANGUAGE) {
                 case Language.JAVA: code.append(javaImageMethodStop())
                     break;
                 case Language.JAVAFX:
                     break;
                 case Language.GWT:
                     break;
-                case Language.CANVAS:
+                case Language.CANVAS: code.append(canvasImageMethodStop())
                     break;
             }
         }

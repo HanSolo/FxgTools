@@ -1,0 +1,41 @@
+function $className(canvas, width, height) {
+    // Public variables
+    this.canvas = canvas;
+    // Get the canvas context and clear it
+    var mainCtx = document.getElementById(canvas).getContext('2d');
+    mainCtx.save();
+    mainCtx.clearRect(0, 0, mainCtx.canvas.width, mainCtx.canvas.height);
+
+    // Get the size
+    mainCtx.canvas.width = width;
+    mainCtx.canvas.height = height;
+
+    var imageWidth = mainCtx.canvas.width;
+    var imageHeight = mainCtx.canvas.height;
+
+    var initialized = false;
+
+    // **************   C O N V E R T E D   C O D E   S T A R T   ********************
+
+$createBuffers
+$creationMethods
+    // **************   C O N V E R T E D   C O D E   S T O P   **********************
+
+    var init = function() {
+        initialized = true;
+
+$drawImagesToBuffer
+    }
+
+    this.paintComponent = function() {
+        if (!initialized) {
+            init();
+        }
+
+        mainCtx.save();
+        mainCtx.clearRect(0, 0, mainCtx.canvas.width, mainCtx.canvas.height);
+
+$drawImagesToCanvas
+        mainCtx.restore();
+    }
+}

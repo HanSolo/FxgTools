@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <title>FXG Canvas Converter</title>
+    <script type='text/javascript' src='$jsFileName'></script>
+
+    <script type='application/javascript'>
+
+        function init()
+        {
+            // Initialzing
+            var test = new $className('canvas', $width, $height);
+            test.paintComponent();
+        }
+    </script>
+  </head>
+  <body onload='init()'>
+    <canvas id='canvas' width='400' height='400'>
+      No canvas in your browser...sorry...
+    </canvas>
+  </body>
+</html>

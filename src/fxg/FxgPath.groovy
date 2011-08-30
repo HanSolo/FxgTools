@@ -91,7 +91,42 @@ class FxgPath extends FxgShape {
                 return "GWT"
 
             case Language.CANVAS:
-                return "CANVAS"
+                code.append("        //${name}\n")
+                code.append("        ctx.save();\n")
+                code.append("        ctx.beginPath();\n")
+                final PathIterator PATH_ITERATOR = path.getPathIterator(null);
+                while (!PATH_ITERATOR.isDone()) {
+                    final double[] COORDINATES = new double[6];
+                    switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
+                        case PathIterator.SEG_MOVETO:
+                            code.append("        ctx.moveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_LINETO:
+                            code.append("        ctx.lineTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_QUADTO:
+                            code.append("        ctx.quadraticCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_CUBICTO:
+                            code.append("        ctx.bezierCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight, ${COORDINATES[4] / referenceWidth} * imageWidth, ${COORDINATES[5] / referenceHeight} * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_CLOSE:
+                            code.append("        ctx.closePath();\n")
+                            break;
+                    }
+                    PATH_ITERATOR.next();
+                }
+                code.append("        ctx.restore();\n")
+                if (filled) {
+                    appendCanvasFill(code, name)
+                    code.append("        ctx.fill();\n")
+                }
+                if (stroked) {
+                    appendCanvasStroke(code, name)
+                    code.append("        ctx.stroke();\n")
+                }
+                code.append("\n")
+                return code.toString()
 
             default:
                 return "NOT SUPPORTED"

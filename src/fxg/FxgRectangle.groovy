@@ -19,7 +19,7 @@ class FxgRectangle extends FxgShape {
     double radiusY
 
     RoundRectangle2D getRectangle() {
-        return new RoundRectangle2D.Double(x, y, width, height, radiusX, radiusY)
+        return new RoundRectangle2D.Double(x, y, width, height, radiusX * 2, radiusY * 2)
     }
 
     String translateTo(final Language LANGUAGE) {
@@ -30,7 +30,7 @@ class FxgRectangle extends FxgShape {
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
                     code.append("        Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 } else {
-                    code.append("        RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX / referenceWidth} * IMAGE_WIDTH, ${radiusY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 }
                 if (filled) {
                     appendJavaPaint(code)
@@ -59,7 +59,38 @@ class FxgRectangle extends FxgShape {
                 return "GWT"
 
             case Language.CANVAS:
-                return "CANVAS"
+                code.append("        //${name}\n")
+                if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
+                    code.append("        ctx.save();\n")
+                    code.append("        ctx.beginPath();\n")
+                    code.append("        ctx.rect(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.closePath();\n")
+                    code.append("        ctx.restore();\n")
+                } else {
+                    code.append("        ctx.save();\n")
+                    code.append("        ctx.beginPath();\n")
+                    code.append("        ctx.moveTo(${x / referenceWidth} * imageWidth + ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth - ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.quadraticCurveTo(${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${radiusX / referenceWidth} * imageWidth);\n")
+                    code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight - ${radiusX / referenceWidth} * imageWidth);\n")
+                    code.append("        ctx.quadraticCurveTo(${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight, ${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth - ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth + ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.quadraticCurveTo(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight, ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${height / referenceHeight} * imageHeight - ${radiusX / referenceWidth} * imageWidth);\n")
+                    code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${radiusX / referenceWidth} * imageWidth);\n")
+                    code.append("        ctx.quadraticCurveTo(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${x / referenceWidth} * imageWidth + ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.closePath();\n")
+                    code.append("        ctx.restore();\n")
+                }
+                if (filled) {
+                    appendCanvasFill(code, name)
+                    code.append("        ctx.fill();\n")
+                }
+                if (stroked) {
+                    appendCanvasStroke(code, name)
+                    code.append("        ctx.stroke();\n")
+                }
+                code.append("\n")
+                return code.toString()
 
             default:
                 return "NOT SUPPORTED"

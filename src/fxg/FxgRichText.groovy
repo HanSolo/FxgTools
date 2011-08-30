@@ -52,7 +52,7 @@ class FxgRichText extends FxgShape{
                 style.append(font.bold ? "Font.BOLD" : "Font.PLAIN")
                 style.append(font.italic ? " | Font.ITALIC" : "")
                 code.append("        Font ${name}_Font = new Font(\"${font.family}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
-                code.append("        final AttributedString ${name} = new AttributedString(\"$text\");\n")
+                code.append("        final AttributedString ${name} = new AttributedString(\"${text.trim()}\");\n")
                 code.append("        ${name}.addAttribute(TextAttribute.FONT, \"${fontFamily}\");\n")
                 code.append("        ${name}.addAttribute(TextAttribute.SIZE, (float)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
                 code.append("        ${name}.addAttribute(TextAttribute.FONT, ${name}_Font);\n")
@@ -80,7 +80,7 @@ class FxgRichText extends FxgShape{
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
                 code.append("${name}_Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * IMAGE_WIDTH);\n")
                 code.append("Text ${name} = new Text();\n")
-                code.append("${name}.setText(\"${text}\");\n")
+                code.append("${name}.setText(\"${text.trim()}\");\n")
                 code.append("${name}.setFont(${name}_Font);\n")
                 code.append("${name}.setX(${x / referenceWidth} * IMAGE_WIDTH);\n")
                 code.append("${name}.setY(${y / referenceHeight} * IMAGE_HEIGHT);\n")
@@ -93,7 +93,22 @@ class FxgRichText extends FxgShape{
                 return "GWT"
 
             case Language.CANVAS:
-                return "CANVAS"
+                if (fill.type != null) {
+                    appendCanvasFill(code, name)
+                    code.append("        ctx.font = '")
+                    italic ? code.append("italic "):code.append("")
+                    bold ? code.append("bold "):code.append("")
+                    code.append("${font.size2D}px ")
+                    code.append("${font.family}';\n")
+                    code.append("        ctx.textBaseline = 'bottom';\n")
+                    code.append("        ctx.fillText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                }
+                if (stroked) {
+                    appendCanvasStroke(code, name)
+                    code.append("        ctx.strokeText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                }
+                code.append("\n")
+                return code.toString()
 
             default:
                 return "NOT SUPPORTED"

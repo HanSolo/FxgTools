@@ -658,7 +658,7 @@ class FxgParser {
                 case FXG.Line:
                     elementName = node.attribute(D.userLabel)?:"Line_${shapeIndex += 1}"
                     shape = parseLine(node)
-                    fxgShape = new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: ((Line2D)shape).p1.x, y1:((Line2D)shape).p1.x, x2: ((Line2D)shape).p2.x, y2: ((Line2D)shape).p2.x)
+                    fxgShape = new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: ((Line2D)shape).p1.x, y1: ((Line2D)shape).p1.y, x2: ((Line2D)shape).p2.x, y2: ((Line2D)shape).p2.y)
                     offsetX = shape.bounds2D.x
                     offsetY = shape.bounds2D.y
                     lastNodeType = "Line"
@@ -675,7 +675,7 @@ class FxgParser {
                         }
                         RR_MATCHER.reset(elementName)
                         if (RR_MATCHER.matches()) {
-                            double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX * 2 : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX * 2
+                            double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
                             shape = new RoundRectangle2D.Double(shape.bounds2D.getX(), shape.bounds2D.getY(), shape.bounds2D.getWidth(), shape.bounds2D.getHeight(), cornerRadius, cornerRadius)
                             fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height, radiusX: ((RoundRectangle2D) shape).arcWidth, radiusY: ((RoundRectangle2D) shape).arcHeight)
                             break;
@@ -727,8 +727,8 @@ class FxgParser {
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        originalWidth = (fxg.@viewWidth ?: 100).toInteger()
-        originalHeight = (fxg.@viewHeight ?: 100).toInteger()
+        originalWidth = (int)(fxg.@viewWidth ?: 100).toDouble()
+        originalHeight = (int)(fxg.@viewHeight ?: 100).toDouble()
 
         width = WIDTH
         height = KEEP_ASPECT ? WIDTH * (originalHeight / originalWidth) : HEIGHT
