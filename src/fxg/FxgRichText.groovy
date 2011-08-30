@@ -51,26 +51,26 @@ class FxgRichText extends FxgShape{
                 StringBuilder style = new StringBuilder();
                 style.append(font.bold ? "Font.BOLD" : "Font.PLAIN")
                 style.append(font.italic ? " | Font.ITALIC" : "")
-                code.append("Font ${name}_Font = new Font(\"${font.family}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
-                code.append("final AttributedString ${name} = new AttributedString(\"$text\");\n")
-                code.append("${name}.addAttribute(TextAttribute.FONT, \"${fontFamily}\");\n")
-                code.append("${name}.addAttribute(TextAttribute.SIZE, (float)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
-                code.append("${name}.addAttribute(TextAttribute.FONT, ${name}_Font);\n")
+                code.append("        Font ${name}_Font = new Font(\"${font.family}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
+                code.append("        final AttributedString ${name} = new AttributedString(\"$text\");\n")
+                code.append("        ${name}.addAttribute(TextAttribute.FONT, \"${fontFamily}\");\n")
+                code.append("        ${name}.addAttribute(TextAttribute.SIZE, (float)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
+                code.append("        ${name}.addAttribute(TextAttribute.FONT, ${name}_Font);\n")
                 if (bold){
-                    code.append("${name}.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);\n")
+                    code.append("        ${name}.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);\n")
                 }
                 if (underline) {
-                    code.append("${name}.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);\n")
+                    code.append("        ${name}.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);\n")
                 }
                 if (lineThrough) {
-                    code.append("${name}.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);\n")
+                    code.append("        ${name}.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);\n")
                 }
                 if (fill.type != null) {
                     appendJavaPaint(code)
                 }
-                code.append("G2.setFont(${name}_Font);\n")
-                code.append("float ${name}_offsetY = (float)(${y / referenceHeight} * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
-                code.append("G2.drawString(${name}.getIterator(), (float)(${x / referenceWidth} * IMAGE_WIDTH), ${name}_offsetY);\n")
+                code.append("        G2.setFont(${name}_Font);\n")
+                code.append("        float ${name}_offsetY = (float)(${y / referenceHeight} * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
+                code.append("        G2.drawString(${name}.getIterator(), (float)(${x / referenceWidth} * IMAGE_WIDTH), ${name}_offsetY);\n")
                 code.append("\n")
                 return code.toString()
 

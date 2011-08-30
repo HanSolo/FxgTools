@@ -29,18 +29,18 @@ abstract class FxgShape {
     protected void appendJavaPaint(StringBuilder code) {
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
-                code.append("G2.setPaint(")
+                code.append("        G2.setPaint(")
                 appendJavaColor(code, fill.color)
                 code.append(");\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
-                code.append("G2.setPaint(new LinearGradientPaint(new Point2D.Double(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT), new Point2D.Double(${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT), ")
+                code.append("        G2.setPaint(new LinearGradientPaint(new Point2D.Double(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT), new Point2D.Double(${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT), ")
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
                 break;
             case FxgFillType.RADIAL_GRADIENT:
-                code.append("G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
+                code.append("        G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
                 code.append("(float)(${fill.radius / referenceWidth} * IMAGE_WIDTH), ")
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
@@ -50,10 +50,10 @@ abstract class FxgShape {
     }
 
     protected void appendJavaStroke(StringBuilder code) {
-        code.append("G2.setPaint(")
+        code.append("        G2.setPaint(")
         appendJavaColor(code, stroke.color)
         code.append(");\n")
-        code.append("G2.setStroke(new BasicStroke((float)(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH), ${stroke.stroke.endCap}, ${stroke.stroke.lineJoin}));\n")
+        code.append("        G2.setStroke(new BasicStroke((float)(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH), ${stroke.stroke.endCap}, ${stroke.stroke.lineJoin}));\n")
     }
 
     private void appendJavaFractions(StringBuilder code, float[] fractions) {

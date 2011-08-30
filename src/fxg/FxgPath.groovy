@@ -21,26 +21,26 @@ class FxgPath extends FxgShape {
         String name = "${layerName}_${shapeName}"
         switch (LANGUAGE) {
             case Language.JAVA:
-                code.append("GeneralPath $name = new GeneralPath();\n")
+                code.append("        GeneralPath $name = new GeneralPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
                         case PathIterator.SEG_MOVETO:
-                            code.append("${name}.moveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.moveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_LINETO:
-                            code.append("${name}.lineTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.lineTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_QUADTO:
-                            code.append("${name}.quadTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.quadTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_CUBICTO:
-                            code.append("${name}.curveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[4] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[5] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.curveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[4] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[5] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_CLOSE:
-                            code.append("${name}.closePath();\n")
+                            code.append("        ${name}.closePath();\n")
                             break;
                     }
                     PATH_ITERATOR.next();
@@ -48,11 +48,11 @@ class FxgPath extends FxgShape {
 
                 if (filled) {
                     appendJavaPaint(code)
-                    code.append("G2.fill($name);\n")
+                    code.append("        G2.fill($name);\n")
                 }
                 if (stroked) {
                     appendJavaStroke(code)
-                    code.append("G2.draw($name);\n")
+                    code.append("        G2.draw($name);\n")
                 }
                 code.append("\n")
                 return code.toString()

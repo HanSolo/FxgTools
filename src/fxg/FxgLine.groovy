@@ -25,14 +25,14 @@ class FxgLine extends FxgShape {
         String name = "${layerName}_${shapeName}"
         switch (LANGUAGE) {
             case Language.JAVA:
-                code.append("Line2D $name = new Line2D.Double(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
+                code.append("        Line2D $name = new Line2D.Double(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 if (filled) {
                     appendJavaPaint(code)
-                    code.append("G2.fill($name);\n")
+                    code.append("        G2.fill($name);\n")
                 }
                 if (stroked) {
                     appendJavaStroke(code)
-                    code.append("G2.draw($name);\n")
+                    code.append("        G2.draw($name);\n")
                 }
                 code.append("\n")
                 return code.toString()
