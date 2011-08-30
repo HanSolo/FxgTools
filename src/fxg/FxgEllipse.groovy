@@ -53,9 +53,9 @@ class FxgEllipse extends FxgShape {
 
             case Language.JAVAFX:
                 if (width.compareTo(height) == 0) {
-                    code.append("Circle ${name} = new Circle(${getCenter().x / referenceWidth} * IMAGE_WIDTH, ${getCenter().y / referenceHeight} * IMAGE_HEIGHT, ${getRadiusX() / referenceWidth} * IMAGE_WIDTH);\n")
+                    code.append("Circle ${name} = new Circle(${center.x / referenceWidth} * IMAGE_WIDTH, ${center.y / referenceHeight} * IMAGE_HEIGHT, ${getRadiusX() / referenceWidth} * IMAGE_WIDTH);\n")
                 } else {
-                    code.append("Ellipse ${name} = new Ellipse(${getCenter().x / referenceWidth} * IMAGE_WIDTH, ${getCenter().y / referenceHeight} * IMAGE_HEIGHT, ${getRadiusX() / referenceWidth} * IMAGE_WIDTH, ${getRadiusY() / referenceHeight} * IMAGE_HEIGHT;\n")
+                    code.append("Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * IMAGE_WIDTH, ${center.y / referenceHeight} * IMAGE_HEIGHT, ${radiusX / referenceWidth} * IMAGE_WIDTH, ${radiusY / referenceHeight} * IMAGE_HEIGHT;\n")
                 }
                 appendJavaFxFill(code, name)
                 code.append("\n")
@@ -69,7 +69,7 @@ class FxgEllipse extends FxgShape {
                 code.append("        ctx.save();\n")
                 code.append("        ctx.scale(${width / height}, 1);\n")
                 code.append("        ctx.beginPath();\n")
-                code.append("        ctx.arc(${getCenter().x / referenceWidth / (width / height)} * imageWidth, ${getCenter().y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth / (width / height)} * imageWidth, 0, 2 * Math.PI, false);\n")
+                code.append("        ctx.arc(${center.x / referenceWidth / (width / height)} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth / (width / height)} * imageWidth, 0, 2 * Math.PI, false);\n")
                 code.append("        ctx.restore();\n")
                 if (filled) {
                     appendCanvasFill(code, name)

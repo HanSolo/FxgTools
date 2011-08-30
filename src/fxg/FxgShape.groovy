@@ -29,7 +29,7 @@ abstract class FxgShape {
     protected void appendJavaPaint(StringBuilder code) {
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
-                code.append("        G2.setPaint(")
+                code.append('        G2.setPaint(')
                 appendJavaColor(code, fill.color)
                 code.append(");\n")
                 break
@@ -70,7 +70,7 @@ abstract class FxgShape {
     private void appendJavaColors(StringBuilder code, Color[] colors) {
         code.append(", new Color[]{")
         fill.colors.eachWithIndex { color, i ->
-            code.append("new Color(${color.getRed() / 255}f, ${color.getGreen() / 255}f, ${color.getBlue() / 255}f, ${color.getAlpha() / 255}f)")
+            code.append("new Color(${color.red / 255}f, ${color.green / 255}f, ${color.blue / 255}f, ${color.alpha / 255}f)")
             if (i.compareTo(fill.colors.length - 1) != 0) {
                 code.append(", ")
             }
@@ -79,7 +79,7 @@ abstract class FxgShape {
     }
 
     private void appendJavaColor(StringBuilder code, Color color) {
-        code.append("new Color(${color.getRed() / 255}f, ${color.getGreen() / 255}f, ${color.getBlue() / 255}f, ${color.getAlpha() / 255}f)")
+        code.append("new Color(${color.red / 255}f, ${color.green / 255}f, ${color.blue / 255}f, ${color.alpha / 255}f)")
     }
 
     // JAVA_FX
@@ -133,13 +133,13 @@ abstract class FxgShape {
     }
 
     private void appendJavaFxColor(StringBuilder code, Color color) {
-        code.append("new Color(${color.getRed() / 255}, ${color.getGreen() / 255}, ${color.getBlue() / 255}, ${color.getAlpha() / 255})")
+        code.append("new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255})")
     }
 
     private void appendJavaFxStops(StringBuilder code, float[] fractions, Color[] colors) {
         code.append("new Stop[]{")
         fill.colors.eachWithIndex { color, i ->
-            code.append("new Stop(${fractions[i]}, new Color(${color.getRed() / 255}, ${color.getGreen() / 255}, ${color.getBlue() / 255}, ${color.getAlpha() / 255}))")
+            code.append("new Stop(${fractions[i]}, new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255}))")
             if (i.compareTo(fill.colors.length - 1) != 0) {
                 code.append(", ")
             }
@@ -202,19 +202,19 @@ abstract class FxgShape {
 
     private void appendCanvasColor(StringBuilder code, Color color) {
         if (color.getAlpha().compareTo(255) == 0) {
-            code.append("'rgb(${color.getRed()}, ${color.getGreen()}, ${color.getBlue()})'")
+            code.append("'rgb(${color.red}, ${color.green}, ${color.blue})'")
         } else {
-            code.append("'rgba(${color.getRed()}, ${color.getGreen()}, ${color.getBlue()}, ${color.getAlpha() / 255})'")
+            code.append("'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})'")
         }
     }
 
     private void appendCanvasStops(StringBuilder code, float[] fractions, Color[] colors, String elementName) {
         fill.colors.eachWithIndex { color, i ->
             code.append("        ${elementName}_Fill.addColorStop(${fractions[i]}, ")
-            if (colors[i].getAlpha().compareTo(255) == 0) {
-                code.append("'rgb(${colors[i].getRed()}, ${colors[i].getGreen()}, ${colors[i].getBlue()})'")
+            if (colors[i].alpha.compareTo(255) == 0) {
+                code.append("'rgb(${colors[i].red}, ${colors[i].green}, ${colors[i].blue})'")
             } else {
-                code.append("'rgba(${colors[i].getRed()}, ${colors[i].getGreen()}, ${colors[i].getBlue()}, ${colors[i].getAlpha() / 255})'")
+                code.append("'rgba(${colors[i].red}, ${colors[i].green}, ${colors[i].blue}, ${colors[i].alpha / 255})'")
             }
             code.append(");\n")
         }

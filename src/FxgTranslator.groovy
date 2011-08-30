@@ -11,30 +11,30 @@ import fxg.Language
 class FxgTranslator {
 
 
-    public void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
-        final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf(".")) : FILE_NAME
-        final String USER_HOME = System.getProperties().getProperty("user.home")
+    void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
+        final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
+        final String USER_HOME = System.properties.getProperty('user.home')
         StringBuilder exportFileName = new StringBuilder()
-        exportFileName.append(USER_HOME).append(File.separator).append("Desktop").append(File.separator).append(CLASS_NAME)
+        exportFileName.append(USER_HOME).append(File.separator).append('Desktop').append(File.separator).append(CLASS_NAME)
 
         StringBuilder codeToExport = new StringBuilder();
 
         // Export the header of the language specific template
         switch(LANGUAGE) {
             case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
-                                    exportFileName.append(".java")
+                                    exportFileName.append('.java')
                                     break;
             case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME))
-                                    exportFileName.append(".jfx")
+                                    exportFileName.append('.jfx')
                                     break;
             case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME))
-                                    exportFileName.append(".java")
+                                    exportFileName.append('.java')
                                     break;
-            case Language.CANVAS:   writeToFile(exportFileName + ".html", htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
+            case Language.CANVAS:   writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
                                     codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append(".js")
                                     break;
-            default: throw new Exception("Language not supported...")
+            default: throw Exception
         }
 
         writeToFile(exportFileName.toString(), codeToExport.toString())
@@ -197,7 +197,7 @@ class FxgTranslator {
         return code.toString()
     }
 
-    public void writeToFile(final String FILE_NAME, String codeToExport) {
+    private void writeToFile(final String FILE_NAME, String codeToExport) {
         new File("$FILE_NAME").withWriter { out ->
             out.println codeToExport
     }

@@ -1,0 +1,228 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0" is_locked="false">
+    <option name="myName" value="Project Default" />
+    <option name="myLocal" value="false" />
+    <inspection_tool class="AbstractClassName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AddEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AssignmentInConditional" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BigDecimalInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BooleanGetBoolean" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BooleanMethodReturnsNull" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BrokenOddnessCheck" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ClassForName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ClassName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CloneableWithoutClone" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ClosureAsLastMethodParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CompareToWithoutComparable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ComparisonOfTwoConstants" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ComparisonWithSelf" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConfusingMethodName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConfusingTernary" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConsecutiveLiteralAppends" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConsecutiveStringConcatenation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConstantIfExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConstantTernaryExpression" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DeadCode" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DoubleNegative" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DuplicateCaseStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DuplicateMapKey" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="DuplicateSetValue" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyElseBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyForStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyIfStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyInstanceInitializer" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyStaticInitializer" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptySwitchStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptyWhileStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EqualsAndHashCode" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EqualsOverloaded" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitArrayListInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToAndMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToCompareToMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToDivMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToEqualsMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToGetAtMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToLeftShiftMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToMinusMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToModMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToMultiplyMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToOrMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToPlusMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToPowerMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToRightShiftMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitCallToXorMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitGarbageCollection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitHashMapInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitHashSetInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitLinkedHashMapInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitLinkedListInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitStackInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitTreeSetInstantiation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FieldName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FindBugsIDEA" enabled="true" level="SERVER PROBLEM" enabled_by_default="true" />
+    <inspection_tool class="ForLoopShouldBeWhileLoop" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GStringAsMapKey" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GrFieldAlreadyDefined" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyAccessToStaticFieldLockedOnInstance" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyAnnotationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="8" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="GroovyAssignmentCanBeOperatorAssignment" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreLazyOperators" value="true" />
+      <option name="ignoreObscureOperators" value="false" />
+    </inspection_tool>
+    <inspection_tool class="GroovyAssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyAssignmentToMethodParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyBreak" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyBusyWait" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="8" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="GroovyConditional" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyConditionalCanBeConditionalCall" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyConditionalCanBeElvis" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyConditionalWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyConstantNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[A-Z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyContinue" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyContinueOrBreakFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyDoubleCheckedLocking" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreOnVolatileVariables" value="false" />
+    </inspection_tool>
+    <inspection_tool class="GroovyDuplicateSwitchBranch" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyEmptyCatchBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyEmptyFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyEmptySyncBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyEmptyTryBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyEnumerationNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="8" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="GroovyGetterCallCanBePropertyAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyIfStatementWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyIfStatementWithTooManyBranches" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="3" />
+    </inspection_tool>
+    <inspection_tool class="GroovyInstanceMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyInstanceVariableNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="m_[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="1" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyInterfaceNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
+      <option name="m_minLength" value="8" />
+      <option name="m_maxLength" value="64" />
+    </inspection_tool>
+    <inspection_tool class="GroovyLangImmutable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyListGetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyListSetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyLocalVariableNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyLoopStatementThatDoesntLoop" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyMapGetCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyMapPutCanBeKeyedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyMethodParameterCount" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="GroovyMethodWithMoreThanThreeNegations" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyMultipleReturnPointsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="1" />
+    </inspection_tool>
+    <inspection_tool class="GroovyNegatedConditional" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNegatedIf" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNestedAssignment" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNestedConditional" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNestedSwitch" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNestedSynchronizedStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNonShortCircuitBoolean" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyNotifyWhileNotSynchronized" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyOctalInteger" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyOverlyComplexArithmeticExpression" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="3" />
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyComplexBooleanExpression" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="3" />
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyComplexMethod" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="10" />
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyLongMethod" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="30" />
+    </inspection_tool>
+    <inspection_tool class="GroovyOverlyNestedMethod" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_limit" value="5" />
+    </inspection_tool>
+    <inspection_tool class="GroovyParameterNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyPublicFieldAccessedInSynchronizedContext" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyRangeTypeCheck" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyResultOfAssignmentUsed" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyResultOfIncrementOrDecrementUsed" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyReturnFromClosureCanBeImplicit" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyReturnFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySetterCallCanBePropertyAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyStaticMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovyStaticVariableNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_regex" value="s_[a-z][A-Za-z\d]*" />
+      <option name="m_minLength" value="4" />
+      <option name="m_maxLength" value="32" />
+    </inspection_tool>
+    <inspection_tool class="GroovySwitchStatementWithNoDefault" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySynchronizationOnNonFinalField" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySynchronizationOnThis" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySynchronizationOnVariableInitializedWithLiteral" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySynchronizedMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovySystemRunFinalizersOnExit" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyThreadStopSuspendResume" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyThrowFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyUnconditionalWait" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyUnresolvedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyUnsynchronizedMethodOverridesSynchronizedMethod" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyUnusedCatchParameter" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyWaitCallNotInLoop" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyWaitWhileNotSynchronized" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="GroovyWhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreNonEmtpyLoops" value="false" />
+    </inspection_tool>
+    <inspection_tool class="IntegerGetInteger" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="InterfaceName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="InvertedIfElse" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MethodName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ObjectOverrideMisspelledMethodName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PackageName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PropertyName" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RemoveAllOnSelf" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ReturnsNullInsteadOfEmptyArray" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ReturnsNullInsteadOfEmptyCollection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SimpleDateFormatMissingLocale" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ThrowExceptionFromFinallyBlock" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedArray" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedObject" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedPrivateField" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedVariable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="VariableName" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>

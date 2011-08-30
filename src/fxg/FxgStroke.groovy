@@ -16,6 +16,6 @@ class FxgStroke {
     Stroke stroke
 
     String getHexColor() {
-        return Integer.toHexString((int) (color).getRGB() & 0x00ffffff)
+        return Integer.toHexString((int) (color).RGB & 0x00ffffff)
     }
 }

@@ -107,9 +107,9 @@ class FxgParser {
                 return new RadialGradientPaint(center, radius, fractions, colors)
             } else if (color != null) {
                 return color
-            } else {
-                return null
             }
+
+            return null
         }
     }
     private class FxgPathReader
@@ -136,7 +136,7 @@ class FxgParser {
 
 
     // ********************   P U B L I C   M E T H O D S   ************************************************************
-    public Map<String, BufferedImage> parse(final Node FXG, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+    Map<String, BufferedImage> parse(final Node FXG, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
         Map<String, BufferedImage> images = [:]
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
 
@@ -160,7 +160,7 @@ class FxgParser {
         return images
     }
 
-    public BufferedImage parseLayer(final Node FXG, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+    BufferedImage parseLayer(final Node FXG, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
 
         def layer = FXG.Group.find {('layer' == it.attribute(D.type)) && (LAYER_NAME == it.attribute(D.userLabel))}
@@ -176,7 +176,7 @@ class FxgParser {
         return IMAGE
     }
 
-    public Map<String, List<FxgElement>> getElements(final Node FXG) {
+    Map<String, List<FxgElement>> getElements(final Node FXG) {
         Map<String, List<FxgElement>> elements = [:]
 
         originalWidth = (FXG.@viewWidth ?: 100).toInteger()
@@ -216,15 +216,15 @@ class FxgParser {
         //double scaleX = (NODE.@scaleX ?: 0).toDouble()
         //double scaleY = (NODE.@scaleY ?: 0).toDouble()
         //double rotation = (NODE.@rotation ?: 0).toDouble()
-        int alpha = (NODE.@alpha ?: 1).toDouble() * 255
+        //int alpha = (NODE.@alpha ?: 1).toDouble() * 255
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
         double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
 
         if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
             return new RoundRectangle2D.Double(x, y, width, height, 0, 0)
-        } else {
-            return new RoundRectangle2D.Double(x, y, width, height, radiusX, radiusY)
         }
+        return new RoundRectangle2D.Double(x, y, width, height, radiusX, radiusY)
+
     }
 
     private Ellipse2D parseEllipse(final NODE) {
@@ -254,9 +254,9 @@ class FxgParser {
     }
 
     private GeneralPath parsePath(final NODE) {
-        String data = NODE.@data == null ? '' : NODE.@data
-        double x = (NODE.@x ?: 0).toDouble() * scaleFactorX
-        double y = (NODE.@y ?: 0).toDouble() * scaleFactorY
+        String data = NODE.@data ?: ''
+        //double x = (NODE.@x ?: 0).toDouble() * scaleFactorX
+        //double y = (NODE.@y ?: 0).toDouble() * scaleFactorY
         //double scaleX = (NODE.@scaleX ?: 0).toDouble()
         //double scaleY = (NODE.@scaleY ?: 0).toDouble()
         //double rotation = (NODE.@rotation ?: 0).toDouble()
@@ -375,13 +375,14 @@ class FxgParser {
     }
 
     private AffineTransform parseTransform(final NODE) {
-        def matrix = NODE.transform[0].Transform[0].matrix[0].Matrix[0]
-        double matrixA = (matrix[0].@a ?: 1).toDouble()
-        double matrixB = (matrix[0].@b ?: 1).toDouble()
-        double matrixC = (matrix[0].@c ?: 1).toDouble()
-        double matrixD = (matrix[0].@d ?: 1).toDouble()
-        double matrixTx = (matrix[0].@tx ?: 1).toDouble()
-        double matrixTy = (matrix[0].@ty ?: 1).toDouble()
+        //def matrix = NODE.transform[0].Transform[0].matrix[0].Matrix[0]
+        //double matrixA = (matrix[0].@a ?: 1).toDouble()
+        //double matrixB = (matrix[0].@b ?: 1).toDouble()
+        //double matrixC = (matrix[0].@c ?: 1).toDouble()
+        //double matrixD = (matrix[0].@d ?: 1).toDouble()
+        //double matrixTx = (matrix[0].@tx ?: 1).toDouble()
+        //double matrixTy = (matrix[0].@ty ?: 1).toDouble()
+        return new AffineTransform()
     }
 
     private void parseFilter(final NODE, final Graphics2D G2, final Shape SHAPE, final Paint SHAPE_PAINT) {
@@ -392,12 +393,12 @@ class FxgParser {
                 int distance = (shadow.@distance ?: 0).toDouble() * scaleFactorX
                 int alpha = (shadow.@alpha ?: 1).toDouble() * 255
                 int blurX = (shadow.@blurX ?: 0).toDouble() * scaleFactorX
-                int blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
+                //int blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
                 boolean inner = (shadow.@inner ?: false)
                 Color color = parseColor(colorString, alpha)
 
                 if (inner) {  // inner shadow
-                    G2.drawImage(createInnerShadow(SHAPE, SHAPE_PAINT, distance, alpha, color, blurX, angle), (int)SHAPE.getBounds2D().getX(), (int)SHAPE.getBounds2D().getY(), null)
+                    G2.drawImage(createInnerShadow(SHAPE, SHAPE_PAINT, distance, alpha, color, blurX, angle), (int)SHAPE.bounds2D.x, (int)SHAPE.bounds2D.y, null)
                 }             // dropShadow
             }
         }
@@ -414,7 +415,7 @@ class FxgParser {
                 fxgFilter.blurX = (shadow.@blurX ?: 0).toDouble() * scaleFactorX
                 fxgFilter.blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
                 fxgFilter.inner = (shadow.@inner ?: false)
-                fxgFilter.color = parseColor(colorString, alpha)
+                fxgFilter.color = parseColor(colorString, (int) fxgFilter.alpha)
             }
         }
         return null
@@ -434,7 +435,7 @@ class FxgParser {
         new Color(red, green, blue, ALPHA)
     }
 
-    private def processPath(final PATH_LIST, final FxgPathReader READER, final GeneralPath PATH) {
+    private processPath(final PATH_LIST, final FxgPathReader READER, final GeneralPath PATH) {
         while (PATH_LIST) {
             switch (READER.read()) {
                 case "M":
@@ -456,16 +457,16 @@ class FxgParser {
         }
     }
 
-    private def convertSolidColor(paint, node) {
+    private convertSolidColor(paint, node) {
         paint.color = parseColor((node.SolidColor[0] ?: '#000000'))
     }
 
-    private def convertLinearGradient(paint, node) {
+    private convertLinearGradient(paint, node) {
         def linearGradient = node.LinearGradient[0]
         double x1 = (linearGradient.@x ?: 0).toDouble() + offsetX
         double y1 = (linearGradient.@y ?: 0).toDouble() + offsetY
         double scaleX = (linearGradient.@scaleX ?: 1).toDouble()
-        double scaleY = (linearGradient.@scaleY ?: 1).toDouble()
+        //double scaleY = (linearGradient.@scaleY ?: 1).toDouble()
         double rotation = (linearGradient.@rotation ?: 0).toDouble()
         double x2 = Math.cos(Math.toRadians(rotation)) * scaleX + x1
         double y2 = Math.sin(Math.toRadians(rotation)) * scaleX + y1
@@ -473,7 +474,7 @@ class FxgParser {
         Point2D start = new Point2D.Double((x1 * scaleFactorX), (y1 * scaleFactorY))
         Point2D stop = new Point2D.Double((x2 * scaleFactorX), (y2 * scaleFactorY))
 
-        if (start.equals(stop)) {  // make sure that the gradient start point is different from the stop point
+        if (start == stop) {  // make sure that the gradient start point is different from the stop point
             stop.setLocation(stop.x, stop.y + 0.001)
         }
 
@@ -489,7 +490,7 @@ class FxgParser {
         paint.colors = colors
     }
 
-    private def convertRadialGradient(paint, node) {
+    private convertRadialGradient(paint, node) {
         def radialGradient = node.RadialGradient[0]
         double x1 = (radialGradient.@x ?: 0).toDouble() + offsetX
         double y1 = (radialGradient.@y ?: 0).toDouble() + offsetY
@@ -514,11 +515,11 @@ class FxgParser {
         paint.colors = colors
     }
 
-    private def convertGradientEntries(gradientEntries, float[] fractions, Color[] colors) {
-        float fraction = 0f
+    private convertGradientEntries(gradientEntries, float[] fractions, Color[] colors) {
+        float fraction = 0
         float oldFraction = -1f
         Color color
-        int alpha = 0f
+        int alpha = 0
         def gradientMap = new HashMap<Float, java.awt.Color>(16)
 
         gradientEntries.each { def gradientEntry->
@@ -528,7 +529,7 @@ class FxgParser {
                 fraction += 0.0001f
             }
             color = gradientEntry.@color == null ? Color.BLACK : parseColor(gradientEntry.@color, alpha)
-            gradientMap.put(fraction, color)
+            (gradientMap[fraction] = color)
             oldFraction = fraction
         }
         gradientMap = gradientMap.sort()
@@ -542,11 +543,11 @@ class FxgParser {
 
     private void paintShape(final Graphics2D G2, final SHAPE, final NODE) {
         if (NODE.fill) {
-            G2.setPaint(parseFill(NODE).getPaint())
+            G2.setPaint(parseFill(NODE).paint)
             G2.fill(SHAPE)
         }
         if (NODE.filters) {
-            parseFilter(NODE.filters, G2, SHAPE, G2.getPaint())
+            parseFilter(NODE.filters, G2, SHAPE, G2.paint)
         }
         if (NODE.stroke) {
             FxgStroke fxgStroke = parseStroke(NODE)
@@ -592,12 +593,12 @@ class FxgParser {
                     if (elementName != null) {
                         E_MATCHER.reset(elementName)
                         if (E_MATCHER.matches()) {
-                            shape = new Ellipse2D.Double(shape.bounds2D.getX(), shape.bounds2D.getY(), shape.bounds2D.getWidth(), shape.bounds2D.getHeight())
+                            shape = new Ellipse2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height)
                         }
                         RR_MATCHER.reset(elementName)
                         if (RR_MATCHER.matches()) {
                             double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX * 2 : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX * 2
-                            shape = new RoundRectangle2D.Double(shape.bounds2D.getX(), shape.bounds2D.getY(), shape.bounds2D.getWidth(), shape.bounds2D.getHeight(), cornerRadius, cornerRadius)
+                            shape = new RoundRectangle2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height, cornerRadius, cornerRadius)
                         }
                     }
                     paintShape(G2, shape, node)
@@ -619,8 +620,8 @@ class FxgParser {
                     }
                     G2.setPaint(fxgText.color)
                     G2.setFont(fxgText.font)
-                    float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.getFont(), G2.getFontRenderContext())).descent
-                    G2.drawString(STRING.getIterator(), fxgText.x, offsetY)
+                    float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.font, G2.fontRenderContext)).descent
+                    G2.drawString(STRING.iterator, fxgText.x, offsetY)
                     break
             }
         }
@@ -669,14 +670,14 @@ class FxgParser {
                     if (elementName != null) {
                         E_MATCHER.reset(elementName)
                         if (E_MATCHER.matches()) {
-                            shape = new Ellipse2D.Double(shape.bounds2D.getX(), shape.bounds2D.getY(), shape.bounds2D.getWidth(), shape.bounds2D.getHeight())
+                            shape = new Ellipse2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height)
                             fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height)
                             break;
                         }
                         RR_MATCHER.reset(elementName)
                         if (RR_MATCHER.matches()) {
                             double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
-                            shape = new RoundRectangle2D.Double(shape.bounds2D.getX(), shape.bounds2D.getY(), shape.bounds2D.getWidth(), shape.bounds2D.getHeight(), cornerRadius, cornerRadius)
+                            shape = new RoundRectangle2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height, cornerRadius, cornerRadius)
                             fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height, radiusX: ((RoundRectangle2D) shape).arcWidth, radiusY: ((RoundRectangle2D) shape).arcHeight)
                             break;
                         }
@@ -689,7 +690,7 @@ class FxgParser {
                 case FXG.RichText:
                     elementName = node.attribute(D.userLabel)?:"Text_${shapeIndex += 1}"
                     def fxgText = parseRichText(node)
-                    FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.getRGB()) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
+                    FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
                     fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily)
                     lastNodeType = "RichText"
                     break
@@ -697,9 +698,9 @@ class FxgParser {
             if (fxgShape != null) {
                 if (node.fill) {
                     FxgFill fxgFill
-                    paint = parseFill(node).getPaint()
+                    paint = parseFill(node).paint
                     if (paint instanceof Color) {
-                        fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int) ((Color) paint).getRGB() & 0x00ffffff), alpha: (float)(((Color) paint).alpha / 255), color: (Color) paint)
+                        fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int) ((Color) paint).RGB & 0x00ffffff), alpha: (float)(((Color) paint).alpha / 255), color: (Color) paint)
                     } else if (paint instanceof LinearGradientPaint) {
                         fxgFill = new FxgLinearGradient(layerName: LAYER_NAME, shapeName: elementName, start: ((LinearGradientPaint) paint).startPoint, stop: ((LinearGradientPaint) paint).endPoint, fractions: ((LinearGradientPaint) paint).fractions, colors: ((LinearGradientPaint) paint).colors)
                     } else if (paint instanceof RadialGradientPaint) {
@@ -740,7 +741,7 @@ class FxgParser {
     }
 
     private BufferedImage createImage(final int WIDTH, final int HEIGHT, final int TRANSPARENCY) {
-        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.localGraphicsEnvironment.defaultScreenDevice.defaultConfiguration
         if (WIDTH <= 0 || HEIGHT <= 0) {
             return GFX_CONF.createCompatibleImage(1, 1, TRANSPARENCY)
         }
@@ -749,25 +750,25 @@ class FxgParser {
     }
 
     private void prepareSoftClipImage(final Graphics2D G2, final Shape SHAPE, final Paint SHAPE_PAINT) {
-        G2.setComposite(java.awt.AlphaComposite.Clear)
-        G2.fillRect(0, 0, (int) SHAPE.getBounds2D().getWidth(), (int) SHAPE.getBounds2D().getHeight())
+        G2.setComposite(AlphaComposite.Clear)
+        G2.fillRect(0, 0, (int) SHAPE.bounds2D.width, (int) SHAPE.bounds2D.height)
 
         G2.setComposite(AlphaComposite.Src)
         addRenderingHints(G2)
         if (SHAPE_PAINT != null) {
             G2.setPaint(SHAPE_PAINT)
-            G2.translate(-SHAPE.getBounds2D().getX(), -SHAPE.getBounds2D().getY())
+            G2.translate(-SHAPE.bounds2D.x, -SHAPE.bounds2D.y)
             G2.fill(SHAPE)
         }
     }
 
     private BufferedImage createInnerShadow(final Shape SHAPE, final Paint SHAPE_PAINT, final int DISTANCE, final float ALPHA, final Color COLOR, final int BLUR, final int ANGLE) {
         final float COLOR_CONSTANT = 1f / 255f
-        final float RED = COLOR_CONSTANT * COLOR.getRed()
-        final float GREEN = COLOR_CONSTANT * COLOR.getGreen()
-        final float BLUE = COLOR_CONSTANT * COLOR.getBlue()
+        final float RED = COLOR_CONSTANT * COLOR.red
+        final float GREEN = COLOR_CONSTANT * COLOR.green
+        final float BLUE = COLOR_CONSTANT * COLOR.blue
         final float MAX_STROKE_WIDTH = BLUR * 1.5
-        final float ALPHA_FACTOR = (ALPHA - 100) / (180 * BLUR - Math.pow(BLUR, 2))
+        final float ALPHA_FACTOR = (ALPHA - 100) / (BLUR * 180 - Math.pow(BLUR, 2))
         final double TRANSLATE_X = (DISTANCE * Math.cos(Math.toRadians(ANGLE)))
         final double TRANSLATE_Y = (DISTANCE * Math.sin(Math.toRadians(ANGLE)))
         final BufferedImage IMAGE = createImage((int)SHAPE.bounds2D.width, (int)SHAPE.bounds2D.height, Transparency.TRANSLUCENT)

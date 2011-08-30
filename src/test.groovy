@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage
 import fxg.FxgElement
 
 
-fxgFile = "/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/gradients2.fxg"
+fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/gradients2.fxg'
 fxg = new XmlParser().parse(new File(fxgFile))
-selectedLayer = "Layer_1"
+selectedLayer = 'Layer_1'
 keepAspect = true
 width = 400
 height = 400
