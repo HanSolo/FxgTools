@@ -11,47 +11,64 @@ import fxg.Language
 class FxgTranslator {
 
 
-    public void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE) {
-        final String CLASS_NAME = FILE_NAME.substring(0, FILE_NAME.lastIndexOf("."))
+    public void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE, final String WIDTH, final String HEIGHT) {
+        final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf(".")) : FILE_NAME
         final String USER_HOME = System.getProperties().getProperty("user.home")
-        final String EXPORT_FILE_NAME = USER_HOME + File.separator + "Desktop" + File.separator + FILE_NAME
+        StringBuilder exportFileName = new StringBuilder()
+        exportFileName.append(USER_HOME).append(File.separator).append("Desktop").append(File.separator).append(CLASS_NAME)
 
         StringBuilder codeToExport = new StringBuilder();
 
         // Export the header of the language specific template
         switch(TO_LANGUAGE) {
-            case Language.JAVA:     codeToExport.append(javaTemplateHeader(CLASS_NAME))
+            case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, TO_LANGUAGE))
+                                    exportFileName.append(".java")
                                     break;
-            case Language.JAVAFX:   codeToExport.append(javaFxTemplateHeader(CLASS_NAME))
+            case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME))
+                                    exportFileName.append(".jfx")
                                     break;
-            case Language.GWT:      codeToExport.append(gwtTemplateHeader(CLASS_NAME))
+            case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME))
+                                    exportFileName.append(".java")
                                     break;
-            case Language.CANVAS:   codeToExport.append(canvasTemplateHeader(CLASS_NAME))
+            case Language.CANVAS:   codeToExport.append(canvasTemplate(CLASS_NAME))
+                                    exportFileName.append(".js")
                                     break;
             default: throw new Exception("Language not supported...")
         }
 
-        // Export the language specific graphics code
-        codeToExport.append(code(layerMap, TO_LANGUAGE))
-
-        // Export the rest of the language specific template
-        switch(TO_LANGUAGE) {
-            case Language.JAVA:     codeToExport.append(javaTemplateFooter(CLASS_NAME))
-                                    break;
-            case Language.JAVAFX:   codeToExport.append(javaFxTemplateFooter(CLASS_NAME))
-                                    break;
-            case Language.GWT:      codeToExport.append(gwtTemplateFooter(CLASS_NAME))
-                                    break;
-            case Language.CANVAS:   codeToExport.append(canvasTemplateFooter(CLASS_NAME))
-                                    break;
-        }
-
-        writeToFile(EXPORT_FILE_NAME, codeToExport.toString())
+        writeToFile(exportFileName.toString(), codeToExport.toString())
     }
 
     // JAVA
-    private String javaTemplateHeader(final String CLASS_NAME) {
-        return "JavaHeader\n"
+    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE) {
+        def template = new File('./resources/java.txt')
+        String codeToExport = template.text
+
+        StringBuilder imageDeclaration = new StringBuilder()
+        StringBuilder imageInitialization = new StringBuilder()
+        StringBuilder imageCreation = new StringBuilder()
+        StringBuilder drawImage = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            imageDeclaration.append("    private BufferedImage ${layerName}Image;\n")
+            imageInitialization.append("        ${layerName}Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
+            imageCreation.append("        if (${layerName}Image != null) {\n")
+            imageCreation.append("            ${layerName}Image.flush();\n")
+            imageCreation.append("        };\n")
+            imageCreation.append("        ${layerName}Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
+            drawImage.append("        G2.drawImage(${layerName}Image, 0, 0, null);\n")
+        }
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
+        codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
+        codeToExport = codeToExport.replace("\$imageDeclaration", imageDeclaration.toString())
+        codeToExport = codeToExport.replace("\$imageInitialization", imageInitialization.toString())
+        codeToExport = codeToExport.replace("\$imageCreation", imageCreation.toString())
+        codeToExport = codeToExport.replace("\$drawImage", drawImage.toString())
+        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, TO_LANGUAGE))
+
+        return codeToExport
     }
 
     private String javaImageMethodStart(final String LAYER_NAME) {
@@ -82,47 +99,25 @@ class FxgTranslator {
         imageCode.append("    }\n\n")
     }
 
-    private String javaTemplateFooter(final String CLASS_NAME) {
-        StringBuilder footerCode = new StringBuilder()
-        footerCode.append("    @Override\n")
-        footerCode.append("    public String toString() {\n")
-        footerCode.append("        return \"${CLASS_NAME}\";\n")
-        footerCode.append("    }\n")
-        footerCode.append("}\n\n")
-        return footerCode.toString()
-    }
-
     // JAVAFX
-    private String javaFxTemplateHeader(final String CLASS_NAME) {
+    private String javaFxTemplate(final String CLASS_NAME) {
         return "JavaFxHeader\n"
     }
 
-    private String javaFxTemplateFooter(final String CLASS_NAME) {
-        return "JavaFxFooter\n"
-    }
-
     // GWT
-    private String gwtTemplateHeader(final String CLASS_NAME) {
+    private String gwtTemplate(final String CLASS_NAME) {
         return "GwtHeader\n"
     }
 
-    private String gwtTemplateFooter(final String CLASS_NAME) {
-        return "GwtFooter\n"
-    }
-
     // CANVAS
-    private String canvasTemplateHeader(final String CLASS_NAME) {
+    private String canvasTemplate(final String CLASS_NAME) {
         return "CanvasHeader\n"
-    }
-
-    private String canvasTemplateFooter(final String CLASS_NAME) {
-        return "CanvasFooter\n"
     }
 
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language TO_LANGUAGE) {
         StringBuilder code = new StringBuilder()
-        for (String layer : layerMap.keySet()) {
+        layerMap.keySet().each {String layer->
             switch(TO_LANGUAGE) {
                 case Language.JAVA: code.append(javaImageMethodStart(layer))
                     break;
@@ -134,7 +129,7 @@ class FxgTranslator {
                     break;
             }
 
-            for (FxgElement element : layerMap[layer]) {
+            layerMap[layer].each {FxgElement element ->
                 code.append(element.shape.translateTo(TO_LANGUAGE))
             }
 
@@ -151,7 +146,6 @@ class FxgTranslator {
         }
         return code.toString()
     }
-
 
     public void writeToFile(final String FILE_NAME, String codeToExport) {
         new File("$FILE_NAME").withWriter { out ->

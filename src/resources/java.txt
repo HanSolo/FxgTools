@@ -1,0 +1,201 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.LinearGradientPaint;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D
+import java.awt.geom.RoundRectangle2D
+import java.awt.geom.GeneralPath;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import javax.swing.JComponent;
+
+
+public class $className extends JComponent {
+    public static final String VALUE_PROPERTY = "Value";
+    private double value;
+    private PropertyChangeSupport propertySupport;
+    private final Rectangle INNER_BOUNDS = new Rectangle(0, 0, 809, 372);
+    private final Point2D CENTER;
+$imageDeclaration
+    private transient final ComponentListener COMPONENT_LISTENER = new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent event) {
+            final int SIZE = getWidth() <= getHeight() ? getWidth() : getHeight();
+            Container parent = getParent();
+            if ((parent != null) && (parent.getLayout() == null)) {
+                if (SIZE < getMinimumSize().width || SIZE < getMinimumSize().height) {
+                    setSize(getMinimumSize());
+                } else {
+                        setSize(getWidth(), getHeight());
+                }
+            } else {
+                if (SIZE < getMinimumSize().width || SIZE < getMinimumSize().height) {
+                    setPreferredSize(getMinimumSize());
+                } else {
+                        setPreferredSize(new Dimension(getWidth(), getHeight()));
+                }
+            }
+            calcInnerBounds();
+            init(getInnerBounds().width, getInnerBounds().height);
+        }
+    };
+
+    public $className() {
+        super();
+        addComponentListener(COMPONENT_LISTENER);
+        propertySupport = new PropertyChangeSupport(this);
+        CENTER = new Point2D.Double();
+$imageInitialization		
+    }
+
+    public final void init(final int WIDTH, final int HEIGHT) {
+        if (WIDTH <= 1 || HEIGHT <= 1) {
+            return;
+        }
+$imageCreation
+        CENTER.setLocation(WIDTH / 2.0, HEIGHT / 2.0);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        // Create the Graphics2D object
+        final Graphics2D G2 = (Graphics2D) g.create();
+
+        // Set the rendering hints
+        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		G2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        // Take insets into account (e.g. used by borders)
+        G2.translate(getInnerBounds().x, getInnerBounds().y);
+
+$drawImage
+        // Dispose the temp graphics object
+        G2.dispose();
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(final double VALUE) {
+        double oldValue = value;
+        value = VALUE;
+        propertySupport.firePropertyChange(VALUE_PROPERTY, oldValue, value);
+        repaint(getInnerBounds());
+    }
+
+    @Override
+    public void addPropertyChangeListener(final PropertyChangeListener LISTENER) {
+        propertySupport.addPropertyChangeListener(LISTENER);
+    }
+
+    @Override
+    public void removePropertyChangeListener(final PropertyChangeListener LISTENER) {
+        propertySupport.removePropertyChangeListener(LISTENER);
+    }
+
+    /**
+    * Calculates the area that is available for painting the display
+    */
+    private void calcInnerBounds() {
+        final Insets INSETS = getInsets();
+        INNER_BOUNDS.setBounds(INSETS.left, INSETS.top, getWidth() - INSETS.left - INSETS.right, getHeight() - INSETS.top - INSETS.bottom);
+    }
+
+    /**
+     * Returns a rectangle representing the available space for drawing the
+     * component taking the insets into account (e.g. given through borders etc.)
+     * @return a rectangle that represents the area available for rendering the component
+     */
+    private Rectangle getInnerBounds() {
+        return INNER_BOUNDS;
+    }
+
+    @Override
+    public java.awt.Dimension getMinimumSize() {
+        /* Return the default size of the component
+         * which will be used by ui-editors for initialization
+         */
+        return new Dimension($minimumWidth, $minimumHeight);
+    }
+
+    @Override
+    public void setPreferredSize(final Dimension DIM) {
+        super.setPreferredSize(DIM);
+        calcInnerBounds();
+        init(getInnerBounds().width, getInnerBounds().height);
+    }
+
+    @Override
+    public void setSize(final int WIDTH, final int HEIGHT) {
+        super.setSize(WIDTH, HEIGHT);
+        calcInnerBounds();
+        init(getInnerBounds().width, getInnerBounds().height);
+    }
+
+    @Override
+    public void setSize(final Dimension DIM) {
+        super.setSize(DIM);
+        calcInnerBounds();
+        init(getInnerBounds().width, getInnerBounds().height);
+    }
+
+    @Override
+    public void setBounds(final Rectangle BOUNDS) {
+        super.setBounds(BOUNDS);
+        calcInnerBounds();
+        init(getInnerBounds().width, getInnerBounds().height);
+    }
+
+    @Override
+    public void setBounds(final int X, final int Y, final int WIDTH, final int HEIGHT) {
+        super.setBounds(X, Y, WIDTH, HEIGHT);
+        calcInnerBounds();
+        init(getInnerBounds().width, getInnerBounds().height);
+    }
+
+    /**
+     * Returns a compatible image of the given size and transparency
+     * @param WIDTH
+     * @param HEIGHT
+     * @param TRANSPARENCY
+     * @return a compatible image of the given size and transparency
+     */
+    private BufferedImage createImage(final int WIDTH, final int HEIGHT, final int TRANSPARENCY) {
+        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        if (WIDTH <= 0 || HEIGHT <= 0) {
+            return GFX_CONF.createCompatibleImage(1, 1, TRANSPARENCY);
+        }
+        final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(WIDTH, HEIGHT, TRANSPARENCY);
+        return IMAGE;
+    }
+
+	// Image methods
+$creationMethods
+	
+	@Override
+	public String toString() {
+		return "$className";
+	}

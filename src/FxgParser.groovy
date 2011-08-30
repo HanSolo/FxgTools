@@ -61,8 +61,8 @@ class FxgParser {
     private int shapeIndex
     private String elementName
     private String lastNodeType
-    private double originalWidth
-    private double originalHeight
+    double originalWidth
+    double originalHeight
     private double width
     private double height
     private double scaleFactorX = 1.0
