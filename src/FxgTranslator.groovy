@@ -27,7 +27,7 @@ class FxgTranslator {
             case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME))
                                     exportFileName.append('.jfx')
                                     break;
-            case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME))
+            case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
                                     break;
             case Language.CANVAS:   writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
@@ -106,8 +106,37 @@ class FxgTranslator {
     }
 
     // GWT
-    private String gwtTemplate(final String CLASS_NAME) {
-        return "GwtTemplate\n"
+    private String gwtTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = new File('./resources/gwt.txt')
+        String codeToExport = template.text
+
+        StringBuilder drawImagesToContext = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            drawImagesToContext.append("        draw_${layerName}_Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
+        }
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$originalWidth", WIDTH)
+        codeToExport = codeToExport.replace("\$originalHeight", HEIGHT)
+        codeToExport = codeToExport.replace("\$drawImagesToContext", drawImagesToContext.toString())
+        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
+
+        return codeToExport
+    }
+
+    private String gwtImageMethodStart(final String LAYER_NAME) {
+        StringBuilder imageCode = new StringBuilder()
+        imageCode.append("    public void draw_${LAYER_NAME}_Image(Context2d ctx, int imageWidth, int imageHeight) {\n")
+        imageCode.append("        ctx.save();\n\n")
+        return imageCode.toString()
+    }
+
+    private String gwtImageMethodStop() {
+        StringBuilder imageCode = new StringBuilder()
+        imageCode.append("        ctx.restore();\n")
+        imageCode.append("    }\n\n")
+        return imageCode.toString()
     }
 
     // CANVAS
@@ -173,7 +202,7 @@ class FxgTranslator {
                     break;
                 case Language.JAVAFX:
                     break;
-                case Language.GWT:
+                case Language.GWT: code.append(gwtImageMethodStart(layer))
                     break;
                 case Language.CANVAS: code.append(canvasImageMethodStart(layer))
                     break;
@@ -188,7 +217,7 @@ class FxgTranslator {
                     break;
                 case Language.JAVAFX:
                     break;
-                case Language.GWT:
+                case Language.GWT: code.append(gwtImageMethodStop())
                     break;
                 case Language.CANVAS: code.append(canvasImageMethodStop())
                     break;

@@ -147,11 +147,8 @@ abstract class FxgShape {
         code.append("}")
     }
 
-    // GWT
-
-
-    // CANVAS
-    protected void appendCanvasFill(StringBuilder code, String elementName) {
+    // CANVAS & GWT
+    protected void appendCanvasFill(StringBuilder code, String elementName, boolean GWT) {
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
                 code.append("        ctx.fillStyle = ")
@@ -159,12 +156,14 @@ abstract class FxgShape {
                 code.append(";\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
-                code.append("        var ${elementName}_Fill = ctx.createLinearGradient((${(fill.start.x) / referenceWidth} * imageWidth), (${(fill.start.y) / referenceHeight} * imageHeight), ((${(fill.stop.x) / referenceWidth}) * imageWidth), ((${(fill.stop.y) / referenceHeight}) * imageHeight));\n")
+                GWT ? code.append("        CanvasGradient ") : code.append("        var ")
+                code.append("${elementName}_Fill = ctx.createLinearGradient((${(fill.start.x) / referenceWidth} * imageWidth), (${(fill.start.y) / referenceHeight} * imageHeight), ((${(fill.stop.x) / referenceWidth}) * imageWidth), ((${(fill.stop.y) / referenceHeight}) * imageHeight));\n")
                 appendCanvasStops(code, fill.fractions, fill.colors, elementName)
                 code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
-                code.append("        var ${elementName}_Fill = ctx.createRadialGradient((${fill.center.x / referenceWidth}) * imageWidth, ((${fill.center.y / referenceHeight}) * imageHeight), 0, ((${fill.center.x / referenceWidth}) * imageWidth), ((${fill.center.y / referenceHeight}) * imageHeight), ${fill.radius / referenceWidth} * imageWidth);\n")
+                GWT ? code.append("        CanvasGradient ") : code.append("        var ")
+                code.append("${elementName}_Fill = ctx.createRadialGradient((${fill.center.x / referenceWidth}) * imageWidth, ((${fill.center.y / referenceHeight}) * imageHeight), 0, ((${fill.center.x / referenceWidth}) * imageWidth), ((${fill.center.y / referenceHeight}) * imageHeight), ${fill.radius / referenceWidth} * imageWidth);\n")
                 appendCanvasStops(code, fill.fractions, fill.colors, elementName)
                 code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
                 break

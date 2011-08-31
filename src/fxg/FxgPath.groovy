@@ -88,7 +88,6 @@ class FxgPath extends FxgShape {
                 return code.toString()
 
             case Language.GWT:
-                return "GWT"
 
             case Language.CANVAS:
                 code.append("        //${name}\n")
@@ -118,7 +117,7 @@ class FxgPath extends FxgShape {
                 }
                 code.append("        ctx.restore();\n")
                 if (filled) {
-                    appendCanvasFill(code, name)
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                     code.append("        ctx.fill();\n")
                 }
                 if (stroked) {

@@ -1,0 +1,46 @@
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.CanvasGradient;
+import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.Context2d.LineCap;
+import com.google.gwt.canvas.dom.client.Context2d.LineJoin;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
+
+
+public class $className implements EntryPoint {
+    private Canvas canvas;
+    private Context2d context;
+    private static final int CANVAS_WIDTH = $originalWidth;
+    private static final int CANVAS_HEIGHT = $originalHeight;
+
+    public void onModuleLoad() {
+        canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            RootPanel.get().add(new Label('Sorry, your browser does not support the HTML5 Canvas element'));
+            return;
+        }
+
+        canvas.setStyleName('canvasStyle');
+        canvas.setWidth(CANVAS_WIDTH + 'px');
+        canvas.setCoordinateSpaceWidth(CANVAS_WIDTH);
+        canvas.setHeight(CANVAS_HEIGHT + 'px');
+        canvas.setCoordinateSpaceHeight(CANVAS_HEIGHT);
+
+        context = canvas.getContext2d();
+        RootPanel.get().add(canvas);
+
+$drawImagesToContext
+        canvas.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.alert('Click on Canvas');
+            } 
+        });
+    }
+
+$creationMethods
+}

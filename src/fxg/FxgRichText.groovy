@@ -90,11 +90,10 @@ class FxgRichText extends FxgShape{
                 return code.toString()
 
             case Language.GWT:
-                return "GWT"
 
             case Language.CANVAS:
                 if (fill.type != null) {
-                    appendCanvasFill(code, name)
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                     code.append("        ctx.font = '")
                     italic ? code.append("italic "):code.append("")
                     bold ? code.append("bold "):code.append("")

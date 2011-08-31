@@ -1,5 +1,6 @@
 import groovy.xml.Namespace
 import groovy.transform.TupleConstructor
+
 import java.awt.AlphaComposite
 import java.awt.GraphicsConfiguration
 import java.awt.GraphicsEnvironment
@@ -14,8 +15,8 @@ import java.awt.Shape
 import java.awt.BasicStroke
 import java.awt.LinearGradientPaint
 import java.awt.RadialGradientPaint
-import java.awt.geom.AffineTransform
 
+import java.awt.geom.AffineTransform
 import java.awt.geom.RoundRectangle2D
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Line2D
@@ -23,6 +24,7 @@ import java.awt.geom.Path2D
 import java.awt.geom.Point2D
 import java.awt.geom.GeneralPath
 import java.awt.image.BufferedImage
+
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 

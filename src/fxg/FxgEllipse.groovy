@@ -62,7 +62,6 @@ class FxgEllipse extends FxgShape {
                 return code.toString()
 
             case Language.GWT:
-                return "GWT"
 
             case Language.CANVAS:
                 code.append("        //${name}\n")
@@ -72,7 +71,7 @@ class FxgEllipse extends FxgShape {
                 code.append("        ctx.arc(${center.x / referenceWidth / (width / height)} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth / (width / height)} * imageWidth, 0, 2 * Math.PI, false);\n")
                 code.append("        ctx.restore();\n")
                 if (filled) {
-                    appendCanvasFill(code, name)
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                     code.append("        ctx.fill();\n")
                 }
                 if (stroked) {
