@@ -2,7 +2,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-class FxgTest extends Application {
+public class FxgTest extends Application {
     @Override
     public void start(Stage stage) {
         $className component = new $className($width, $height);

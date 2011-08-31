@@ -246,7 +246,7 @@ class FxgTranslator {
             }
         }
         if (LANGUAGE == Language.JAVAFX) {
-            allElements.replace(allElements.length() - 32, allElements.length(), "")
+            allElements.replace(allElements.length() - 31, allElements.length(), "")
         }
         return code.toString()
     }

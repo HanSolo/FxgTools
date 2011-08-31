@@ -4,7 +4,7 @@ import javafx.scene.shape.*;
 import javafx.scene.text.*;
 
 public class $className extends Parent {
-    $className(int imageWidth, int imageHeight) {
+    public $className(int imageWidth, int imageHeight) {
 $drawingCode
         getChildren().addAll($elementList);
     }

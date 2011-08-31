@@ -88,7 +88,11 @@ abstract class FxgShape {
             appendJavaFxPaint(code, elementName)
         }
         if (stroked) {
-            code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
+            if (stroke.stroke.lineWidth < 2) {
+                code.append("        ${elementName}.setStrokeType(StrokeType.OUTSIDE);\n")
+            } else {
+                code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
+            }
             switch (stroke.stroke.endCap) {
                 case BasicStroke.CAP_BUTT:
                     code.append("        ${elementName}.setStrokeLineCap(StrokeLineCap.BUTT);\n")
@@ -114,7 +118,7 @@ abstract class FxgShape {
             code.append("        ${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * imageWidth);\n")
             code.append("        ${elementName}.setStroke(")
             appendJavaFxColor(code, stroke.color)
-            code.append(";\n")
+            code.append(");\n")
         }
     }
 
@@ -137,6 +141,9 @@ abstract class FxgShape {
                 code.append("false, CycleMethod.NO_CYCLE, ")
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
+                break
+            default:
+                code.append("        ${elementName}.setFill(null);\n")
                 break
         }
     }
