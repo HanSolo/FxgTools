@@ -85,26 +85,7 @@ abstract class FxgShape {
     // JAVA_FX
     protected void appendJavaFxFillAndStroke(StringBuilder code, String elementName) {
         if (filled) {
-            switch(fill.type) {
-                case FxgFillType.SOLID_COLOR:
-                    code.append("        ${elementName}.setFill(")
-                    appendJavaFxColor(code, fill.color)
-                    code.append(");\n")
-                    break
-                case FxgFillType.LINEAR_GRADIENT:
-                    code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * imageWidth, ${fill.start.y / referenceHeight} * imageHeight, ${fill.stop.x / referenceWidth} * imageWidth, ${fill.stop.y / referenceHeight} * imageHeight, ")
-                    code.append("true, CycleMethod.No_CYCLE, ")
-                    appendJavaFxStops(code, fill.fractions, fill.colors)
-                    code.append("));\n")
-                    break
-                case FxgFillType.RADIAL_GRADIENT:
-                    code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * imageWidth, ${fill.center.y / referenceHeight} * imageHeight, ")
-                    code.append("${fill.radius / referenceWidth} * imageWidth, ")
-                    code.append("true, CycleMethod.No_CYCLE, ")
-                    appendJavaFxStops(code, fill.fractions, fill.colors)
-                    code.append("));\n")
-                    break
-            }
+            appendJavaFxPaint(code, elementName)
         }
         if (stroked) {
             code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
@@ -131,6 +112,32 @@ abstract class FxgShape {
                     break
             }
             code.append("        ${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * imageWidth);\n")
+            code.append("        ${elementName}.setStroke(")
+            appendJavaFxColor(code, stroke.color)
+            code.append(";\n")
+        }
+    }
+
+    protected void appendJavaFxPaint(StringBuilder code, String elementName) {
+        switch(fill.type) {
+            case FxgFillType.SOLID_COLOR:
+                code.append("        ${elementName}.setFill(")
+                appendJavaFxColor(code, fill.color)
+                code.append(");\n")
+                break
+            case FxgFillType.LINEAR_GRADIENT:
+                code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * imageWidth, ${fill.start.y / referenceHeight} * imageHeight, ${fill.stop.x / referenceWidth} * imageWidth, ${fill.stop.y / referenceHeight} * imageHeight, ")
+                code.append("false, CycleMethod.NO_CYCLE, ")
+                appendJavaFxStops(code, fill.fractions, fill.colors)
+                code.append("));\n")
+                break
+            case FxgFillType.RADIAL_GRADIENT:
+                code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * imageWidth, ${fill.center.y / referenceHeight} * imageHeight, ")
+                code.append("${fill.radius / referenceWidth} * imageWidth, ")
+                code.append("false, CycleMethod.NO_CYCLE, ")
+                appendJavaFxStops(code, fill.fractions, fill.colors)
+                code.append("));\n")
+                break
         }
     }
 

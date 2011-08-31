@@ -43,6 +43,7 @@ import java.awt.font.TextAttribute
 import java.text.AttributedString
 import fxg.FxgFilter
 import fxg.FxgDropShadow
+import groovy.transform.Field
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,9 +61,8 @@ class FxgParser {
     private final Pattern RR_PATTERN = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
     private final Matcher E_MATCHER = E_PATTERN.matcher("")
     private final Matcher RR_MATCHER = RR_PATTERN.matcher("")
-    private int shapeIndex
-    private String elementName
     private String lastNodeType
+    private String elementName
     double originalWidth
     double originalHeight
     private double width
@@ -199,11 +199,11 @@ class FxgParser {
             layers = FXG.Group.findAll {('layer' == it.attribute(D.type)) && 'false' != it.@visible}
         }
         String layerName
+        int shapeIndex = 0
         layers.each {def layer ->
             layerName = elements.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_1"
-            shapeIndex = 0
             List shapes = []
-            convertLayer(layerName, layer, elements, shapes)
+            shapeIndex = convertLayer(layerName, layer, elements, shapes, shapeIndex)
         }
 
         return elements
@@ -560,6 +560,7 @@ class FxgParser {
     }
 
     private void convertLayer(final LAYER, final Graphics2D G2) {
+        String elementName
         LAYER.each {Node node->
             Shape shape
             Paint paint
@@ -629,21 +630,22 @@ class FxgParser {
         }
     }
 
-    private void convertLayer(final String LAYER_NAME, final Node LAYER, Map<String, List<FxgElement>> elements, List shapes) {
-        LAYER.each {Node node->
+    private int convertLayer(final String LAYER_NAME, final Node LAYER, Map<String, List<FxgElement>> elements, List shapes, int index) {
+        LAYER.eachWithIndex {Node node, int i->
             Shape shape
             Paint paint
             FxgStroke stroke
             FxgShape fxgShape = null
+            index += 1
             switch(node.name()) {
                 case FXG.Group:
-                    elementName = node.attribute(D.userLabel)?:"Group_${shapeIndex += 1}"
-                    shapeIndex += 1
+                    elementName = node.attribute(D.userLabel)?:"Group"
                     lastNodeType = "Group"
-                    convertLayer(LAYER_NAME, node, elements, shapes)
+                    convertLayer(LAYER_NAME, node, elements, shapes, index)
                     break
                 case FXG.Rect:
-                    elementName = node.attribute(D.userLabel)?:"Rectangle_${shapeIndex += 1}"
+                    elementName = node.attribute(D.userLabel)?:"Rectangle"
+                    elementName += "_${i}"
                     shape = parseRectangle(node)
                     fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height, radiusX: ((RoundRectangle2D) shape).arcWidth, radiusY: ((RoundRectangle2D) shape).arcHeight)
                     offsetX = shape.bounds2D.x
@@ -651,7 +653,8 @@ class FxgParser {
                     lastNodeType = "Rect"
                     break
                 case FXG.Ellipse:
-                    elementName = node.attribute(D.userLabel)?:"Ellipse_${shapeIndex += 1}"
+                    elementName = node.attribute(D.userLabel)?:"Ellipse"
+                    elementName += "_${i}"
                     shape = parseEllipse(node)
                     fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height)
                     offsetX = shape.bounds2D.x
@@ -659,7 +662,8 @@ class FxgParser {
                     lastNodeType = "Ellipse"
                     break
                 case FXG.Line:
-                    elementName = node.attribute(D.userLabel)?:"Line_${shapeIndex += 1}"
+                    elementName = node.attribute(D.userLabel)?:"Line"
+                    elementName += "_${i}"
                     shape = parseLine(node)
                     fxgShape = new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: ((Line2D)shape).p1.x, y1: ((Line2D)shape).p1.y, x2: ((Line2D)shape).p2.x, y2: ((Line2D)shape).p2.y)
                     offsetX = shape.bounds2D.x
@@ -667,21 +671,22 @@ class FxgParser {
                     lastNodeType = "Line"
                     break
                 case FXG.Path:
-                    elementName = lastNodeType == "Group" ?  elementName : node.attribute(D.userLabel)?:"Path_${shapeIndex += 1}"
+                    elementName = lastNodeType == "Group" ?  elementName : node.attribute(D.userLabel)?:"Path"
+                    elementName += "_${i}"
                     shape = parsePath(node)
                     if (elementName != null) {
                         E_MATCHER.reset(elementName)
                         if (E_MATCHER.matches()) {
                             shape = new Ellipse2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height)
                             fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height)
-                            break;
+                            break
                         }
                         RR_MATCHER.reset(elementName)
                         if (RR_MATCHER.matches()) {
                             double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
                             shape = new RoundRectangle2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height, cornerRadius, cornerRadius)
                             fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height, radiusX: ((RoundRectangle2D) shape).arcWidth, radiusY: ((RoundRectangle2D) shape).arcHeight)
-                            break;
+                            break
                         }
                         fxgShape = new FxgPath(layerName: LAYER_NAME, shapeName: elementName, path: shape)
                     }
@@ -690,7 +695,8 @@ class FxgParser {
                     lastNodeType = "Path"
                     break
                 case FXG.RichText:
-                    elementName = node.attribute(D.userLabel)?:"Text_${shapeIndex += 1}"
+                    elementName = node.attribute(D.userLabel)?:"Text"
+                    elementName += "_${i}"
                     def fxgText = parseRichText(node)
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
                     fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily)
@@ -727,6 +733,7 @@ class FxgParser {
             }
         }
         elements.put(LAYER_NAME, shapes)
+        return index
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {

@@ -14,8 +14,8 @@ class FxgTranslator {
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
         final String USER_HOME = System.properties.getProperty('user.home')
-        StringBuilder exportFileName = new StringBuilder()
-        exportFileName.append(USER_HOME).append(File.separator).append('Desktop').append(File.separator).append(CLASS_NAME)
+        StringBuilder desktopPath = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator)
+        StringBuilder exportFileName = new StringBuilder(desktopPath).append(CLASS_NAME)
 
         StringBuilder codeToExport = new StringBuilder()
 
@@ -24,7 +24,8 @@ class FxgTranslator {
             case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
                                     break;
-            case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+            case Language.JAVAFX:   writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                                    codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
                                     break;
             case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
@@ -106,10 +107,19 @@ class FxgTranslator {
         String codeToExport = template.text
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
-        codeToExport = codeToExport.replace("\$width", WIDTH)
-        codeToExport = codeToExport.replace("\$height", HEIGHT)
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
         codeToExport = codeToExport.replace("\$elementList", allElements.toString())
+
+        return codeToExport
+    }
+
+    private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = new File('./resources/javafxtest.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
 
         return codeToExport
     }
@@ -220,10 +230,7 @@ class FxgTranslator {
             layerMap[layer].eachWithIndex {FxgElement element, i ->
                 code.append(element.shape.translateTo(LANGUAGE))
                 if (LANGUAGE == Language.JAVAFX){
-                    allElements.append("${layer}_${element.shape.shapeName}")
-                    if (i.compareTo(layerMap.size() - 1) != 0) {
-                        allElements.append(", ")
-                    }
+                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n                             ")
                 }
             }
 
@@ -237,6 +244,9 @@ class FxgTranslator {
                 case Language.CANVAS: code.append(canvasImageMethodStop())
                     break;
             }
+        }
+        if (LANGUAGE == Language.JAVAFX) {
+            allElements.replace(allElements.length() - 32, allElements.length(), "")
         }
         return code.toString()
     }

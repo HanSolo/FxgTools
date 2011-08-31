@@ -76,7 +76,7 @@ class FxgRichText extends FxgShape{
 
             case Language.JAVAFX:
                 code.append("        Font ${name}_Font = new Font(\"${font.family}\", ${font.size2D / referenceWidth} * imageWidth);\n")
-                String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.PLAIN")
+                String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.NORMAL")
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
                 code.append("        ${name}_Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth);\n")
                 code.append("        Text ${name} = new Text();\n")
@@ -86,6 +86,9 @@ class FxgRichText extends FxgShape{
                 code.append("        ${name}.setY(${y / referenceHeight} * imageHeight);\n")
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
+                if (fill.type != null) {
+                    appendJavaFxPaint(code, name)
+                }
                 code.append("\n")
                 return code.toString()
 
