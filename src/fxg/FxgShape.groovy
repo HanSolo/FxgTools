@@ -83,52 +83,54 @@ abstract class FxgShape {
     }
 
     // JAVA_FX
-    protected void appendJavaFxFill(StringBuilder code, String elementName) {
-        switch(fill.type) {
-            case FxgFillType.SOLID_COLOR:
-                code.append("${elementName}.setFill(")
-                appendJavaFxColor(code, fill.color)
-                code.append(");\n")
-                break
-            case FxgFillType.LINEAR_GRADIENT:
-                code.append("${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT, ${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT, ")
-                code.append("true, CycleMethod.No_CYCLE, ")
-                appendJavaFxStops(code, fill.fractions, fill.colors)
-                code.append("));\n")
-                break
-            case FxgFillType.RADIAL_GRADIENT:
-                code.append("${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT, ")
-                code.append("${fill.radius / referenceWidth} * IMAGE_WIDTH, ")
-                code.append("true, CycleMethod.No_CYCLE, ")
-                appendJavaFxStops(code, fill.fractions, fill.colors)
-                code.append("));\n")
-                break
+    protected void appendJavaFxFillAndStroke(StringBuilder code, String elementName) {
+        if (filled) {
+            switch(fill.type) {
+                case FxgFillType.SOLID_COLOR:
+                    code.append("        ${elementName}.setFill(")
+                    appendJavaFxColor(code, fill.color)
+                    code.append(");\n")
+                    break
+                case FxgFillType.LINEAR_GRADIENT:
+                    code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * imageWidth, ${fill.start.y / referenceHeight} * imageHeight, ${fill.stop.x / referenceWidth} * imageWidth, ${fill.stop.y / referenceHeight} * imageHeight, ")
+                    code.append("true, CycleMethod.No_CYCLE, ")
+                    appendJavaFxStops(code, fill.fractions, fill.colors)
+                    code.append("));\n")
+                    break
+                case FxgFillType.RADIAL_GRADIENT:
+                    code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * imageWidth, ${fill.center.y / referenceHeight} * imageHeight, ")
+                    code.append("${fill.radius / referenceWidth} * imageWidth, ")
+                    code.append("true, CycleMethod.No_CYCLE, ")
+                    appendJavaFxStops(code, fill.fractions, fill.colors)
+                    code.append("));\n")
+                    break
+            }
         }
         if (stroked) {
-            code.append("${elementName}.setStrokeType(StrokeType.CENTERED);\n")
+            code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
             switch (stroke.stroke.endCap) {
                 case BasicStroke.CAP_BUTT:
-                    code.append("${elementName}.setStrokeLineCap(StrokeLineCap.BUTT);\n")
+                    code.append("        ${elementName}.setStrokeLineCap(StrokeLineCap.BUTT);\n")
                     break
                 case BasicStroke.CAP_ROUND:
-                    code.append("${elementName}.setStrokeLineCap(StrokeLineCap.ROUND);\n")
+                    code.append("        ${elementName}.setStrokeLineCap(StrokeLineCap.ROUND);\n")
                     break
                 case BasicStroke.CAP_SQUARE:
-                    code.append("${elementName}.setStrokeLineCap(StrokeLineCap.SQUARE);\n")
+                    code.append("        ${elementName}.setStrokeLineCap(StrokeLineCap.SQUARE);\n")
                     break
             }
             switch (stroke.stroke.lineJoin) {
                 case BasicStroke.JOIN_BEVEL:
-                    code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.BEVEL);\n")
+                    code.append("        ${elementName}.setStrokeLineJoin(StrokeLineJoin.BEVEL);\n")
                     break
                 case BasicStroke.JOIN_ROUND:
-                    code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.ROUND);\n")
+                    code.append("        ${elementName}.setStrokeLineJoin(StrokeLineJoin.ROUND);\n")
                     break
                 case BasicStroke.JOIN_MITER:
-                    code.append("${elementName}.setStrokeLineJoin(StrokeLineJoin.MITER);\n")
+                    code.append("        ${elementName}.setStrokeLineJoin(StrokeLineJoin.MITER);\n")
                     break
             }
-            code.append("${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH);\n")
+            code.append("        ${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * imageWidth);\n")
         }
     }
 

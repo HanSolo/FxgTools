@@ -1,7 +1,7 @@
 package fxg
 
 import java.awt.geom.Ellipse2D
-import java.awt.Color
+
 import java.awt.geom.Point2D
 
 /**
@@ -53,11 +53,12 @@ class FxgEllipse extends FxgShape {
 
             case Language.JAVAFX:
                 if (width.compareTo(height) == 0) {
-                    code.append("Circle ${name} = new Circle(${center.x / referenceWidth} * IMAGE_WIDTH, ${center.y / referenceHeight} * IMAGE_HEIGHT, ${getRadiusX() / referenceWidth} * IMAGE_WIDTH);\n")
+                    code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth} * imageWidth);\n")
                 } else {
-                    code.append("Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * IMAGE_WIDTH, ${center.y / referenceHeight} * IMAGE_HEIGHT, ${radiusX / referenceWidth} * IMAGE_WIDTH, ${radiusY / referenceHeight} * IMAGE_HEIGHT;\n")
+                    code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight;\n")
                 }
-                appendJavaFxFill(code, name)
+                appendJavaFxFillAndStroke(code, name)
+
                 code.append("\n")
                 return code.toString()
 

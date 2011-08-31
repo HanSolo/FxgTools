@@ -9,7 +9,7 @@ import fxg.Language
  * To change this template use File | Settings | File Templates.
  */
 class FxgTranslator {
-
+    private StringBuilder allElements = new StringBuilder()
 
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
@@ -17,15 +17,15 @@ class FxgTranslator {
         StringBuilder exportFileName = new StringBuilder()
         exportFileName.append(USER_HOME).append(File.separator).append('Desktop').append(File.separator).append(CLASS_NAME)
 
-        StringBuilder codeToExport = new StringBuilder();
+        StringBuilder codeToExport = new StringBuilder()
 
         // Export the header of the language specific template
         switch(LANGUAGE) {
             case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
                                     break;
-            case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME))
-                                    exportFileName.append('.jfx')
+            case Language.JAVAFX:   codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                                    exportFileName.append('.java')
                                     break;
             case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
@@ -101,15 +101,23 @@ class FxgTranslator {
     }
 
     // JAVAFX
-    private String javaFxTemplate(final String CLASS_NAME) {
-        return "JavaFxTemplate\n"
+    private String javaFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = new File('./resources/javafx.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
+        codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
+        codeToExport = codeToExport.replace("\$elementList", allElements.toString())
+
+        return codeToExport
     }
 
     // GWT
     private String gwtTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = new File('./resources/gwt.txt')
         String codeToExport = template.text
-
         StringBuilder drawImagesToContext = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
@@ -196,6 +204,7 @@ class FxgTranslator {
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
+        allElements.setLength(0)
         layerMap.keySet().each {String layer->
             switch(LANGUAGE) {
                 case Language.JAVA: code.append(javaImageMethodStart(layer))
@@ -208,8 +217,14 @@ class FxgTranslator {
                     break;
             }
 
-            layerMap[layer].each {FxgElement element ->
+            layerMap[layer].eachWithIndex {FxgElement element, i ->
                 code.append(element.shape.translateTo(LANGUAGE))
+                if (LANGUAGE == Language.JAVAFX){
+                    allElements.append("${layer}_${element.shape.shapeName}")
+                    if (i.compareTo(layerMap.size() - 1) != 0) {
+                        allElements.append(", ")
+                    }
+                }
             }
 
             switch(LANGUAGE) {

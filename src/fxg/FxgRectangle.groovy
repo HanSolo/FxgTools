@@ -44,14 +44,14 @@ class FxgRectangle extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
+                code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
                 if (radiusX > 0) {
-                    code.append("        ${name}.setArcWidth(${radiusX / referenceWidth} * IMAGE_WIDTH);\n")
+                    code.append("        ${name}.setArcWidth(${radiusX / referenceWidth} * imageWidth);\n")
                 }
                 if (radiusY > 0) {
-                    code.append("        ${name}.setArcHeight(${radiusY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        ${name}.setArcHeight(${radiusY / referenceHeight} * imageHeight);\n")
                 }
-                appendJavaFxFill(code, name)
+                appendJavaFxFillAndStroke(code, name)
                 code.append("\n")
                 return code.toString()
 
