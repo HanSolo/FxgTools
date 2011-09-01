@@ -264,7 +264,9 @@ class FxgTranslator {
                     code.append(javaLayerMethodStop())
                     break
                 case Language.JAVAFX:
-                    allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                    if (allElements.length() > layer.length() + 32) {
+                        allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                    }
                     code.append("        ${layer}.getChildren().addAll(")
                     code.append(allElements.toString())
                     code.append(");\n")

@@ -129,6 +129,8 @@ abstract class FxgShape {
             code.append("        ${elementName}.setStroke(")
             appendJavaFxColor(code, stroke.color)
             code.append(");\n")
+        } else {
+            code.append("        ${elementName}.setStroke(null);\n")
         }
     }
 

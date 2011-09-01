@@ -83,6 +83,7 @@ class FxgRichText extends FxgShape{
                 code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth));\n")
                 code.append("        ${name}.setX(${x / referenceWidth} * imageWidth);\n")
                 code.append("        ${name}.setY(${y / referenceHeight} * imageHeight);\n")
+                code.append("        ${name}.setTextOrigin(VPos.BOTTOM);\n")
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
                 appendJavaFxPaint(code, name)

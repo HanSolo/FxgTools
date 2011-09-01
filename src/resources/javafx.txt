@@ -1,3 +1,4 @@
+import javafx.geometry.VPos;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.Group;
