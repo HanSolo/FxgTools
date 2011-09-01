@@ -21,7 +21,7 @@ class FxgPath extends FxgShape {
         String name = "${layerName}_${shapeName}"
         switch (LANGUAGE) {
             case Language.JAVA:
-                code.append("        GeneralPath $name = new GeneralPath();\n")
+                code.append("        final GeneralPath $name = new GeneralPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
                 code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
@@ -47,7 +47,7 @@ class FxgPath extends FxgShape {
                 }
 
                 if (filled) {
-                    appendJavaPaint(code, name)
+                    appendJavaPaint(code, name, type)
                 }
                 if (stroked) {
                     appendJavaStroke(code, name)
@@ -82,6 +82,7 @@ class FxgPath extends FxgShape {
                     PATH_ITERATOR.next();
                 }
                 appendJavaFxFillAndStroke(code, name)
+                appendJavaFxFilter(code, name)
                 code.append("\n")
                 return code.toString()
 

@@ -17,7 +17,7 @@ abstract class FxgShape {
     FxgShapeType type
     FxgFill fill
     FxgStroke stroke
-    FxgFilter filter
+    List<FxgFilter> filters = []
     boolean filled
     boolean stroked
     double referenceWidth
@@ -26,18 +26,22 @@ abstract class FxgShape {
     abstract String translateTo(final Language LANGUAGE)
 
     // JAVA
-    protected void appendJavaPaint(StringBuilder code, String elementName) {
+    protected void appendJavaPaint(StringBuilder code, String elementName, FxgShapeType shapeType) {
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
                 code.append('        G2.setPaint(')
                 appendJavaColor(code, fill.color)
                 code.append(");\n")
+                if (shapeType != FxgShapeType.TEXT) {
+                    code.append("        G2.fill(${elementName});\n")
+                }
                 break
             case FxgFillType.LINEAR_GRADIENT:
                 code.append("        G2.setPaint(new LinearGradientPaint(new Point2D.Double(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT), new Point2D.Double(${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT), ")
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
+                code.append("        G2.fill(${elementName});\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
                 code.append("        G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
@@ -45,6 +49,7 @@ abstract class FxgShape {
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
+                code.append("        G2.fill(${elementName});\n")
                 break
         }
     }
@@ -146,6 +151,39 @@ abstract class FxgShape {
             case FxgFillType.NONE:
                 code.append("        ${elementName}.setFill(null);\n")
                 break
+        }
+    }
+
+    protected void appendJavaFxFilter(StringBuilder code, String elementName) {
+        if (!filters.isEmpty()) {
+            String lastFilterName
+            filters.eachWithIndex { filter, i ->
+                switch(filter.type) {
+                    case FxgFilterType.SHADOW:
+                        if (filter.inner) {
+                            code.append("        InnerShadow ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * imageWidth, ${filter.getOffset().x / referenceWidth} * imageWidth, ${filter.getOffset().y / referenceHeight} * imageHeight, ")
+                            code.append("        new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
+                            code.append(");\n")
+                            if (i > 0) {
+                                code.append("        ${elementName}_InnerShadow${i}.inputProperty().set(${lastFilterName});\n")
+                                code.append("        ${elementName}.setEffect(${elementName}_InnerShadow${i});\n")
+                            }
+                            lastFilterName = "${elementName}_InnerShadow${i}"
+                        } else {
+                            code.append("        DropShadow ${elementName}_DropShadow${i} = new DropShadow();\n")
+                            code.append("        ${elementName}_DropShadow${i}.setOffsetX(${filter.getOffset().x / referenceWidth} * imageWidth);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setOffsetY(${filter.getOffset().y / referenceHeight} * imageHeight);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setRadius(${filter.blurX / referenceWidth} * imageWidth);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setColor(new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
+                            if (i > 0) {
+                                code.append("        ${elementName}_DropShadow${i}.inputProperty().set(${lastFilterName});\n")
+                                code.append("        ${elementName}.setEffect(${elementName}_DropShadow${i});\n")
+                            }
+                            lastFilterName = "${elementName}_DropShadow"
+                        }
+                        break;
+                }
+            }
         }
     }
 

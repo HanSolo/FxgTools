@@ -1,6 +1,7 @@
 package fxg
 
 import java.awt.Color
+import java.awt.geom.Point2D
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,8 +10,8 @@ import java.awt.Color
  * Time: 13:40
  * To change this template use File | Settings | File Templates.
  */
-class FxgDropShadow extends FxgFilter{
-    FxgFilterType type = FxgFilterType.DROP_SHADOW
+class FxgShadow extends FxgFilter{
+    FxgFilterType type = FxgFilterType.SHADOW
     boolean inner
     int angle
     int distance
@@ -18,4 +19,8 @@ class FxgDropShadow extends FxgFilter{
     double blurX
     double blurY
     Color color
+
+    Point2D getOffset() {
+        return new Point2D.Double(distance * Math.cos(Math.toRadians(-angle)), distance * Math.sin(Math.toRadians(-angle)))
+    }
 }

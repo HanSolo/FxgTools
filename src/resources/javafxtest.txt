@@ -7,6 +7,7 @@ public class FxgTest extends Application {
     public void start(Stage stage) {
         $className component = new $className($width, $height);
         Scene scene = new Scene(component, $width, $height);
+        stage.setTitle("FXG -> JavaFX");
         stage.setScene(scene);
         stage.setVisible(true);
     }

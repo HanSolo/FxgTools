@@ -28,12 +28,12 @@ class FxgRectangle extends FxgShape {
         switch (LANGUAGE) {
             case Language.JAVA:
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
-                    code.append("        Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        final Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 } else {
-                    code.append("        RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        final RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 }
                 if (filled) {
-                    appendJavaPaint(code, name)
+                    appendJavaPaint(code, name, type)
                 }
                 if (stroked) {
                     appendJavaStroke(code, name)
@@ -44,12 +44,13 @@ class FxgRectangle extends FxgShape {
             case Language.JAVAFX:
                 code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
                 if (radiusX > 0) {
-                    code.append("        ${name}.setArcWidth(${radiusX / referenceWidth} * imageWidth);\n")
+                    code.append("        ${name}.setArcWidth(${radiusX * 2 / referenceWidth} * imageWidth);\n")
                 }
                 if (radiusY > 0) {
-                    code.append("        ${name}.setArcHeight(${radiusY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}.setArcHeight(${radiusY * 2 / referenceHeight} * imageHeight);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)
+                appendJavaFxFilter(code, name)
                 code.append("\n")
                 return code.toString()
 

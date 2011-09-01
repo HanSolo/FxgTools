@@ -2,20 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/fxg/FxgNoFill.groovy" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/fxg/FxgDropShadow.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgShadow.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FxgParser.groovy" afterPath="$PROJECT_DIR$/src/FxgParser.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/FxgTranslator.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgEllipse.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgEllipse.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgFill.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgFill.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgFillType.java" afterPath="$PROJECT_DIR$/src/fxg/FxgFillType.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgFilterType.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgFilterType.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgLine.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgLine.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgPath.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgPath.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgRectangle.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgRectangle.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgRichText.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgRichText.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/fxg/FxgShape.groovy" afterPath="$PROJECT_DIR$/src/fxg/FxgShape.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/resources/canvas.txt" afterPath="$PROJECT_DIR$/src/resources/canvas.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/resources/html.txt" afterPath="$PROJECT_DIR$/src/resources/html.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/resources/java.txt" afterPath="$PROJECT_DIR$/src/resources/java.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/resources/javafx.txt" afterPath="$PROJECT_DIR$/src/resources/javafx.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/resources/javafxtest.txt" afterPath="$PROJECT_DIR$/src/resources/javafxtest.txt" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,19 +81,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="test.groovy" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test.groovy">
+      <file leaf-file-name="FxgParser.groovy" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="143" selection-start="448" selection-end="448" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FxgShape.groovy" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/fxg/FxgShape.groovy">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="136" selection-start="2708" selection-end="2708" vertical-scroll-proportion="0.5954466">
+            <state line="737" column="36" selection-start="32920" selection-end="32920" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -100,7 +93,25 @@
       <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/FxgTranslator.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="163" selection-start="2514" selection-end="2514" vertical-scroll-proportion="0.0">
+            <state line="235" column="89" selection-start="12186" selection-end="12186" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test.groovy" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test.groovy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="134" selection-start="1300" selection-end="1300" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FxgShape.groovy" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/fxg/FxgShape.groovy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="89" column="109" selection-start="3649" selection-end="3649" vertical-scroll-proportion="0.2591944">
               <folding />
             </state>
           </provider>
@@ -126,22 +137,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/resources/gwt.txt" />
-        <option value="$PROJECT_DIR$/src/resources/javafxtest.txt" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgFill.groovy" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgFillType.java" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgNoFill.groovy" />
-        <option value="$PROJECT_DIR$/src/FxgParser.groovy" />
-        <option value="$PROJECT_DIR$/src/FxgTranslator.groovy" />
+        <option value="$PROJECT_DIR$/src/resources/canvas.txt" />
         <option value="$PROJECT_DIR$/src/resources/java.txt" />
+        <option value="$PROJECT_DIR$/src/resources/javafxtest.txt" />
+        <option value="$PROJECT_DIR$/src/resources/html.txt" />
+        <option value="$PROJECT_DIR$/src/FxgTranslator.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgFilterType.groovy" />
+        <option value="$PROJECT_DIR$/src/resources/javafx.txt" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgShadow.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgEllipse.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgLine.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgPath.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgRectangle.groovy" />
-        <option value="$PROJECT_DIR$/src/fxg/FxgShape.groovy" />
-        <option value="$PROJECT_DIR$/src/test.groovy" />
         <option value="$PROJECT_DIR$/src/fxg/FxgRichText.groovy" />
-        <option value="$PROJECT_DIR$/src/resources/javafx.txt" />
+        <option value="$PROJECT_DIR$/src/test.groovy" />
+        <option value="$PROJECT_DIR$/src/FxgParser.groovy" />
+        <option value="$PROJECT_DIR$/src/fxg/FxgShape.groovy" />
       </list>
     </option>
   </component>
@@ -194,34 +205,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="FxgTools">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="FxgTools">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -292,6 +275,34 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="FxgTools">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="FxgTools">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Favorites" />
       <pane id="PackagesPane" />
     </panes>
@@ -309,9 +320,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -521,7 +532,7 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3290398" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32910627" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -592,114 +603,114 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgFill.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="31" selection-start="221" selection-end="221" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgNoFill.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="39" selection-start="238" selection-end="238" vertical-scroll-proportion="0.12477064">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgFillType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="8" selection-start="243" selection-end="243" vertical-scroll-proportion="0.2084063">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRadialGradient.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="51" selection-start="299" selection-end="345" vertical-scroll-proportion="0.17863397">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/resources/java.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="182" column="82" selection-start="6105" selection-end="6105" vertical-scroll-proportion="0.16637479">
+        <state line="91" column="8" selection-start="3295" selection-end="3295" vertical-scroll-proportion="0.74430823">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/FxgTranslator.groovy">
+    <entry file="file://$PROJECT_DIR$/src/resources/html.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="163" selection-start="2514" selection-end="2514" vertical-scroll-proportion="0.0">
+        <state line="4" column="24" selection-start="95" selection-end="95" vertical-scroll-proportion="0.11908932">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgElement.groovy">
+    <entry file="file://$PROJECT_DIR$/src/resources/javafxtest.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="6" selection-start="171" selection-end="171" vertical-scroll-proportion="0.08931699">
+        <state line="9" column="37" selection-start="350" selection-end="350" vertical-scroll-proportion="0.26795095">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test.groovy">
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgFilter.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="143" selection-start="448" selection-end="448" vertical-scroll-proportion="0.0">
+        <state line="9" column="15" selection-start="180" selection-end="180" vertical-scroll-proportion="0.08931699">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/resources/javafx.txt">
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgFilterType.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="30" selection-start="790" selection-end="790" vertical-scroll-proportion="0.6467391">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRichText.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="33" selection-start="3406" selection-end="3406" vertical-scroll-proportion="0.135436">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="723" column="54" selection-start="32348" selection-end="32348" vertical-scroll-proportion="0.7921147">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRectangle.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="50" selection-start="5995" selection-end="5995" vertical-scroll-proportion="0.66129035">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fxg/FxgPath.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="50" selection-start="7732" selection-end="7732" vertical-scroll-proportion="0.718638">
+        <state line="10" column="4" selection-start="190" selection-end="190" vertical-scroll-proportion="0.11908932">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgLine.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="50" selection-start="2339" selection-end="2339" vertical-scroll-proportion="0.7921147">
+        <state line="40" column="46" selection-start="1485" selection-end="1485" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgPath.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="46" selection-start="5388" selection-end="5388" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRectangle.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="46" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgRichText.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="46" selection-start="4392" selection-end="4392" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/resources/javafx.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="44" selection-start="133" selection-end="133" vertical-scroll-proportion="0.08931699">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="134" selection-start="1300" selection-end="1300" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgEllipse.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="50" selection-start="2925" selection-end="2925" vertical-scroll-proportion="0.75268817">
+        <state line="63" column="54" selection-start="2211" selection-end="2211" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/fxg/FxgShadow.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="24" selection-start="439" selection-end="439" vertical-scroll-proportion="0.47635728">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/FxgTranslator.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="235" column="89" selection-start="12186" selection-end="12186" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="737" column="36" selection-start="32920" selection-end="32920" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/fxg/FxgShape.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="136" selection-start="2708" selection-end="2708" vertical-scroll-proportion="0.5954466">
+        <state line="89" column="109" selection-start="3649" selection-end="3649" vertical-scroll-proportion="0.2591944">
           <folding />
         </state>
       </provider>

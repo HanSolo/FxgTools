@@ -2,7 +2,7 @@
 <html lang='en'>
   <head>
     <meta charset='utf-8' />
-    <title>FXG Canvas Converter</title>
+    <title>FXG -> Canvas</title>
     <script type='text/javascript' src='$jsFileName'></script>
 
     <script type='application/javascript'>

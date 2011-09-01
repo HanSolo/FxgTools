@@ -9,6 +9,7 @@ import fxg.Language
  * To change this template use File | Settings | File Templates.
  */
 class FxgTranslator {
+    private StringBuilder allLayers = new StringBuilder()
     private StringBuilder allElements = new StringBuilder()
 
     // Translate given elements to given language
@@ -24,18 +25,18 @@ class FxgTranslator {
         switch(LANGUAGE) {
             case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
-                                    break;
+                                    break
             case Language.JAVAFX:   writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
                                     codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
-                                    break;
+                                    break
             case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
-                                    break;
+                                    break
             case Language.CANVAS:   writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
                                     codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append(".js")
-                                    break;
+                                    break
             default: throw Exception
         }
 
@@ -75,32 +76,31 @@ class FxgTranslator {
         return codeToExport
     }
 
-    private String javaImageMethodStart(final String LAYER_NAME) {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("    private BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
-        imageCode.append("        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();\n")
-        imageCode.append("        if (WIDTH <= 0 || HEIGHT <= 0) {\n")
-        imageCode.append("            return GFX_CONF.createCompatibleImage(1, 1, java.awt.Transparency.TRANSLUCENT);\n")
-        imageCode.append("        }\n")
-        imageCode.append("        final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);\n")
-        imageCode.append("        final Graphics2D G2 = IMAGE.createGraphics();\n")
-        imageCode.append("        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\n")
-        imageCode.append("        G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);\n")
-        imageCode.append("        G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);\n")
-        imageCode.append("        G2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);\n")
-        imageCode.append("\n")
-        imageCode.append("        final FontRenderContext RENDER_CONTEXT = new FontRenderContext(null, true, true);\n")
-        imageCode.append("\n")
-        imageCode.append("        final int IMAGE_WIDTH = IMAGE.getWidth();\n")
-        imageCode.append("        final int IMAGE_HEIGHT = IMAGE.getHeight();\n")
-        return imageCode.toString()
+    private String javaLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    private BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
+        layerCode.append("        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();\n")
+        layerCode.append("        if (WIDTH <= 0 || HEIGHT <= 0) {\n")
+        layerCode.append("            return GFX_CONF.createCompatibleImage(1, 1, java.awt.Transparency.TRANSLUCENT);\n")
+        layerCode.append("        }\n")
+        layerCode.append("        final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);\n")
+        layerCode.append("        final Graphics2D G2 = IMAGE.createGraphics();\n")
+        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\n")
+        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);\n")
+        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);\n")
+        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);\n")
+        layerCode.append("\n")
+        layerCode.append("        final int IMAGE_WIDTH = IMAGE.getWidth();\n")
+        layerCode.append("        final int IMAGE_HEIGHT = IMAGE.getHeight();\n")
+        return layerCode.toString()
     }
 
-    private String javaImageMethodStop() {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("        G2.dispose();\n")
-        imageCode.append("        return IMAGE;\n")
-        imageCode.append("    }\n\n")
+    private String javaLayerMethodStop() {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("        G2.dispose();\n")
+        layerCode.append("        return IMAGE;\n")
+        layerCode.append("    }\n\n")
+        return layerCode.toString()
     }
 
 
@@ -111,9 +111,25 @@ class FxgTranslator {
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
-        codeToExport = codeToExport.replace("\$elementList", allElements.toString())
+        allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
+        codeToExport = codeToExport.replace("\$layerList", allLayers.toString())
 
         return codeToExport
+    }
+
+    private String javaFxLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("\n")
+        layerCode.append("    private Group create_${LAYER_NAME}_Layer(int imageWidth, int imageHeight) {\n")
+        layerCode.append("        Group $LAYER_NAME = new Group();\n")
+        return layerCode.toString()
+    }
+
+    private String javaFxLayerMethodStop(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("        return ${LAYER_NAME};\n")
+        layerCode.append("    }\n")
+        return layerCode.toString()
     }
 
     private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
@@ -147,18 +163,18 @@ class FxgTranslator {
         return codeToExport
     }
 
-    private String gwtImageMethodStart(final String LAYER_NAME) {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("    public void draw_${LAYER_NAME}_Image(Context2d ctx, int imageWidth, int imageHeight) {\n")
-        imageCode.append("        ctx.save();\n\n")
-        return imageCode.toString()
+    private String gwtLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    public void draw_${LAYER_NAME}_Image(Context2d ctx, int imageWidth, int imageHeight) {\n")
+        layerCode.append("        ctx.save();\n\n")
+        return layerCode.toString()
     }
 
-    private String gwtImageMethodStop() {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("        ctx.restore();\n")
-        imageCode.append("    }\n\n")
-        return imageCode.toString()
+    private String gwtLayerMethodStop() {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("        ctx.restore();\n")
+        layerCode.append("    }\n\n")
+        return layerCode.toString()
     }
 
 
@@ -189,18 +205,18 @@ class FxgTranslator {
         return codeToExport
     }
 
-    private String canvasImageMethodStart(final String LAYER_NAME) {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("    var draw_${LAYER_NAME}_Image = function(ctx) {\n")
-        imageCode.append("        ctx.save();\n\n")
-        return imageCode.toString()
+    private String canvasLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    var draw_${LAYER_NAME}_Image = function(ctx) {\n")
+        layerCode.append("        ctx.save();\n\n")
+        return layerCode.toString()
     }
 
-    private String canvasImageMethodStop() {
-        StringBuilder imageCode = new StringBuilder()
-        imageCode.append("        ctx.restore();\n")
-        imageCode.append("    }\n\n")
-        return imageCode.toString()
+    private String canvasLayerMethodStop() {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("        ctx.restore();\n")
+        layerCode.append("    }\n\n")
+        return layerCode.toString()
     }
 
     private String htmlTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
@@ -219,39 +235,50 @@ class FxgTranslator {
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
-        allElements.setLength(0)
+        allLayers.length = 0
+        allElements.length = 0
         layerMap.keySet().each {String layer->
             switch(LANGUAGE) {
-                case Language.JAVA: code.append(javaImageMethodStart(layer))
-                    break;
-                case Language.JAVAFX:
-                    break;
-                case Language.GWT: code.append(gwtImageMethodStart(layer))
-                    break;
-                case Language.CANVAS: code.append(canvasImageMethodStart(layer))
-                    break;
+                case Language.JAVA: code.append(javaLayerMethodStart(layer))
+                    break
+                case Language.JAVAFX: code.append(javaFxLayerMethodStart(layer))
+                    break
+                case Language.GWT: code.append(gwtLayerMethodStart(layer))
+                    break
+                case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
+                    break
             }
 
             layerMap[layer].eachWithIndex {FxgElement element, i ->
                 code.append(element.shape.translateTo(LANGUAGE))
                 if (LANGUAGE == Language.JAVAFX){
-                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n                             ")
+                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
+                    for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
+                        allElements.append(" ")
+                    }
                 }
             }
 
             switch(LANGUAGE) {
-                case Language.JAVA: code.append(javaImageMethodStop())
-                    break;
+                case Language.JAVA:
+                    code.append(javaLayerMethodStop())
+                    break
                 case Language.JAVAFX:
-                    break;
-                case Language.GWT: code.append(gwtImageMethodStop())
-                    break;
-                case Language.CANVAS: code.append(canvasImageMethodStop())
-                    break;
+                    allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                    code.append("        ${layer}.getChildren().addAll(")
+                    code.append(allElements.toString())
+                    code.append(");\n")
+                    allElements.length = 0
+                    code.append(javaFxLayerMethodStop(layer))
+                    allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
+                    break
+                case Language.GWT:
+                    code.append(gwtLayerMethodStop())
+                    break
+                case Language.CANVAS:
+                    code.append(canvasLayerMethodStop())
+                    break
             }
-        }
-        if (LANGUAGE == Language.JAVAFX) {
-            allElements.replace(allElements.length() - 31, allElements.length(), "")
         }
         return code.toString()
     }

@@ -42,9 +42,9 @@ import fxg.FxgRadialGradient
 import java.awt.font.TextAttribute
 import java.text.AttributedString
 import fxg.FxgFilter
-import fxg.FxgDropShadow
-import groovy.transform.Field
+
 import fxg.FxgNoFill
+import fxg.FxgShadow
 
 /**
  * Created by IntelliJ IDEA.
@@ -71,8 +71,8 @@ class FxgParser {
     private double scaleFactorX = 1.0
     private double scaleFactorY = 1.0
     double aspectRatio
-    private double offsetX;
-    private double offsetY;
+    private double offsetX
+    private double offsetY
     @TupleConstructor()
     private class FxgStroke {
         BasicStroke stroke
@@ -407,10 +407,11 @@ class FxgParser {
         }
     }
 
-    private FxgFilter parseFilter(final NODE) {
+    private List<FxgFilter> parseFilter(final NODE) {
         if (NODE.DropShadowFilter) {
-            FxgDropShadow fxgFilter = new FxgDropShadow()
+            List<FxgFilter> filters = []
             NODE.DropShadowFilter.each {def shadow->
+                FxgShadow fxgFilter = new FxgShadow()
                 fxgFilter.angle = (shadow.@angle ?: 0).toInteger()
                 String colorString = (shadow.@color ?: '#000000')
                 fxgFilter.distance = (shadow.@distance ?: 0).toDouble() * scaleFactorX
@@ -419,7 +420,9 @@ class FxgParser {
                 fxgFilter.blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
                 fxgFilter.inner = (shadow.@inner ?: false)
                 fxgFilter.color = parseColor(colorString, (int) fxgFilter.alpha)
+                filters.add(fxgFilter)
             }
+            return filters
         }
         return null
     }
@@ -726,14 +729,13 @@ class FxgParser {
                         fxgShape.filled = true
                     }
                 }
-
                 if (node.stroke) {
                     FxgStroke fxgStroke = parseStroke(node)
                     fxgShape.stroke = new fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)
                     fxgShape.stroked = true
                 }
-                if (node.filter) {
-                    fxgShape.filter = parseFilter(node)
+                if (node.filters) {
+                    fxgShape.filters = parseFilter(node.filters)
                 }
                 fxgShape.referenceWidth = originalWidth
                 fxgShape.referenceHeight = originalHeight
@@ -797,7 +799,7 @@ class FxgParser {
         G2.translate(TRANSLATE_X, -TRANSLATE_Y)
         G2.setClip(SHAPE)
         float variableAlpha
-        for (float strokeWidth = BLUR; strokeWidth.compareTo(1); strokeWidth -= 1) {
+        for (float strokeWidth = BLUR ; strokeWidth.compareTo(1) ; strokeWidth -= 1) {
             variableAlpha = (1 - Math.pow(strokeWidth, -1.5)) * ALPHA_FACTOR
             G2.setColor(new Color(RED, GREEN, BLUE, variableAlpha))
             G2.setStroke(new BasicStroke((float)(MAX_STROKE_WIDTH * Math.pow(0.87 + BLUR / 1000, strokeWidth))))

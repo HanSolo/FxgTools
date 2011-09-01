@@ -8,5 +8,5 @@ package fxg
  * To change this template use File | Settings | File Templates.
  */
 enum FxgFilterType {
-    DROP_SHADOW
+    SHADOW
 }

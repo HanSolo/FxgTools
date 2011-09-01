@@ -25,9 +25,9 @@ class FxgLine extends FxgShape {
         String name = "${layerName}_${shapeName}"
         switch (LANGUAGE) {
             case Language.JAVA:
-                code.append("        Line2D $name = new Line2D.Double(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
+                code.append("        final Line2D $name = new Line2D.Double(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 if (filled) {
-                    appendJavaPaint(code, name)
+                    appendJavaPaint(code, name, type)
                 }
                 if (stroked) {
                     appendJavaStroke(code, name)
@@ -38,6 +38,7 @@ class FxgLine extends FxgShape {
             case Language.JAVAFX:
                 code.append("        Line ${name} = new Line(${x1 / referenceWidth} * imageWidth, ${y1 / referenceHeight} * imageHeight, ${x2 / referenceWidth} * imageWidth, ${y2 / referenceHeight} * imageHeight);\n")
                 appendJavaFxFillAndStroke(code, name)
+                appendJavaFxFilter(code, name)
                 code.append("\n")
                 return code.toString()
 
