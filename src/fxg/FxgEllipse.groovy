@@ -41,12 +41,10 @@ class FxgEllipse extends FxgShape {
             case Language.JAVA:
                 code.append("        Ellipse2D $name = new Ellipse2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 if (filled) {
-                    appendJavaPaint(code)
-                    code.append("        G2.fill($name);\n")
+                    appendJavaPaint(code, name)
                 }
                 if (stroked) {
-                    appendJavaStroke(code)
-                    code.append("        G2.draw($name);\n")
+                    appendJavaStroke(code, name)
                 }
                 code.append("\n")
                 return code.toString()
@@ -73,11 +71,9 @@ class FxgEllipse extends FxgShape {
                 code.append("        ctx.restore();\n")
                 if (filled) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
-                    code.append("        ctx.fill();\n")
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
-                    code.append("        ctx.stroke();\n")
                 }
                 code.append("\n")
                 return code.toString()

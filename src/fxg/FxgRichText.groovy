@@ -66,7 +66,7 @@ class FxgRichText extends FxgShape{
                     code.append("        ${name}.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);\n")
                 }
                 if (fill.type != null) {
-                    appendJavaPaint(code)
+                    appendJavaPaint(code, name)
                 }
                 code.append("        G2.setFont(${name}_Font);\n")
                 code.append("        float ${name}_offsetY = (float)(${y / referenceHeight} * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
@@ -75,20 +75,16 @@ class FxgRichText extends FxgShape{
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Font ${name}_Font = new Font(\"${font.family}\", ${font.size2D / referenceWidth} * imageWidth);\n")
                 String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.NORMAL")
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
-                code.append("        ${name}_Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth);\n")
                 code.append("        Text ${name} = new Text();\n")
                 code.append("        ${name}.setText(\"${text.trim()}\");\n")
-                code.append("        ${name}.setFont(${name}_Font);\n")
+                code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth));\n")
                 code.append("        ${name}.setX(${x / referenceWidth} * imageWidth);\n")
                 code.append("        ${name}.setY(${y / referenceHeight} * imageHeight);\n")
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
-                if (fill.type != null) {
-                    appendJavaFxPaint(code, name)
-                }
+                appendJavaFxPaint(code, name)
                 code.append("\n")
                 return code.toString()
 

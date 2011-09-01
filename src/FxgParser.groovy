@@ -44,6 +44,7 @@ import java.text.AttributedString
 import fxg.FxgFilter
 import fxg.FxgDropShadow
 import groovy.transform.Field
+import fxg.FxgNoFill
 
 /**
  * Created by IntelliJ IDEA.
@@ -701,6 +702,7 @@ class FxgParser {
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
                     fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily)
                     lastNodeType = "RichText"
+                    fxgShape.fill = fxgFill
                     break
             }
             if (fxgShape != null) {
@@ -714,11 +716,17 @@ class FxgParser {
                     } else if (paint instanceof RadialGradientPaint) {
                         fxgFill = new FxgRadialGradient(layerName: LAYER_NAME, shapeName: elementName, center: ((RadialGradientPaint) paint).centerPoint, radius: ((RadialGradientPaint) paint).radius, fractions: ((RadialGradientPaint) paint).fractions, colors: ((RadialGradientPaint) paint).colors)
                     } else {
-                        fxgFill = null
+                        fxgFill = new FxgNoFill()
                     }
                     fxgShape.fill = fxgFill
                     fxgShape.filled = true
+                } else {
+                    if (node.name() != FXG.RichText) {
+                        fxgShape.fill = new FxgNoFill()
+                        fxgShape.filled = true
+                    }
                 }
+
                 if (node.stroke) {
                     FxgStroke fxgStroke = parseStroke(node)
                     fxgShape.stroke = new fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)

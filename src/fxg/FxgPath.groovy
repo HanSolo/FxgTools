@@ -47,12 +47,10 @@ class FxgPath extends FxgShape {
                 }
 
                 if (filled) {
-                    appendJavaPaint(code)
-                    code.append("        G2.fill($name);\n")
+                    appendJavaPaint(code, name)
                 }
                 if (stroked) {
-                    appendJavaStroke(code)
-                    code.append("        G2.draw($name);\n")
+                    appendJavaStroke(code, name)
                 }
                 code.append("\n")
                 return code.toString()
@@ -118,11 +116,9 @@ class FxgPath extends FxgShape {
                 code.append("        ctx.restore();\n")
                 if (filled) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
-                    code.append("        ctx.fill();\n")
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
-                    code.append("        ctx.stroke();\n")
                 }
                 code.append("\n")
                 return code.toString()

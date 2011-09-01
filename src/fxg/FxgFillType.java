@@ -7,5 +7,6 @@ package fxg;
 enum FxgFillType {
     SOLID_COLOR,
     LINEAR_GRADIENT,
-    RADIAL_GRADIENT
+    RADIAL_GRADIENT,
+    NONE
 }

@@ -27,12 +27,10 @@ class FxgLine extends FxgShape {
             case Language.JAVA:
                 code.append("        Line2D $name = new Line2D.Double(${x1 / referenceWidth} * IMAGE_WIDTH, ${y1 / referenceHeight} * IMAGE_HEIGHT, ${x2 / referenceWidth} * IMAGE_WIDTH, ${y2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 if (filled) {
-                    appendJavaPaint(code)
-                    code.append("        G2.fill($name);\n")
+                    appendJavaPaint(code, name)
                 }
                 if (stroked) {
-                    appendJavaStroke(code)
-                    code.append("        G2.draw($name);\n")
+                    appendJavaStroke(code, name)
                 }
                 code.append("\n")
                 return code.toString()
@@ -56,11 +54,9 @@ class FxgLine extends FxgShape {
                 code.append("\n")
                 if (filled) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
-                    code.append("        ctx.fill();\n")
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
-                    code.append("        ctx.stroke();\n")
                 }
                 return code.toString()
 

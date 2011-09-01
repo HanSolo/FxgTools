@@ -26,7 +26,7 @@ abstract class FxgShape {
     abstract String translateTo(final Language LANGUAGE)
 
     // JAVA
-    protected void appendJavaPaint(StringBuilder code) {
+    protected void appendJavaPaint(StringBuilder code, String elementName) {
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
                 code.append('        G2.setPaint(')
@@ -49,11 +49,12 @@ abstract class FxgShape {
         }
     }
 
-    protected void appendJavaStroke(StringBuilder code) {
+    protected void appendJavaStroke(StringBuilder code, String elementName) {
         code.append("        G2.setPaint(")
         appendJavaColor(code, stroke.color)
         code.append(");\n")
         code.append("        G2.setStroke(new BasicStroke((float)(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH), ${stroke.stroke.endCap}, ${stroke.stroke.lineJoin}));\n")
+        code.append("        G2.draw(${elementName});\n")
     }
 
     private void appendJavaFractions(StringBuilder code, float[] fractions) {
@@ -142,7 +143,7 @@ abstract class FxgShape {
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
                 break
-            default:
+            case FxgFillType.NONE:
                 code.append("        ${elementName}.setFill(null);\n")
                 break
         }
@@ -170,18 +171,21 @@ abstract class FxgShape {
                 code.append("        ctx.fillStyle = ")
                 appendCanvasColor(code, fill.color)
                 code.append(";\n")
+                code.append("        ctx.fill();\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
                 GWT ? code.append("        CanvasGradient ") : code.append("        var ")
                 code.append("${elementName}_Fill = ctx.createLinearGradient((${(fill.start.x) / referenceWidth} * imageWidth), (${(fill.start.y) / referenceHeight} * imageHeight), ((${(fill.stop.x) / referenceWidth}) * imageWidth), ((${(fill.stop.y) / referenceHeight}) * imageHeight));\n")
                 appendCanvasStops(code, fill.fractions, fill.colors, elementName)
                 code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
+                code.append("        ctx.fill();\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
                 GWT ? code.append("        CanvasGradient ") : code.append("        var ")
                 code.append("${elementName}_Fill = ctx.createRadialGradient((${fill.center.x / referenceWidth}) * imageWidth, ((${fill.center.y / referenceHeight}) * imageHeight), 0, ((${fill.center.x / referenceWidth}) * imageWidth), ((${fill.center.y / referenceHeight}) * imageHeight), ${fill.radius / referenceWidth} * imageWidth);\n")
                 appendCanvasStops(code, fill.fractions, fill.colors, elementName)
                 code.append("        ctx.fillStyle = ${elementName}_Fill;\n")
+                code.append("        ctx.fill();\n")
                 break
         }
     }
@@ -213,6 +217,7 @@ abstract class FxgShape {
             code.append("        ctx.strokeStyle = ")
             appendCanvasColor(code, stroke.color)
             code.append(";\n")
+            code.append("        ctx.stroke();\n")
     }
 
     private void appendCanvasColor(StringBuilder code, Color color) {

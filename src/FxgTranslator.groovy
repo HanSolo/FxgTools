@@ -11,6 +11,7 @@ import fxg.Language
 class FxgTranslator {
     private StringBuilder allElements = new StringBuilder()
 
+    // Translate given elements to given language
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -41,6 +42,7 @@ class FxgTranslator {
         writeToFile(exportFileName.toString(), codeToExport.toString())
     }
 
+
     // JAVA
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = new File('./resources/java.txt')
@@ -56,7 +58,7 @@ class FxgTranslator {
             imageInitialization.append("        ${layerName}Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
             imageCreation.append("        if (${layerName}Image != null) {\n")
             imageCreation.append("            ${layerName}Image.flush();\n")
-            imageCreation.append("        };\n")
+            imageCreation.append("        }\n")
             imageCreation.append("        ${layerName}Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
             drawImage.append("        G2.drawImage(${layerName}Image, 0, 0, null);\n")
         }
@@ -101,6 +103,7 @@ class FxgTranslator {
         imageCode.append("    }\n\n")
     }
 
+
     // JAVAFX
     private String javaFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = new File('./resources/javafx.txt')
@@ -123,6 +126,7 @@ class FxgTranslator {
 
         return codeToExport
     }
+
 
     // GWT
     private String gwtTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -156,6 +160,7 @@ class FxgTranslator {
         imageCode.append("    }\n\n")
         return imageCode.toString()
     }
+
 
     // CANVAS
     private String canvasTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -251,6 +256,8 @@ class FxgTranslator {
         return code.toString()
     }
 
+
+    // OUTPUT
     private void writeToFile(final String FILE_NAME, String codeToExport) {
         new File("$FILE_NAME").withWriter { out ->
             out.println codeToExport

@@ -33,12 +33,10 @@ class FxgRectangle extends FxgShape {
                     code.append("        RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 }
                 if (filled) {
-                    appendJavaPaint(code)
-                    code.append("        G2.fill(${name});\n")
+                    appendJavaPaint(code, name)
                 }
                 if (stroked) {
-                    appendJavaStroke(code)
-                    code.append("        G2.draw(${name});\n")
+                    appendJavaStroke(code, name)
                 }
                 code.append("\n")
                 return code.toString()
@@ -82,11 +80,9 @@ class FxgRectangle extends FxgShape {
                 }
                 if (filled) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
-                    code.append("        ctx.fill();\n")
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
-                    code.append("        ctx.stroke();\n")
                 }
                 code.append("\n")
                 return code.toString()
