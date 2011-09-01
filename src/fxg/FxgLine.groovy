@@ -45,6 +45,7 @@ class FxgLine extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
+                code.append("\n")
                 code.append("        //${name}\n")
                 code.append("        ctx.save();\n")
                 code.append("        ctx.beginPath();\n")
@@ -52,13 +53,13 @@ class FxgLine extends FxgShape {
                 code.append("        ctx.lineTo(${x2 / referenceWidth} * imageWidth, ${y2 / referenceHeight} * imageHeight);\n")
                 code.append("        ctx.closePath();\n")
                 code.append("        ctx.restore();\n")
-                code.append("\n")
                 if (filled) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
                 }
+                appendCanvasFilter(code, name)
                 return code.toString()
 
             default:

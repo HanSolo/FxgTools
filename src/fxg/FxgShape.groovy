@@ -62,6 +62,10 @@ abstract class FxgShape {
         code.append("        G2.draw(${elementName});\n")
     }
 
+    protected void appendJavaFilter(StringBuilder code, String elementName) {
+
+    }
+
     private void appendJavaFractions(StringBuilder code, float[] fractions) {
         code.append("new float[]{")
         fill.fractions.eachWithIndex { fraction, i ->
@@ -256,6 +260,28 @@ abstract class FxgShape {
             appendCanvasColor(code, stroke.color)
             code.append(";\n")
             code.append("        ctx.stroke();\n")
+    }
+
+    protected void appendCanvasFilter(StringBuilder code, String elementName) {
+        if (!filters.isEmpty()) {
+            filters.eachWithIndex { filter, i ->
+                switch(filter.type) {
+                    case FxgFilterType.SHADOW:
+                        if (filter.inner) {
+
+                        } else {
+                            code.append("        ctx.shadowOffsetX = ${filter.getOffset().x / referenceWidth} * imageWidth;\n")
+                            code.append("        ctx.shadowOffsetY = ${filter.getOffset().y / referenceHeight} * imageHeight;\n")
+                            code.append("        ctx.shadowColor = ")
+                            code.append("'rgba(${filter.color.red}, ${filter.color.green}, ${filter.color.blue}, ${filter.color.alpha / 255})'")
+                            code.append(";\n")
+                            code.append("        ctx.shadowBlur = ${filter.blurX / referenceWidth} * imageWidth;\n")
+                            code.append("        ctx.fill();\n")
+                        }
+                        break;
+                }
+            }
+        }
     }
 
     private void appendCanvasColor(StringBuilder code, Color color) {

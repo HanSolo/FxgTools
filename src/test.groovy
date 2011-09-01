@@ -19,7 +19,7 @@ Map<String, BufferedImage> allLayerImages = parser.parse(fxg, width, height, kee
 
 Map<String, List<FxgElement>> layerMap = parser.getElements(fxg)
 translator = new FxgTranslator()
-translator.translate("Test.java", layerMap, fxg.Language.JAVAFX, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight))
+translator.translate("Test.java", layerMap, fxg.Language.CANVAS, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight))
 
 
 

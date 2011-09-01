@@ -63,6 +63,7 @@ class FxgEllipse extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
+                code.append("\n")
                 code.append("        //${name}\n")
                 code.append("        ctx.save();\n")
                 code.append("        ctx.scale(${width / height}, 1);\n")
@@ -75,7 +76,7 @@ class FxgEllipse extends FxgShape {
                 if (stroked) {
                     appendCanvasStroke(code, name)
                 }
-                code.append("\n")
+                appendCanvasFilter(code, name)
                 return code.toString()
 
             default:

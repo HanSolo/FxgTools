@@ -93,6 +93,8 @@ class FxgRichText extends FxgShape{
             case Language.GWT:
 
             case Language.CANVAS:
+                code.append("\n")
+                code.append("        //${name}\n")
                 if (fill.type != null) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                     code.append("        ctx.font = '")
@@ -107,7 +109,7 @@ class FxgRichText extends FxgShape{
                     appendCanvasStroke(code, name)
                     code.append("        ctx.strokeText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                 }
-                code.append("\n")
+                appendCanvasFilter(code, name)
                 return code.toString()
 
             default:

@@ -57,6 +57,7 @@ class FxgRectangle extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
+                code.append("\n")
                 code.append("        //${name}\n")
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
                     code.append("        ctx.save();\n")
@@ -85,7 +86,7 @@ class FxgRectangle extends FxgShape {
                 if (stroked) {
                     appendCanvasStroke(code, name)
                 }
-                code.append("\n")
+                appendCanvasFilter(code, name)
                 return code.toString()
 
             default:

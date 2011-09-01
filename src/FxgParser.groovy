@@ -729,13 +729,13 @@ class FxgParser {
                         fxgShape.filled = true
                     }
                 }
+                if (node.filters) {
+                    fxgShape.filters = parseFilter(node.filters)
+                }
                 if (node.stroke) {
                     FxgStroke fxgStroke = parseStroke(node)
                     fxgShape.stroke = new fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)
                     fxgShape.stroked = true
-                }
-                if (node.filters) {
-                    fxgShape.filters = parseFilter(node.filters)
                 }
                 fxgShape.referenceWidth = originalWidth
                 fxgShape.referenceHeight = originalHeight
