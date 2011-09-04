@@ -4,6 +4,7 @@
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/FxgParser.groovy" afterPath="$PROJECT_DIR$/src/FxgParser.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test.groovy" afterPath="$PROJECT_DIR$/src/test.groovy" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -70,7 +71,7 @@
       <file leaf-file-name="FxgParser.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="552" column="64" selection-start="22174" selection-end="22174" vertical-scroll-proportion="1.7939068">
+            <state line="485" column="47" selection-start="19453" selection-end="19453" vertical-scroll-proportion="2.1592128">
               <folding />
             </state>
           </provider>
@@ -119,8 +120,8 @@
         <option value="$PROJECT_DIR$/src/resources/javafx.txt" />
         <option value="$PROJECT_DIR$/src/fxg/FxgShape.groovy" />
         <option value="$PROJECT_DIR$/src/FxgTranslator.groovy" />
-        <option value="$PROJECT_DIR$/src/FxgParser.groovy" />
         <option value="$PROJECT_DIR$/src/test.groovy" />
+        <option value="$PROJECT_DIR$/src/FxgParser.groovy" />
       </list>
     </option>
   </component>
@@ -173,8 +174,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -209,6 +208,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -237,6 +237,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -458,7 +459,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="37" width="1680" height="969" extended-state="0" />
+    <frame x="0" y="22" width="1680" height="969" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -476,8 +477,8 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39975476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18638872" sideWeight="0.70140517" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29859486" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18638872" sideWeight="0.7025761" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2974239" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -614,7 +615,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/FxgParser.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="552" column="64" selection-start="22174" selection-end="22174" vertical-scroll-proportion="1.7939068">
+        <state line="485" column="47" selection-start="19453" selection-end="19453" vertical-scroll-proportion="2.1592128">
           <folding />
         </state>
       </provider>

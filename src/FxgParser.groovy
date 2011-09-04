@@ -151,8 +151,8 @@ class FxgParser {
         }
 
         String layerName
-        layers.each {def layer ->
-            layerName = images.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_1"
+        layers.eachWithIndex {def layer, int i ->
+            layerName = images.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
             images[layerName] = createImage((int)(originalWidth * scaleFactorX), (int) (originalHeight * scaleFactorY), Transparency.TRANSLUCENT)
 
             final Graphics2D G2 = images[layerName].createGraphics()
@@ -201,8 +201,8 @@ class FxgParser {
         }
         String layerName
         int shapeIndex = 0
-        layers.each {def layer ->
-            layerName = elements.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_1"
+        layers.eachWithIndex {def layer, int i ->
+            layerName = elements.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
             List shapes = []
             shapeIndex = convertLayer(layerName, layer, elements, shapes, shapeIndex)
         }
@@ -456,16 +456,16 @@ class FxgParser {
 
     private convertLinearGradient(paint, node) {
         def linearGradient = node.LinearGradient[0]
-        double x1 = ((linearGradient.@x ?: 0).toDouble()) + offsetX + groupOffsetX
-        double y1 = ((linearGradient.@y ?: 0).toDouble()) + offsetY + groupOffsetY
-        double scaleX = (linearGradient.@scaleX ?: 1).toDouble()
+        double x1 = (linearGradient.@x ?: 0).toDouble() * scaleFactorX
+        double y1 = (linearGradient.@y ?: 0).toDouble() * scaleFactorY
+        double scaleX = (linearGradient.@scaleX ?: 0).toDouble()
         //double scaleY = (linearGradient.@scaleY ?: 1).toDouble()
         double rotation = Math.toRadians((linearGradient.@rotation ?: 0).toDouble())
-        double x2 = Math.cos(rotation) * scaleX + x1
-        double y2 = Math.sin(rotation) * scaleX + y1
+        double x2 = Math.cos(rotation) * scaleX * scaleFactorX + x1
+        double y2 = Math.sin(rotation) * scaleX * scaleFactorY + y1
 
-        Point2D start = new Point2D.Double((x1 * scaleFactorX), (y1 * scaleFactorY))
-        Point2D stop = new Point2D.Double((x2 * scaleFactorX), (y2 * scaleFactorY))
+        Point2D start = new Point2D.Double(x1 + offsetX, y1 + offsetY)
+        Point2D stop = new Point2D.Double(x2 + offsetX, y2 + offsetY)
 
         if (start == stop) {  // make sure that the gradient start point is different from the stop point
             stop.setLocation(stop.x, stop.y + 0.001)
@@ -485,8 +485,8 @@ class FxgParser {
 
     private convertRadialGradient(paint, node) {
         def radialGradient = node.RadialGradient[0]
-        double x1 = ((radialGradient.@x ?: 0).toDouble()) + offsetX + groupOffsetX
-        double y1 = ((radialGradient.@y ?: 0).toDouble()) + offsetY + groupOffsetY
+        double x1 = (radialGradient.@x ?: 0).toDouble() + offsetX
+        double y1 = (radialGradient.@y ?: 0).toDouble() + offsetY
         double scaleX = (radialGradient.@scaleX ?: 0).toDouble()
         //double scaleY = (radialGradient.@scaleY ?: 0).toDouble()
         double rotation = Math.toRadians((radialGradient.@rotation ?: 0).toDouble())
@@ -495,11 +495,11 @@ class FxgParser {
         Point2D center = new Point2D.Double((x1 * scaleFactorX), (y1 * scaleFactorY))
         Point2D stop = new Point2D.Double((x2 * scaleFactorX), (y2 * scaleFactorY))
         float radius = (float) (center.distance(stop) / 2.0)
-
         def gradientEntries = radialGradient.GradientEntry
         float[] fractions = new float[gradientEntries.size()]
         Color[] colors = new Color[gradientEntries.size()]
-
+        println "XY: $x1 , $y1"
+        println "Offset: $offsetX , $offsetY"
         convertGradientEntries(gradientEntries, fractions, colors)
 
         paint.center = center
@@ -565,20 +565,20 @@ class FxgParser {
                     break
                 case FXG.Rect:
                     shape = parseRectangle(node)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
                     break
                 case FXG.Ellipse:
                     shape = parseEllipse(node)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
                     break
                 case FXG.Line:
                     shape = parseLine(node)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
                     break
                 case FXG.Path:
@@ -643,8 +643,8 @@ class FxgParser {
                     elementName += "_${i}"
                     shape = parseRectangle(node)
                     fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height, radiusX: ((RoundRectangle2D) shape).arcWidth, radiusY: ((RoundRectangle2D) shape).arcHeight)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     lastNodeType = "Rect"
                     break
                 case FXG.Ellipse:
@@ -652,8 +652,8 @@ class FxgParser {
                     elementName += "_${i}"
                     shape = parseEllipse(node)
                     fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: elementName, x: shape.bounds2D.x, y: shape.bounds2D.y, width: shape.bounds2D.width, height: shape.bounds2D.height)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     lastNodeType = "Ellipse"
                     break
                 case FXG.Line:
@@ -661,8 +661,8 @@ class FxgParser {
                     elementName += "_${i}"
                     shape = parseLine(node)
                     fxgShape = new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: ((Line2D)shape).p1.x, y1: ((Line2D)shape).p1.y, x2: ((Line2D)shape).p2.x, y2: ((Line2D)shape).p2.y)
-                    offsetX = shape.bounds2D.x + groupOffsetX
-                    offsetY = shape.bounds2D.y + groupOffsetY
+                    offsetX = shape.bounds2D.x
+                    offsetY = shape.bounds2D.y
                     lastNodeType = "Line"
                     break
                 case FXG.Path:
