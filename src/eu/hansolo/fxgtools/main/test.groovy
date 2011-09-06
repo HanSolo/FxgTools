@@ -1,10 +1,15 @@
+package eu.hansolo.fxgtools.main
+
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE
+
 import javax.swing.JFrame
 import javax.swing.JPanel
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
-import fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.Language
+
 
 
 fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/gradients2.fxg'
@@ -19,7 +24,8 @@ Map<String, BufferedImage> allLayerImages = parser.parse(fxg, width, height, kee
 
 Map<String, List<FxgElement>> layerMap = parser.getElements(fxg)
 translator = new FxgTranslator()
-translator.translate("Test.java", layerMap, fxg.Language.CANVAS, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight))
+
+translator.translate("Test.java", layerMap, Language.CANVAS, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight))
 
 
 

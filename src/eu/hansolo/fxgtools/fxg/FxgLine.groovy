@@ -1,4 +1,4 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 import java.awt.geom.Line2D
 

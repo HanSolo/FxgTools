@@ -1,3 +1,5 @@
+package eu.hansolo.fxgtools.main
+
 import groovy.xml.Namespace
 import groovy.transform.TupleConstructor
 
@@ -16,7 +18,6 @@ import java.awt.BasicStroke
 import java.awt.LinearGradientPaint
 import java.awt.RadialGradientPaint
 
-import java.awt.geom.AffineTransform
 import java.awt.geom.RoundRectangle2D
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Line2D
@@ -28,23 +29,23 @@ import java.awt.image.BufferedImage
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 
-import fxg.FxgElement
-import fxg.FxgRectangle
-import fxg.FxgEllipse
-import fxg.FxgShape
-import fxg.FxgLine
-import fxg.FxgPath
-import fxg.FxgFill
-import fxg.FxgColor
-import fxg.FxgRichText
-import fxg.FxgLinearGradient
-import fxg.FxgRadialGradient
+import eu.hansolo.fxgtools.fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.FxgRectangle
+import eu.hansolo.fxgtools.fxg.FxgEllipse
+import eu.hansolo.fxgtools.fxg.FxgShape
+import eu.hansolo.fxgtools.fxg.FxgLine
+import eu.hansolo.fxgtools.fxg.FxgPath
+import eu.hansolo.fxgtools.fxg.FxgFill
+import eu.hansolo.fxgtools.fxg.FxgColor
+import eu.hansolo.fxgtools.fxg.FxgRichText
+import eu.hansolo.fxgtools.fxg.FxgLinearGradient
+import eu.hansolo.fxgtools.fxg.FxgRadialGradient
 import java.awt.font.TextAttribute
 import java.text.AttributedString
-import fxg.FxgFilter
+import eu.hansolo.fxgtools.fxg.FxgFilter
 
-import fxg.FxgNoFill
-import fxg.FxgShadow
+import eu.hansolo.fxgtools.fxg.FxgNoFill
+import eu.hansolo.fxgtools.fxg.FxgShadow
 
 /**
  * User: han.solo at muenster.de
@@ -163,6 +164,10 @@ class FxgParser {
         return images
     }
 
+    Map<String, BufferedImage> parse(final String FILE_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+        return parse(new XmlParser().parse(new File(FILE_NAME)), WIDTH, HEIGHT, KEEP_ASPECT)
+    }
+
     BufferedImage parseLayer(final Node FXG, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
 
@@ -177,6 +182,10 @@ class FxgParser {
         G2.dispose()
 
         return IMAGE
+    }
+
+    BufferedImage parseLayer(final String FILE_NAME, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+        return parseLayer(new XmlParser().parse(new File(FILE_NAME)), LAYER_NAME, WIDTH, HEIGHT, KEEP_ASPECT)
     }
 
     Map<String, List<FxgElement>> getElements(final Node FXG) {
@@ -208,6 +217,10 @@ class FxgParser {
         }
 
         return elements
+    }
+
+    Map<String, List<FxgElement>> getElements(final String FILE_NAME) {
+        return getElements(new XmlParser().parse(new File(FILE_NAME)))
     }
 
     // ********************   P R I V A T E   M E T H O D S   **********************************************************
@@ -498,8 +511,6 @@ class FxgParser {
         def gradientEntries = radialGradient.GradientEntry
         float[] fractions = new float[gradientEntries.size()]
         Color[] colors = new Color[gradientEntries.size()]
-        println "XY: $x1 , $y1"
-        println "Offset: $offsetX , $offsetY"
         convertGradientEntries(gradientEntries, fractions, colors)
 
         paint.center = center
@@ -725,7 +736,7 @@ class FxgParser {
                 }
                 if (node.stroke) {
                     FxgStroke fxgStroke = parseStroke(node)
-                    fxgShape.stroke = new fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)
+                    fxgShape.stroke = new eu.hansolo.fxgtools.fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)
                     fxgShape.stroked = true
                 }
                 fxgShape.referenceWidth = originalWidth

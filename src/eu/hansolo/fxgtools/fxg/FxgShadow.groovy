@@ -1,4 +1,4 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 import java.awt.Color
 import java.awt.geom.Point2D

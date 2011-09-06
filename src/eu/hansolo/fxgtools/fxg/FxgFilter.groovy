@@ -1,16 +1,12 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 /**
  * Created by IntelliJ IDEA.
  * User: hansolo
- * Date: 28.08.11
- * Time: 06:52
+ * Date: 29.08.11
+ * Time: 13:38
  * To change this template use File | Settings | File Templates.
  */
-enum FxgShapeType {
-    LINE,
-    RECT,
-    ELLIPSE,
-    PATH,
-    TEXT
+abstract class FxgFilter {
+    def type
 }

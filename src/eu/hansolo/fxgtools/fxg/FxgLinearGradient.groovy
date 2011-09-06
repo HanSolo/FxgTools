@@ -1,4 +1,4 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 import java.awt.LinearGradientPaint
 import java.awt.Color

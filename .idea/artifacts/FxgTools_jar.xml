@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="FxgTools:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FxgTools_jar</output-path>
+    <root id="root">
+      <element id="archive" name="FxgTools.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="FxgTools" />
+        <element id="directory" name="eu">
+          <element id="directory" name="hansolo">
+            <element id="directory" name="fxgtools">
+              <element id="directory" name="resources">
+                <element id="dir-copy" path="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources" />
+              </element>
+            </element>
+          </element>
+        </element>
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/../../../../../SSD/Users/hansolo/dev/groovy-1.8.2/embeddable/groovy-all-1.8.2.jar" />
+    </root>
+  </artifact>
+</component>

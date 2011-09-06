@@ -1,9 +1,8 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 import java.awt.Font
 import java.text.AttributedString
 import java.awt.font.TextAttribute
-import java.awt.font.TextLayout
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,5 +1,7 @@
-import fxg.FxgElement
-import fxg.Language
+package eu.hansolo.fxgtools.main
+
+import eu.hansolo.fxgtools.fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.Language
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,7 +48,7 @@ class FxgTranslator {
 
     // JAVA
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        def template = new File('./resources/java.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
         String codeToExport = template.text
 
         StringBuilder imageDeclaration = new StringBuilder()
@@ -106,7 +108,7 @@ class FxgTranslator {
 
     // JAVAFX
     private String javaFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        def template = new File('./resources/javafx.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx.txt')
         String codeToExport = template.text
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
@@ -133,7 +135,7 @@ class FxgTranslator {
     }
 
     private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
-        def template = new File('./resources/javafxtest.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafxtest.txt')
         String codeToExport = template.text
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
@@ -146,7 +148,7 @@ class FxgTranslator {
 
     // GWT
     private String gwtTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        def template = new File('./resources/gwt.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/gwt.txt')
         String codeToExport = template.text
         StringBuilder drawImagesToContext = new StringBuilder()
 
@@ -180,7 +182,7 @@ class FxgTranslator {
 
     // CANVAS
     private String canvasTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        def template = new File('./resources/canvas.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/canvas.txt')
         String codeToExport = template.text
 
         StringBuilder createBuffers = new StringBuilder()
@@ -220,7 +222,7 @@ class FxgTranslator {
     }
 
     private String htmlTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
-        def template = new File('./resources/html.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/html.txt')
         String codeToExport = template.text
 
         codeToExport = codeToExport.replace("\$jsFileName", CLASS_NAME + ".js")

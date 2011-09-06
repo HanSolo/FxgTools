@@ -1,4 +1,4 @@
-package fxg
+package eu.hansolo.fxgtools.fxg
 
 /**
  * Created by IntelliJ IDEA.
