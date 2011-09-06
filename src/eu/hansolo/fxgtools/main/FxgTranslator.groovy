@@ -13,6 +13,9 @@ import eu.hansolo.fxgtools.fxg.Language
 class FxgTranslator {
     private StringBuilder allLayers = new StringBuilder()
     private StringBuilder allElements = new StringBuilder()
+    private int splitCounter = 0
+    private int nextSplit = 40000
+    private int splitGroup = 0
 
     // Translate given elements to given language
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
@@ -20,6 +23,10 @@ class FxgTranslator {
         final String USER_HOME = System.properties.getProperty('user.home')
         StringBuilder desktopPath = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator)
         StringBuilder exportFileName = new StringBuilder(desktopPath).append(CLASS_NAME)
+
+        splitCounter = 0
+        nextSplit = 40000
+        splitGroup = 0
 
         StringBuilder codeToExport = new StringBuilder()
 
@@ -105,6 +112,20 @@ class FxgTranslator {
         return layerCode.toString()
     }
 
+    private void javaSplitLayer(int splitGroup, StringBuilder code) {
+        if (splitGroup == 1) {
+            code.append("        addSplit_${splitGroup}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+            code.append("        G2.dispose();\n\n")
+            code.append("        return IMAGE;\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${splitGroup}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+        } else {
+            code.append("        addSplit_${splitGroup}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${splitGroup}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+        }
+    }
+
 
     // JAVAFX
     private String javaFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -177,6 +198,19 @@ class FxgTranslator {
         layerCode.append("        ctx.restore();\n")
         layerCode.append("    }\n\n")
         return layerCode.toString()
+    }
+
+    private void gwtSplitLayer(int splitGroup, StringBuilder code) {
+        if (splitGroup == 1) {
+            code.append("        addSplit_${splitGroup}(ctx, imageWidth, imageHeight);\n\n")
+            code.append("        ctx.restore();\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${splitGroup}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+        } else {
+            code.append("        addSplit_${splitGroup}(ctx, imageWidth, imageHeight);\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${splitGroup}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+        }
     }
 
 
@@ -253,6 +287,20 @@ class FxgTranslator {
 
             layerMap[layer].eachWithIndex {FxgElement element, i ->
                 code.append(element.shape.translateTo(LANGUAGE))
+                splitCounter = code.length()
+                if (splitCounter.compareTo(nextSplit) > 0) {
+                    nextSplit = splitCounter + 40000
+                    splitCounter = 0
+                    splitGroup += 1
+
+                    if (LANGUAGE == Language.JAVA) {
+                        javaSplitLayer(splitGroup, code)
+                    }
+                    if (LANGUAGE == Language.GWT) {
+                        gwtSplitLayer(splitGroup, code)
+                    }
+                }
+
                 if (LANGUAGE == Language.JAVAFX){
                     allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
                     for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
@@ -263,7 +311,11 @@ class FxgTranslator {
 
             switch(LANGUAGE) {
                 case Language.JAVA:
-                    code.append(javaLayerMethodStop())
+                    if (splitGroup > 0) {
+                        code.append("    }\n\n")
+                    } else {
+                        code.append(javaLayerMethodStop())
+                    }
                     break
                 case Language.JAVAFX:
                     if (allElements.length() > layer.length() + 32) {
