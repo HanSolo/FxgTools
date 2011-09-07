@@ -15,7 +15,7 @@ class FxgTranslator {
     private StringBuilder allElements = new StringBuilder()
     private int splitCounter = 0
     private int nextSplit = 40000
-    private int splitGroup = 0
+    private int splitNumber = 0
 
     // Translate given elements to given language
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
@@ -26,7 +26,6 @@ class FxgTranslator {
 
         splitCounter = 0
         nextSplit = 40000
-        splitGroup = 0
 
         StringBuilder codeToExport = new StringBuilder()
 
@@ -112,17 +111,17 @@ class FxgTranslator {
         return layerCode.toString()
     }
 
-    private void javaSplitLayer(int splitGroup, StringBuilder code) {
-        if (splitGroup == 1) {
-            code.append("        addSplit_${splitGroup}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+    private void javaSplitLayer(String layerName, int splitNumber, StringBuilder code) {
+        if (splitNumber == 1) {
+            code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("        G2.dispose();\n\n")
             code.append("        return IMAGE;\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${splitGroup}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
         } else {
-            code.append("        addSplit_${splitGroup}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${splitGroup}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
         }
     }
 
@@ -200,16 +199,16 @@ class FxgTranslator {
         return layerCode.toString()
     }
 
-    private void gwtSplitLayer(int splitGroup, StringBuilder code) {
-        if (splitGroup == 1) {
-            code.append("        addSplit_${splitGroup}(ctx, imageWidth, imageHeight);\n\n")
+    private void gwtSplitLayer(String layerName, int splitNumber, StringBuilder code) {
+        if (splitNumber == 1) {
+            code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("        ctx.restore();\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${splitGroup}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
         } else {
-            code.append("        addSplit_${splitGroup}(ctx, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${splitGroup}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
         }
     }
 
@@ -274,6 +273,7 @@ class FxgTranslator {
         allLayers.length = 0
         allElements.length = 0
         layerMap.keySet().each {String layer->
+            splitNumber = 0
             switch(LANGUAGE) {
                 case Language.JAVA: code.append(javaLayerMethodStart(layer))
                     break
@@ -291,13 +291,13 @@ class FxgTranslator {
                 if (splitCounter.compareTo(nextSplit) > 0) {
                     nextSplit = splitCounter + 40000
                     splitCounter = 0
-                    splitGroup += 1
+                    splitNumber += 1
 
                     if (LANGUAGE == Language.JAVA) {
-                        javaSplitLayer(splitGroup, code)
+                        javaSplitLayer(layer, splitNumber, code)
                     }
                     if (LANGUAGE == Language.GWT) {
-                        gwtSplitLayer(splitGroup, code)
+                        gwtSplitLayer(layer, splitNumber, code)
                     }
                 }
 
@@ -311,7 +311,7 @@ class FxgTranslator {
 
             switch(LANGUAGE) {
                 case Language.JAVA:
-                    if (splitGroup > 0) {
+                    if (splitNumber > 0) {
                         code.append("    }\n\n")
                     } else {
                         code.append(javaLayerMethodStop())
