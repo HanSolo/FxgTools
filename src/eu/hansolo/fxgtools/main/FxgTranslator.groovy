@@ -16,7 +16,7 @@ class FxgTranslator {
     private StringBuilder allLayers = new StringBuilder()
     private StringBuilder allElements = new StringBuilder()
     private int splitCounter = 0
-    private int nextSplit = 40000
+    private int nextSplit = 50000
     private int splitNumber = 0
 
     // Translate given elements to given language
@@ -137,7 +137,9 @@ class FxgTranslator {
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
-        allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
+        if (allLayers.length() > 31) {
+            allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
+        }
         codeToExport = codeToExport.replace("\$layerList", allLayers.toString())
 
         return codeToExport
@@ -153,7 +155,6 @@ class FxgTranslator {
 
     private String javaFxLayerMethodStop(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("        return ${LAYER_NAME};\n")
         layerCode.append("    }\n")
         return layerCode.toString()
     }
@@ -167,6 +168,35 @@ class FxgTranslator {
         codeToExport = codeToExport.replace("\$height", HEIGHT)
 
         return codeToExport
+    }
+
+    private void javaFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
+        if (splitNumber == 1) {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${layerName}.getChildren().addAll(")
+            code.append(allElements.toString())
+            code.append(");\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight);\n\n")
+            code.append("        return ${layerName};\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${layerName}, int imageWidth, int imageHeight) {\n")
+        } else {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${layerName}.getChildren().addAll(")
+            code.append(allElements.toString())
+            code.append(");\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight);\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${layerName}, int imageWidth, int imageHeight) {\n")
+        }
     }
 
 
@@ -289,26 +319,30 @@ class FxgTranslator {
                     break
             }
 
-            layerMap[layer].eachWithIndex {FxgElement element, i ->
+            layerMap[layer].each {FxgElement element ->
                 code.append(element.shape.translateTo(LANGUAGE))
+
+                if (LANGUAGE == Language.JAVAFX){
+                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
+                    for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
+                        allElements.append(" ")
+                    }
+                }
+
                 splitCounter = code.length()
                 if (splitCounter.compareTo(nextSplit) > 0) {
-                    nextSplit = splitCounter + 40000
+                    nextSplit = splitCounter + 50000
                     splitCounter = 0
                     splitNumber += 1
 
                     if (LANGUAGE == Language.JAVA) {
                         javaSplitLayer(layer, splitNumber, code)
                     }
+                    if (LANGUAGE == Language.JAVAFX) {
+                        javaFxSplitLayer(layer, splitNumber, code, allElements)
+                    }
                     if (LANGUAGE == Language.GWT) {
                         gwtSplitLayer(layer, splitNumber, code)
-                    }
-                }
-
-                if (LANGUAGE == Language.JAVAFX){
-                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
-                    for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
-                        allElements.append(" ")
                     }
                 }
             }
@@ -329,6 +363,9 @@ class FxgTranslator {
                     code.append(allElements.toString())
                     code.append(");\n")
                     allElements.length = 0
+                    if (splitNumber== 0) {
+                        code.append("        return ${layer};\n")
+                    }
                     code.append(javaFxLayerMethodStop(layer))
                     allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
                     break
