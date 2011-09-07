@@ -2,6 +2,7 @@ package eu.hansolo.fxgtools.main
 
 import eu.hansolo.fxgtools.fxg.FxgElement
 import eu.hansolo.fxgtools.fxg.Language
+import javax.swing.event.EventListenerList
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,6 +12,7 @@ import eu.hansolo.fxgtools.fxg.Language
  * To change this template use File | Settings | File Templates.
  */
 class FxgTranslator {
+    private EventListenerList eventListenerList = new EventListenerList()
     private StringBuilder allLayers = new StringBuilder()
     private StringBuilder allElements = new StringBuilder()
     private int splitCounter = 0
@@ -19,6 +21,7 @@ class FxgTranslator {
 
     // Translate given elements to given language
     void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
+        fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
         final String USER_HOME = System.properties.getProperty('user.home')
         StringBuilder desktopPath = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator)
@@ -45,10 +48,11 @@ class FxgTranslator {
                                     codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append(".js")
                                     break
-            default: throw Exception
+            default:                fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
+                                    throw Exception
         }
-
         writeToFile(exportFileName.toString(), codeToExport.toString())
+        fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
     }
 
 
@@ -346,4 +350,24 @@ class FxgTranslator {
             out.println codeToExport
     }
 }
+
+
+    // TRANSLATION EVENT LISTENER
+    public void addTranslationListener(TranslationListener listener) {
+        eventListenerList.add(TranslationListener.class, listener)
+    }
+
+    public void removeTranslationListener(TranslationListener listener) {
+        eventListenerList.remove(TranslationListener.class, listener)
+    }
+
+    protected void fireTranslationEvent(TranslationEvent event) {
+        Object[] listeners = eventListenerList.getListenerList()
+        int max = listeners.length
+        for (int i = 0; i < max; i++) {
+            if ( listeners[i] == TranslationListener.class ) {
+                ((TranslationListener) listeners[i + 1]).translationEventPerformed(event)
+            }
+        }
+    }
 }
