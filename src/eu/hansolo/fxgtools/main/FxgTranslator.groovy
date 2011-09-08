@@ -34,7 +34,8 @@ class FxgTranslator {
 
         // Export the header of the language specific template
         switch(LANGUAGE) {
-            case Language.JAVA:     codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+            case Language.JAVA:     writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
+                                    codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
                                     exportFileName.append('.java')
                                     break
             case Language.JAVAFX:   writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
@@ -115,8 +116,14 @@ class FxgTranslator {
         return layerCode.toString()
     }
 
+    private String javaShadowFile() {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javashadow.txt')
+        String codeToExport = template.text
+        return codeToExport
+    }
+
     private void javaSplitLayer(String layerName, int splitNumber, StringBuilder code) {
-        if (splitNumber == 1) {
+        if (splitNumber.is(1)) {
             code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("        G2.dispose();\n\n")
             code.append("        return IMAGE;\n")
@@ -171,7 +178,7 @@ class FxgTranslator {
     }
 
     private void javaFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
-        if (splitNumber == 1) {
+        if (splitNumber.is(1)) {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
@@ -234,7 +241,7 @@ class FxgTranslator {
     }
 
     private void gwtSplitLayer(String layerName, int splitNumber, StringBuilder code) {
-        if (splitNumber == 1) {
+        if (splitNumber.is(1)) {
             code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("        ctx.restore();\n\n")
             code.append("    }\n\n")
@@ -322,7 +329,7 @@ class FxgTranslator {
             layerMap[layer].each {FxgElement element ->
                 code.append(element.shape.translateTo(LANGUAGE))
 
-                if (LANGUAGE == Language.JAVAFX){
+                if (LANGUAGE.is(Language.JAVAFX)){
                     allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
                     for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
                         allElements.append(" ")
@@ -335,13 +342,13 @@ class FxgTranslator {
                     splitCounter = 0
                     splitNumber += 1
 
-                    if (LANGUAGE == Language.JAVA) {
+                    if (LANGUAGE.is(Language.JAVA)) {
                         javaSplitLayer(layer, splitNumber, code)
                     }
-                    if (LANGUAGE == Language.JAVAFX) {
+                    if (LANGUAGE.is(Language.JAVAFX)) {
                         javaFxSplitLayer(layer, splitNumber, code, allElements)
                     }
-                    if (LANGUAGE == Language.GWT) {
+                    if (LANGUAGE.is(Language.GWT)) {
                         gwtSplitLayer(layer, splitNumber, code)
                     }
                 }
@@ -363,7 +370,7 @@ class FxgTranslator {
                     code.append(allElements.toString())
                     code.append(");\n")
                     allElements.length = 0
-                    if (splitNumber== 0) {
+                    if (splitNumber.is(0)) {
                         code.append("        return ${layer};\n")
                     }
                     code.append(javaFxLayerMethodStop(layer))
@@ -400,8 +407,8 @@ class FxgTranslator {
 
     protected void fireTranslationEvent(TranslationEvent event) {
         Object[] listeners = eventListenerList.getListenerList()
-        int max = listeners.length
-        for (int i = 0; i < max; i++) {
+        final int MAX = listeners.length - 1
+        for (i in MAX) {
             if ( listeners[i] == TranslationListener.class ) {
                 ((TranslationListener) listeners[i + 1]).translationEventPerformed(event)
             }

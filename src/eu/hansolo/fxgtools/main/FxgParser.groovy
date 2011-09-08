@@ -46,6 +46,7 @@ import eu.hansolo.fxgtools.fxg.FxgFilter
 
 import eu.hansolo.fxgtools.fxg.FxgNoFill
 import eu.hansolo.fxgtools.fxg.FxgShadow
+import eu.hansolo.fxgtools.fxg.JavaShadow
 
 /**
  * User: han.solo at muenster.de
@@ -236,7 +237,7 @@ class FxgParser {
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
         double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
 
-        if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
+        if (radiusX.compareTo(0).is(0) && radiusY.compareTo(0).is(0)) {
             return new RoundRectangle2D.Double(x, y, width, height, 0, 0)
         }
         return new RoundRectangle2D.Double(x, y, width, height, radiusX, radiusY)
@@ -390,6 +391,7 @@ class FxgParser {
     
     private void parseFilter(final NODE, final Graphics2D G2, final Shape SHAPE, final Paint SHAPE_PAINT) {
         if (NODE.DropShadowFilter) {
+            BufferedImage innerShadowImage = null
             NODE.DropShadowFilter.each {def shadow->
                 int angle = (shadow.@angle ?: 0).toInteger()
                 String colorString = (shadow.@color ?: '#000000')
@@ -401,8 +403,15 @@ class FxgParser {
                 Color color = parseColor(colorString, alpha)
 
                 if (inner) {  // inner shadow
-                    G2.drawImage(createInnerShadow(SHAPE, SHAPE_PAINT, distance, alpha, color, blurX, angle), (int)SHAPE.bounds2D.x, (int)SHAPE.bounds2D.y, null)
-                }             // dropShadow
+                    innerShadowImage = JavaShadow.INSTANCE.createInnerShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 255), color, blurX, angle)
+                    G2.drawImage(innerShadowImage, (int) SHAPE.bounds2D.x, (int) SHAPE.bounds2D.y, null)
+                } else {  // drop shadow
+                    G2.drawImage(JavaShadow.INSTANCE.createDropShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 255), color, blurX, angle), (int)SHAPE.bounds2D.x - blurX, (int)SHAPE.bounds2D.y - blurX, null)
+                    if (innerShadowImage != null) {
+                        G2.drawImage(innerShadowImage, (int) SHAPE.bounds2D.x, (int) SHAPE.bounds2D.y, null)
+                        innerShadowImage = null
+                    }
+                }
             }
         }
     }
@@ -434,7 +443,7 @@ class FxgParser {
     }
 
     private Color parseColor(final String COLOR, final int ALPHA) {
-        assert COLOR.size() == 7
+        assert COLOR.size().is(7)
         int red = Integer.valueOf(COLOR[1..2], 16).intValue()
         int green = Integer.valueOf(COLOR[3..4], 16).intValue()
         int blue = Integer.valueOf(COLOR[5..6], 16).intValue()
@@ -529,7 +538,7 @@ class FxgParser {
         gradientEntries.each { def gradientEntry->
             fraction = (gradientEntry.@ratio ?: 0).toFloat()
             alpha = (gradientEntry.@alpha ?: 1).toDouble() * 255
-            if (fraction.compareTo(oldFraction) == 0) { // make sure that the current fraction is different from the last
+            if (fraction.compareTo(oldFraction).is(0)) { // make sure that the current fraction is different from the last
                 fraction += 0.0001f
             }
             color = gradientEntry.@color == null ? Color.BLACK : parseColor(gradientEntry.@color, alpha)
@@ -767,49 +776,6 @@ class FxgParser {
             return GFX_CONF.createCompatibleImage(1, 1, TRANSPARENCY)
         }
         final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(WIDTH, HEIGHT, TRANSPARENCY)
-        return IMAGE
-    }
-
-    private void prepareSoftClipImage(final Graphics2D G2, final Shape SHAPE, final Paint SHAPE_PAINT) {
-        G2.setComposite(AlphaComposite.Clear)
-        G2.fillRect(0, 0, (int) SHAPE.bounds2D.width, (int) SHAPE.bounds2D.height)
-
-        G2.setComposite(AlphaComposite.Src)
-        addRenderingHints(G2)
-        if (SHAPE_PAINT != null) {
-            G2.setPaint(SHAPE_PAINT)
-            G2.translate(-SHAPE.bounds2D.x, -SHAPE.bounds2D.y)
-            G2.fill(SHAPE)
-        }
-    }
-
-    private BufferedImage createInnerShadow(final Shape SHAPE, final Paint SHAPE_PAINT, final int DISTANCE, final float ALPHA, final Color COLOR, final int BLUR, final int ANGLE) {
-        final float COLOR_CONSTANT = 1f / 255f
-        final float RED = COLOR_CONSTANT * COLOR.red
-        final float GREEN = COLOR_CONSTANT * COLOR.green
-        final float BLUE = COLOR_CONSTANT * COLOR.blue
-        final float MAX_STROKE_WIDTH = BLUR * 1.5
-        final float ALPHA_FACTOR = (ALPHA - 100) / (BLUR * 180 - Math.pow(BLUR, 2))
-        final double TRANSLATE_X = (DISTANCE * Math.cos(Math.toRadians(ANGLE)))
-        final double TRANSLATE_Y = (DISTANCE * Math.sin(Math.toRadians(ANGLE)))
-        final BufferedImage IMAGE = createImage((int)SHAPE.bounds2D.width, (int)SHAPE.bounds2D.height, Transparency.TRANSLUCENT)
-        final Graphics2D G2 = IMAGE.createGraphics()
-        prepareSoftClipImage(G2, SHAPE, SHAPE_PAINT)
-
-        // Create the inner shadow
-        G2.setComposite(AlphaComposite.SrcAtop)
-        G2.translate(TRANSLATE_X, -TRANSLATE_Y)
-        G2.setClip(SHAPE)
-        float variableAlpha
-        for (float strokeWidth = BLUR ; strokeWidth.compareTo(1) ; strokeWidth -= 1) {
-            variableAlpha = (1 - Math.pow(strokeWidth, -1.5)) * ALPHA_FACTOR
-            G2.setColor(new Color(RED, GREEN, BLUE, variableAlpha))
-            G2.setStroke(new BasicStroke((float)(MAX_STROKE_WIDTH * Math.pow(0.87 + BLUR / 1000, strokeWidth))))
-            G2.draw(SHAPE)
-        }
-
-        G2.dispose()
-
         return IMAGE
     }
 

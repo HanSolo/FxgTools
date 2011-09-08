@@ -32,6 +32,7 @@ class FxgLine extends FxgShape {
                 if (stroked) {
                     appendJavaStroke(code, name)
                 }
+                appendJavaFilter(code, name)
                 code.append("\n")
                 return code.toString()
 

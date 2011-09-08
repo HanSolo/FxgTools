@@ -23,7 +23,7 @@ class FxgPath extends FxgShape {
             case Language.JAVA:
                 code.append("        final GeneralPath $name = new GeneralPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
@@ -52,13 +52,14 @@ class FxgPath extends FxgShape {
                 if (stroked) {
                     appendJavaStroke(code, name)
                 }
+                appendJavaFilter(code, name)
                 code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
                 code.append("        Path $name = new Path();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     PATH_ITERATOR.windingRule
@@ -117,7 +118,7 @@ class FxgPath extends FxgShape {
                 }
                 code.append("        ctx.restore();\n")
                 if (filled) {
-                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
+                    appendCanvasFill(code, name, LANGUAGE.is(Language.GWT))
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)

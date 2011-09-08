@@ -46,11 +46,12 @@ class FxgEllipse extends FxgShape {
                 if (stroked) {
                     appendJavaStroke(code, name)
                 }
+                appendJavaFilter(code, name)
                 code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
-                if (width.compareTo(height) == 0) {
+                if (width.compareTo(height).is(0)) {
                     code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth} * imageWidth);\n")
                 } else {
                     code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight);\n")
@@ -71,7 +72,7 @@ class FxgEllipse extends FxgShape {
                 code.append("        ctx.arc(${center.x / referenceWidth / (width / height)} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth / (width / height)} * imageWidth, 0, 2 * Math.PI, false);\n")
                 code.append("        ctx.restore();\n")
                 if (filled) {
-                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
+                    appendCanvasFill(code, name, LANGUAGE.is(Language.GWT))
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)

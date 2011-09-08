@@ -63,7 +63,19 @@ abstract class FxgShape {
     }
 
     protected void appendJavaFilter(StringBuilder code, String elementName) {
-
+        if (!filters.isEmpty()) {
+            filters.each { filter ->
+                switch(filter.type) {
+                    case FxgFilterType.SHADOW:
+                        if (filter.inner) {
+                            code.append("        //G2.drawImage(JavaShadow.INSTANCE.createInnerShadow((Shape) ${elementName}, INSERT PAINT OF ${elementName}, (int) (${filter.distance / referenceWidth} * IMAGE_WIDTH), ${filter.alpha / 255}f, new Color(${filter.color.red}, ${filter.color.green}, ${filter.color.blue}, ${filter.color.alpha}), (int) ${filter.blurX}, (int) ${filter.angle}), ${elementName}.getBounds().x, ${elementName}.getBounds().y, null);\n")
+                        } else {
+                            code.append("        //G2.drawImage(JavaShadow.INSTANCE.createDropShadow((Shape) ${elementName}, INSERT PAINT OF ${elementName}, (int) (${filter.distance / referenceWidth} * IMAGE_WIDTH), ${filter.alpha / 255}f, new Color(${filter.color.red}, ${filter.color.green}, ${filter.color.blue}, ${filter.color.alpha}), (int) ${filter.blurX}, (int) ${filter.angle}), ${elementName}.getBounds().x, ${elementName}.getBounds().y, null);\n")
+                        }
+                        break;
+                }
+            }
+        }
     }
 
     private void appendJavaFractions(StringBuilder code, float[] fractions) {
@@ -266,7 +278,7 @@ abstract class FxgShape {
 
     protected void appendCanvasFilter(StringBuilder code, String elementName) {
         if (!filters.isEmpty()) {
-            filters.eachWithIndex { filter, i ->
+            filters.each { filter ->
                 switch(filter.type) {
                     case FxgFilterType.SHADOW:
                         if (filter.inner) {
@@ -287,7 +299,7 @@ abstract class FxgShape {
     }
 
     private void appendCanvasColor(StringBuilder code, Color color) {
-        if (color.getAlpha().compareTo(255) == 0) {
+        if (color.getAlpha().compareTo(255).is(0)) {
             code.append("'rgb(${color.red}, ${color.green}, ${color.blue})'")
         } else {
             code.append("'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})'")
@@ -297,7 +309,7 @@ abstract class FxgShape {
     private void appendCanvasStops(StringBuilder code, float[] fractions, Color[] colors, String elementName) {
         fill.colors.eachWithIndex { color, i ->
             code.append("        ${elementName}_Fill.addColorStop(${fractions[i]}, ")
-            if (colors[i].alpha.compareTo(255) == 0) {
+            if (colors[i].alpha.compareTo(255).is(0)) {
                 code.append("'rgb(${colors[i].red}, ${colors[i].green}, ${colors[i].blue})'")
             } else {
                 code.append("'rgba(${colors[i].red}, ${colors[i].green}, ${colors[i].blue}, ${colors[i].alpha / 255})'")
