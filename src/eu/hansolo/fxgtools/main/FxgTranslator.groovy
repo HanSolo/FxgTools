@@ -18,14 +18,18 @@ class FxgTranslator {
     private int splitCounter = 0
     private int nextSplit = 50000
     private int splitNumber = 0
+    private List<String> layerSelection = []
 
     // Translate given elements to given language
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
-        final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
+        final String CLASS_NAME = (FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME).capitalize()
         final String USER_HOME = System.properties.getProperty('user.home')
         StringBuilder desktopPath = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator)
         StringBuilder exportFileName = new StringBuilder(desktopPath).append(CLASS_NAME)
+        if (layerSelection.isEmpty()) {
+            layerSelection.addAll(layerMap.keySet())
+        }
 
         splitCounter = 0
         nextSplit = 40000
@@ -70,6 +74,10 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
+    void setLayerSelection(List<String> selectedLayers) {
+        layerSelection.clear()
+        layerSelection.addAll(selectedLayers)
+    }
 
     // JAVA
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -82,13 +90,15 @@ class FxgTranslator {
         StringBuilder drawImage = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            imageDeclaration.append("    private BufferedImage ${layerName}Image;\n")
-            imageInitialization.append("        ${layerName}Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
-            imageCreation.append("        if (${layerName}Image != null) {\n")
-            imageCreation.append("            ${layerName}Image.flush();\n")
-            imageCreation.append("        }\n")
-            imageCreation.append("        ${layerName}Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
-            drawImage.append("        G2.drawImage(${layerName}Image, 0, 0, null);\n")
+            if (layerSelection.contains(layerName)) {
+                imageDeclaration.append("    private BufferedImage ${layerName}Image;\n")
+                imageInitialization.append("        ${layerName}Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
+                imageCreation.append("        if (${layerName}Image != null) {\n")
+                imageCreation.append("            ${layerName}Image.flush();\n")
+                imageCreation.append("        }\n")
+                imageCreation.append("        ${layerName}Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
+                drawImage.append("        G2.drawImage(${layerName}Image, 0, 0, null);\n")
+            }
         }
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
@@ -228,7 +238,9 @@ class FxgTranslator {
         StringBuilder drawImagesToContext = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            drawImagesToContext.append("        draw_${layerName}_Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
+            if (layerSelection.contains(layerName)){
+                drawImagesToContext.append("        draw_${layerName}_Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
+            }
         }
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
@@ -278,12 +290,14 @@ class FxgTranslator {
         StringBuilder drawImagesToCanvas = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
-            createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
-            createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
-            createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n\n")
-            drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n\n")
-            drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n\n")
+            if (layerSelection.contains(layerName)) {
+                createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
+                createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
+                createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
+                createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n\n")
+                drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n\n")
+                drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n\n")
+            }
         }
 
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
@@ -328,74 +342,76 @@ class FxgTranslator {
         allLayers.length = 0
         allElements.length = 0
         layerMap.keySet().each {String layer->
-            splitNumber = 0
-            switch(LANGUAGE) {
-                case Language.JAVA: code.append(javaLayerMethodStart(layer))
-                    break
-                case Language.JAVAFX: code.append(javaFxLayerMethodStart(layer))
-                    break
-                case Language.GWT: code.append(gwtLayerMethodStart(layer))
-                    break
-                case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
-                    break
-            }
+            if (layerSelection.contains(layer)) {
+                splitNumber = 0
+                switch(LANGUAGE) {
+                    case Language.JAVA: code.append(javaLayerMethodStart(layer))
+                        break
+                    case Language.JAVAFX: code.append(javaFxLayerMethodStart(layer))
+                        break
+                    case Language.GWT: code.append(gwtLayerMethodStart(layer))
+                        break
+                    case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
+                        break
+                }
 
-            layerMap[layer].each {FxgElement element ->
-                code.append(element.shape.translateTo(LANGUAGE))
+                layerMap[layer].each {FxgElement element ->
+                    code.append(element.shape.translateTo(LANGUAGE))
 
-                if (LANGUAGE.is(Language.JAVAFX)){
-                    allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
-                    for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
-                        allElements.append(" ")
+                    if (LANGUAGE.is(Language.JAVAFX)){
+                        allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
+                        for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
+                            allElements.append(" ")
+                        }
+                    }
+
+                    splitCounter = code.length()
+                    if (splitCounter.compareTo(nextSplit) > 0) {
+                        nextSplit = splitCounter + 50000
+                        splitCounter = 0
+                        splitNumber += 1
+
+                        if (LANGUAGE.is(Language.JAVA)) {
+                            javaSplitLayer(layer, splitNumber, code)
+                        }
+                        if (LANGUAGE.is(Language.JAVAFX)) {
+                            javaFxSplitLayer(layer, splitNumber, code, allElements)
+                        }
+                        if (LANGUAGE.is(Language.GWT)) {
+                            gwtSplitLayer(layer, splitNumber, code)
+                        }
                     }
                 }
 
-                splitCounter = code.length()
-                if (splitCounter.compareTo(nextSplit) > 0) {
-                    nextSplit = splitCounter + 50000
-                    splitCounter = 0
-                    splitNumber += 1
-
-                    if (LANGUAGE.is(Language.JAVA)) {
-                        javaSplitLayer(layer, splitNumber, code)
-                    }
-                    if (LANGUAGE.is(Language.JAVAFX)) {
-                        javaFxSplitLayer(layer, splitNumber, code, allElements)
-                    }
-                    if (LANGUAGE.is(Language.GWT)) {
-                        gwtSplitLayer(layer, splitNumber, code)
-                    }
+                switch(LANGUAGE) {
+                    case Language.JAVA:
+                        if (splitNumber > 0) {
+                            code.append("    }\n\n")
+                        } else {
+                            code.append(javaLayerMethodStop())
+                        }
+                        break
+                    case Language.JAVAFX:
+                        if (allElements.length() > layer.length() + 32) {
+                            allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                        }
+                        code.append("        ${layer}.getChildren().addAll(")
+                        code.append(allElements.toString())
+                        code.append(");\n")
+                        allElements.length = 0
+                        if (splitNumber.is(0)) {
+                            code.append("        return ${layer};\n")
+                        }
+                        code.append(javaFxLayerMethodStop(layer))
+                        allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
+                        break
+                    case Language.GWT:
+                        code.append(gwtLayerMethodStop())
+                        break
+                    case Language.CANVAS:
+                        code.append(canvasLayerMethodStop())
+                        break
                 }
-            }
-
-            switch(LANGUAGE) {
-                case Language.JAVA:
-                    if (splitNumber > 0) {
-                        code.append("    }\n\n")
-                    } else {
-                        code.append(javaLayerMethodStop())
-                    }
-                    break
-                case Language.JAVAFX:
-                    if (allElements.length() > layer.length() + 32) {
-                        allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
-                    }
-                    code.append("        ${layer}.getChildren().addAll(")
-                    code.append(allElements.toString())
-                    code.append(");\n")
-                    allElements.length = 0
-                    if (splitNumber.is(0)) {
-                        code.append("        return ${layer};\n")
-                    }
-                    code.append(javaFxLayerMethodStop(layer))
-                    allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
-                    break
-                case Language.GWT:
-                    code.append(gwtLayerMethodStop())
-                    break
-                case Language.CANVAS:
-                    code.append(canvasLayerMethodStop())
-                    break
             }
         }
         return code.toString()
