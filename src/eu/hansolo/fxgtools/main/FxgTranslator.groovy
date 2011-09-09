@@ -20,7 +20,7 @@ class FxgTranslator {
     private int splitNumber = 0
 
     // Translate given elements to given language
-    void translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -34,26 +34,40 @@ class FxgTranslator {
 
         // Export the header of the language specific template
         switch(LANGUAGE) {
-            case Language.JAVA:     writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
-                                    codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
-                                    exportFileName.append('.java')
-                                    break
-            case Language.JAVAFX:   writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
-                                    codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
-                                    exportFileName.append('.java')
-                                    break
-            case Language.GWT:      codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
-                                    exportFileName.append('.java')
-                                    break
-            case Language.CANVAS:   writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
-                                    codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
-                                    exportFileName.append(".js")
-                                    break
-            default:                fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
-                                    throw Exception
+            case Language.JAVA:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
+                }
+                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                exportFileName.append('.java')
+                break
+            case Language.JAVAFX:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                }
+                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                exportFileName.append('.java')
+                break
+            case Language.GWT:
+                codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                exportFileName.append('.java')
+                break
+            case Language.CANVAS:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                }
+                codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                exportFileName.append(".js")
+                break
+            default:
+                fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
+                throw Exception
         }
-        writeToFile(exportFileName.toString(), codeToExport.toString())
+        if (EXPORT_TO_FILE) {
+            writeToFile(exportFileName.toString(), codeToExport.toString())
+        }
         fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
+        return codeToExport.toString()
     }
 
 
