@@ -47,6 +47,7 @@ import eu.hansolo.fxgtools.fxg.FxgFilter
 import eu.hansolo.fxgtools.fxg.FxgNoFill
 import eu.hansolo.fxgtools.fxg.FxgShadow
 import eu.hansolo.fxgtools.fxg.JavaShadow
+import java.awt.Dimension
 
 /**
  * User: han.solo at muenster.de
@@ -222,6 +223,16 @@ class FxgParser {
 
     Map<String, List<FxgElement>> getElements(final String FILE_NAME) {
         return getElements(new XmlParser().parse(new File(FILE_NAME)))
+    }
+
+    Dimension getDimension(final Node FXG) {
+        originalWidth = (int)(FXG.@viewWidth ?: 100).toDouble()
+        originalHeight = (int)(FXG.@viewHeight ?: 100).toDouble()
+        return new Dimension((int) originalWidth, (int) originalHeight)
+    }
+
+    Dimension getDimension(final String FILE_NAME) {
+        return getDimension(new XmlParser().parse(new File(FILE_NAME)))
     }
 
     // ********************   P R I V A T E   M E T H O D S   **********************************************************
