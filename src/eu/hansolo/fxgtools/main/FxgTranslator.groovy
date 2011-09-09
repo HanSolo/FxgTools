@@ -407,11 +407,11 @@ class FxgTranslator {
 
     protected void fireTranslationEvent(TranslationEvent event) {
         Object[] listeners = eventListenerList.getListenerList()
-        final int MAX = listeners.length - 1
-        for (i in MAX) {
-            if ( listeners[i] == TranslationListener.class ) {
-                ((TranslationListener) listeners[i + 1]).translationEventPerformed(event)
-            }
-        }
+    int max = listeners.length
+    for (int i = 0; i < max; i++) {
+      if ( listeners[i] == TranslationListener.class ) {
+        ((TranslationListener) listeners[i + 1]).translationEventPerformed(event)
+      }
     }
+  }
 }
