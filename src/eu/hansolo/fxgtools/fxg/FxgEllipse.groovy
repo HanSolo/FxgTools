@@ -17,6 +17,7 @@ class FxgEllipse extends FxgShape {
     double y
     double width
     double height
+    double alpha
 
     Ellipse2D getEllipse() {
             return new Ellipse2D.Double(x, y, width, height)

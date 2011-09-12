@@ -15,6 +15,7 @@ class FxgLine extends FxgShape {
     double y1
     double x2
     double y2
+    double alpha
 
     Line2D getLine() {
             return new Line2D.Double(x1, y1, x2, y2)

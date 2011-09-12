@@ -17,6 +17,7 @@ class FxgRectangle extends FxgShape {
     double height
     double radiusX
     double radiusY
+    double alpha
 
     RoundRectangle2D getRectangle() {
         return new RoundRectangle2D.Double(x, y, width, height, radiusX * 2, radiusY * 2)

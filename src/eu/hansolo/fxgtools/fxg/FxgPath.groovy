@@ -15,6 +15,7 @@ import java.awt.geom.Path2D
 class FxgPath extends FxgShape {
     FxgShapeType type = FxgShapeType.PATH
     GeneralPath path
+    double alpha
 
     String translateTo(final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()

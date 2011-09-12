@@ -25,6 +25,7 @@ class FxgRichText extends FxgShape{
     boolean lineThrough
     String text
     String fontFamily
+    double alpha
 
     AttributedString getAttributedString() {
         AttributedString string = new AttributedString(text)
