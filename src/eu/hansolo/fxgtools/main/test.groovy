@@ -20,7 +20,7 @@ width = 400
 height = 400
 
 parser = new FxgParser()
-Map<String, BufferedImage> allLayerImages = parser.parse(fxg, width, height, keepAspect)
+Map<String, BufferedImage> allLayerImages = parser.parse(fxgFile, width, height, keepAspect)
 
 //Map<String, List<FxgElement>> layerMap = parser.getElements(fxg)
 //translator = new FxgTranslator()

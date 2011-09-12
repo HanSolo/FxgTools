@@ -249,11 +249,7 @@ class FxgParser {
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
         double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
 
-        if (radiusX.compareTo(0).is(0) && radiusY.compareTo(0).is(0)) {
-            return new RoundRectangle2D.Double(x, y, width, height, 0, 0)
-        }
         return new RoundRectangle2D.Double(x, y, width, height, radiusX, radiusY)
-
     }
 
     private Ellipse2D parseEllipse(final NODE) {
@@ -519,21 +515,20 @@ class FxgParser {
 
     private convertRadialGradient(paint, node) {
         def radialGradient = node.RadialGradient[0]
-        double x1 = (radialGradient.@x ?: 0).toDouble() + offsetX
-        double y1 = (radialGradient.@y ?: 0).toDouble() + offsetY
+        double x1 = (radialGradient.@x ?: 0).toDouble() * scaleFactorX + offsetX
+        double y1 = (radialGradient.@y ?: 0).toDouble() * scaleFactorY + offsetY
         double scaleX = (radialGradient.@scaleX ?: 0).toDouble()
         //double scaleY = (radialGradient.@scaleY ?: 0).toDouble()
         double rotation = Math.toRadians((radialGradient.@rotation ?: 0).toDouble())
-        double x2 = Math.cos(rotation) * scaleX + x1
-        double y2 = Math.sin(rotation) * scaleX + y1
-        Point2D center = new Point2D.Double((x1 * scaleFactorX), (y1 * scaleFactorY))
-        Point2D stop = new Point2D.Double((x2 * scaleFactorX), (y2 * scaleFactorY))
+        double x2 = Math.cos(rotation) * scaleX * scaleFactorX + x1
+        double y2 = Math.sin(rotation) * scaleX * scaleFactorY + y1
+        Point2D center = new Point2D.Double(x1, y1)
+        Point2D stop = new Point2D.Double(x2, y2)
         float radius = (float) (center.distance(stop) / 2.0)
         def gradientEntries = radialGradient.GradientEntry
         float[] fractions = new float[gradientEntries.size()]
         Color[] colors = new Color[gradientEntries.size()]
         convertGradientEntries(gradientEntries, fractions, colors)
-
         paint.center = center
         paint.radius = radius ?: 0.001f
         paint.fractions = fractions
@@ -770,13 +765,6 @@ class FxgParser {
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        originalWidth = 0
-        originalHeight = 0
-        width = 0
-        height = 0
-        scaleFactorX = 1.0
-        scaleFactorY = 1.0
-        aspectRatio = 1.0
         offsetX = 0
         offsetY = 0
         groupOffsetX = 0
