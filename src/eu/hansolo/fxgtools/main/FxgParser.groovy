@@ -65,6 +65,7 @@ class FxgParser {
     private final Matcher RR_MATCHER = RR_PATTERN.matcher("")
     private String lastNodeType
     private String elementName
+    String fxgVersion
     double originalWidth
     double originalHeight
     private double width
@@ -229,6 +230,7 @@ class FxgParser {
     Dimension getDimension(final Node FXG) {
         originalWidth = (int)(FXG.@viewWidth ?: 100).toDouble()
         originalHeight = (int)(FXG.@viewHeight ?: 100).toDouble()
+        fxgVersion = FXG.@version
         return new Dimension((int) originalWidth, (int) originalHeight)
     }
 
@@ -770,6 +772,7 @@ class FxgParser {
         groupOffsetX = 0
         groupOffsetY = 0
 
+        fxgVersion = fxg.@version
         originalWidth = (int)(fxg.@viewWidth ?: 100).toDouble()
         originalHeight = (int)(fxg.@viewHeight ?: 100).toDouble()
 
