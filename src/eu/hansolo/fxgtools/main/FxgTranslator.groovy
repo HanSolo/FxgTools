@@ -42,25 +42,25 @@ class FxgTranslator {
                 if (EXPORT_TO_FILE) {
                     writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
                 }
-                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.java')
                 break
             case Language.JAVAFX:
                 if (EXPORT_TO_FILE) {
-                    writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                    writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 }
-                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.java')
                 break
             case Language.GWT:
-                codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.java')
                 break
             case Language.CANVAS:
                 if (EXPORT_TO_FILE) {
-                    writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH, HEIGHT))
+                    writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 }
-                codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH, HEIGHT, layerMap, LANGUAGE))
+                codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append(".js")
                 break
             default:
