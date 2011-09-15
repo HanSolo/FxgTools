@@ -1,0 +1,11 @@
+import groovyx.javafx.SceneGraphBuilder
+import groovyx.javafx.GroovyFX;
+
+GroovyFX.start { mainStage ->
+    def sg = new SceneGraphBuilder(mainStage)
+    sg.stage(title: "FXG -> GroovyFX", visible: true) {
+        scene(width: $width, height: $height)  {
+            node(new $className($width, $height))
+        }
+    }
+}

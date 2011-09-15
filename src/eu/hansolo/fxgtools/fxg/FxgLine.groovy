@@ -64,6 +64,13 @@ class FxgLine extends FxgShape {
                 appendCanvasFilter(code, name)
                 return code.toString()
 
+            case Language.GROOVYFX:
+                code.append("        def ${name} = new Line(${x1 / referenceWidth} * imageWidth, ${y1 / referenceHeight} * imageHeight, ${x2 / referenceWidth} * imageWidth, ${y2 / referenceHeight} * imageHeight)\n")
+                appendGroovyFxFillAndStroke(code, name)
+                appendGroovyFxFilter(code, name)
+                code.append("\n")
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

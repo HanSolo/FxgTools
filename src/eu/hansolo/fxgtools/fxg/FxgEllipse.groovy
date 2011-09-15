@@ -52,7 +52,7 @@ class FxgEllipse extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                if (width.compareTo(height).is(0)) {
+                if (width.compareTo(height) == 0) {
                     code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth} * imageWidth);\n")
                 } else {
                     code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight);\n")
@@ -79,6 +79,17 @@ class FxgEllipse extends FxgShape {
                     appendCanvasStroke(code, name)
                 }
                 appendCanvasFilter(code, name)
+                return code.toString()
+
+            case Language.GROOVYFX:
+                if (width.compareTo(height) == 0) {
+                    code.append("        def ${name} = new Circle(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth} * imageWidth)\n")
+                } else {
+                    code.append("        def ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight)\n")
+                }
+                appendGroovyFxFillAndStroke(code, name)
+                appendGroovyFxFilter(code, name)
+                code.append("\n")
                 return code.toString()
 
             default:

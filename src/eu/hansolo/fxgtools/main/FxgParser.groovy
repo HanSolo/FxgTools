@@ -547,7 +547,7 @@ class FxgParser {
         gradientEntries.each { def gradientEntry->
             fraction = (gradientEntry.@ratio ?: 0).toFloat()
             alpha = ((gradientEntry.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
-            if (fraction.compareTo(oldFraction).is(0)) { // make sure that the current fraction is different from the last
+            if (fraction.compareTo(oldFraction) == 0) { // make sure that the current fraction is different from the last
                 fraction += 0.0001f
             }
             color = gradientEntry.@color == null ? Color.BLACK : parseColor(gradientEntry.@color, alpha)

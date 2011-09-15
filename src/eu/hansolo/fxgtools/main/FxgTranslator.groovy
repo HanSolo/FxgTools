@@ -63,6 +63,14 @@ class FxgTranslator {
                 codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append(".js")
                 break
+            case Language.GROOVYFX:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(desktopPath.append('FxgTest.groovy').toString(), groovyFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
+                }
+                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                exportFileName.append('.groovy')
+                break
+
             default:
                 fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
                 throw Exception
@@ -336,6 +344,77 @@ class FxgTranslator {
     }
 
 
+    // GROOVYFX
+    private String groovyFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfx.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
+        if (allLayers.length() > 31) {
+            allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
+        }
+        codeToExport = codeToExport.replace("\$layerList", allLayers.toString())
+
+        return codeToExport
+    }
+
+    private String groovyFxLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("\n")
+        layerCode.append("    private Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
+        layerCode.append("        def $LAYER_NAME = new Group()\n")
+        return layerCode.toString()
+    }
+
+    private String groovyFxLayerMethodStop(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("        return $LAYER_NAME")
+        layerCode.append("    }\n")
+        return layerCode.toString()
+    }
+
+    private String groovyFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfxtest.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
+
+        return codeToExport
+    }
+
+    private void groovyFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
+        if (splitNumber.is(1)) {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${layerName}.children.addAll(")
+            code.append(allElements.toString())
+            code.append(");\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight)\n\n")
+            code.append("        return ${layerName};\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${layerName}, imageWidth, imageHeight) {\n")
+        } else {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${layerName}.children.addAll(")
+            code.append(allElements.toString())
+            code.append(")\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight)\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${layerName}, imageWidth, imageHeight) {\n")
+        }
+    }
+
+
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
@@ -353,12 +432,13 @@ class FxgTranslator {
                         break
                     case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
                         break
+                    case Language.GROOVYFX: code.append(groovyFxLayerMethodStart(layer))
                 }
 
                 layerMap[layer].each {FxgElement element ->
                     code.append(element.shape.translateTo(LANGUAGE))
 
-                    if (LANGUAGE.is(Language.JAVAFX)){
+                    if (LANGUAGE.is(Language.JAVAFX) || LANGUAGE.is(LANGUAGE.GROOVYFX)){
                         allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
                         for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
                             allElements.append(" ")
@@ -376,6 +456,9 @@ class FxgTranslator {
                         }
                         if (LANGUAGE.is(Language.JAVAFX)) {
                             javaFxSplitLayer(layer, splitNumber, code, allElements)
+                        }
+                        if (LANGUAGE.is(Language.GROOVYFX)) {
+                            groovyFxSplitLayer(layer, splitNumber, code, allElements)
                         }
                         if (LANGUAGE.is(Language.GWT)) {
                             gwtSplitLayer(layer, splitNumber, code)
@@ -399,7 +482,7 @@ class FxgTranslator {
                         code.append(allElements.toString())
                         code.append(");\n")
                         allElements.length = 0
-                        if (splitNumber.is(0)) {
+                        if (splitNumber == 0) {
                             code.append("        return ${layer};\n")
                         }
                         code.append(javaFxLayerMethodStop(layer))
@@ -410,6 +493,20 @@ class FxgTranslator {
                         break
                     case Language.CANVAS:
                         code.append(canvasLayerMethodStop())
+                        break
+                    case Language.GROOVYFX:
+                        if (allElements.length() > layer.length() + 32) {
+                            allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                        }
+                        code.append("        ${layer}.children.addAll(")
+                        code.append(allElements.toString())
+                        code.append(")\n")
+                        allElements.length = 0
+                        if (splitNumber == 0) {
+                            code.append("        return ${layer}\n")
+                        }
+                        code.append(javaFxLayerMethodStop(layer))
+                        allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
                         break
                 }
             }

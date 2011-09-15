@@ -1,0 +1,9 @@
+import groovyx.javafx.GroovyFX
+import groovyx.javafx.SceneGraphBuilder
+
+public class $className extends Parent {
+    public $className(int imageWidth, int imageHeight) {
+        getChildren().addAll($layerList)
+    }
+$drawingCode
+}

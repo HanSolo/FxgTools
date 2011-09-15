@@ -113,6 +113,22 @@ class FxgRichText extends FxgShape{
                 appendCanvasFilter(code, name)
                 return code.toString()
 
+            case Language.GROOVYFX:
+                String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.NORMAL")
+                String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
+                code.append("        def ${name} = new Text()\n")
+                code.append("        ${name}.text = \"${text.trim()}\"\n")
+                code.append("        ${name}.font = Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth)\n")
+                code.append("        ${name}.x = ${x / referenceWidth} * imageWidth\n")
+                code.append("        ${name}.y = ${y / referenceHeight} * imageHeight\n")
+                code.append("        ${name}.textOrigin = VPos.BOTTOM\n")
+                code.append(lineThrough ? "        ${name}.strikeThrough = true\n" : "")
+                code.append(underline ? "        ${name}.underline = true\n" : "")
+                appendGroovyFxPaint(code, name)
+                appendGroovyFxFilter(code, name)
+                code.append("\n")
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

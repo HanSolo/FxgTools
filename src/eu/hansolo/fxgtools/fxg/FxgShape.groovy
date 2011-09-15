@@ -25,6 +25,18 @@ abstract class FxgShape {
 
     abstract String translateTo(final Language LANGUAGE)
 
+    protected StringBuilder makeNicer(StringBuilder code) {
+        // replace: 0.0 * imageWidth -> 0.0
+
+        // replace: 0.0 * imageHeight -> 0.0
+
+        // replace: 1.0 * imageWidth -> imageWidth
+
+        // replace: 1.0 * imageHeight -> imageHeight
+
+        return code
+    }
+
     // JAVA
     protected void appendJavaPaint(StringBuilder code, String elementName, FxgShapeType shapeType) {
         switch(fill.type) {
@@ -180,7 +192,7 @@ abstract class FxgShape {
                     case FxgFilterType.SHADOW:
                         if (filter.inner) {
                             code.append("        InnerShadow ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * imageWidth, ${filter.getOffset().x / referenceWidth} * imageWidth, ${filter.getOffset().y / referenceHeight} * imageHeight, ")
-                            code.append("        new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
+                            code.append("new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
                             code.append(");\n")
                             if (i > 0) {
                                 code.append("        ${elementName}_InnerShadow${i}.inputProperty().set(${lastFilterName});\n")
@@ -299,7 +311,7 @@ abstract class FxgShape {
     }
 
     private void appendCanvasColor(StringBuilder code, Color color) {
-        if (color.getAlpha().compareTo(255).is(0)) {
+        if (color.getAlpha().compareTo(255) == 0) {
             code.append("'rgb(${color.red}, ${color.green}, ${color.blue})'")
         } else {
             code.append("'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha / 255})'")
@@ -309,12 +321,128 @@ abstract class FxgShape {
     private void appendCanvasStops(StringBuilder code, float[] fractions, Color[] colors, String elementName) {
         fill.colors.eachWithIndex { color, i ->
             code.append("        ${elementName}_Fill.addColorStop(${fractions[i]}, ")
-            if (colors[i].alpha.compareTo(255).is(0)) {
+            if (colors[i].alpha.compareTo(255) == 0) {
                 code.append("'rgb(${colors[i].red}, ${colors[i].green}, ${colors[i].blue})'")
             } else {
                 code.append("'rgba(${colors[i].red}, ${colors[i].green}, ${colors[i].blue}, ${colors[i].alpha / 255})'")
             }
             code.append(");\n")
         }
+    }
+
+    // GROOVYFX
+    protected void appendGroovyFxFillAndStroke(StringBuilder code, String elementName) {
+        if (filled) {
+            appendGroovyFxPaint(code, elementName)
+        }
+        if (stroked) {
+            if (stroke.stroke.lineWidth < 2) {
+                code.append("        ${elementName}.strokeType = StrokeType.OUTSIDE\n")
+            } else {
+                code.append("        ${elementName}.strokeType = StrokeType.CENTERED\n")
+            }
+            switch (stroke.stroke.endCap) {
+                case BasicStroke.CAP_BUTT:
+                    code.append("        ${elementName}.strokeLineCap = StrokeLineCap.BUTT\n")
+                    break
+                case BasicStroke.CAP_ROUND:
+                    code.append("        ${elementName}.strokeLineCap = StrokeLineCap.ROUND\n")
+                    break
+                case BasicStroke.CAP_SQUARE:
+                    code.append("        ${elementName}.strokeLineCap = StrokeLineCap.SQUARE\n")
+                    break
+            }
+            switch (stroke.stroke.lineJoin) {
+                case BasicStroke.JOIN_BEVEL:
+                    code.append("        ${elementName}.strokeLineJoin = StrokeLineJoin.BEVEL\n")
+                    break
+                case BasicStroke.JOIN_ROUND:
+                    code.append("        ${elementName}.strokeLineJoin = StrokeLineJoin.ROUND\n")
+                    break
+                case BasicStroke.JOIN_MITER:
+                    code.append("        ${elementName}.strokeLineJoin = StrokeLineJoin.MITER\n")
+                    break
+            }
+            code.append("        ${elementName}.strokeWidth = ${stroke.stroke.lineWidth / referenceWidth} * imageWidth\n")
+            code.append("        ${elementName}.stroke = ")
+            appendJavaFxColor(code, stroke.color)
+            code.append("\n")
+        } else {
+            code.append("        ${elementName}.stroke = null\n")
+        }
+    }
+
+    protected void appendGroovyFxPaint(StringBuilder code, String elementName) {
+        switch(fill.type) {
+            case FxgFillType.SOLID_COLOR:
+                code.append("        ${elementName}.fill = ")
+                appendGroovyFxColor(code, fill.color)
+                code.append("\n")
+                break
+            case FxgFillType.LINEAR_GRADIENT:
+                code.append("        ${elementName}.fill = new LinearGradient(${fill.start.x / referenceWidth} * imageWidth, ${fill.start.y / referenceHeight} * imageHeight, ${fill.stop.x / referenceWidth} * imageWidth, ${fill.stop.y / referenceHeight} * imageHeight, ")
+                code.append("false, CycleMethod.NO_CYCLE, ")
+                appendGroovyFxStops(code, fill.fractions, fill.colors)
+                code.append(")\n")
+                break
+            case FxgFillType.RADIAL_GRADIENT:
+                code.append("        ${elementName}.fill = new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * imageWidth, ${fill.center.y / referenceHeight} * imageHeight, ")
+                code.append("${fill.radius / referenceWidth} * imageWidth, ")
+                code.append("false, CycleMethod.NO_CYCLE, ")
+                appendGroovyFxStops(code, fill.fractions, fill.colors)
+                code.append(")\n")
+                break
+            case FxgFillType.NONE:
+                code.append("        ${elementName}.fill = null\n")
+                break
+        }
+    }
+
+    protected void appendGroovyFxFilter(StringBuilder code, String elementName) {
+        if (!filters.isEmpty()) {
+            String lastFilterName
+            filters.eachWithIndex { filter, i ->
+                switch(filter.type) {
+                    case FxgFilterType.SHADOW:
+                        if (filter.inner) {
+                            code.append("        def ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * imageWidth, ${filter.getOffset().x / referenceWidth} * imageWidth, ${filter.getOffset().y / referenceHeight} * imageHeight, ")
+                            code.append("new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
+                            code.append(");\n")
+                            if (i > 0) {
+                                code.append("        ${elementName}_InnerShadow${i}.inputProperty().set(${lastFilterName})\n")
+                                code.append("        ${elementName}.effect = ${elementName}_InnerShadow${i}\n")
+                            }
+                            lastFilterName = "${elementName}_InnerShadow${i}"
+                        } else {
+                            code.append("        def ${elementName}_DropShadow${i} = new DropShadow()\n")
+                            code.append("        ${elementName}_DropShadow${i}.offsetX = ${filter.getOffset().x / referenceWidth} * imageWidth\n")
+                            code.append("        ${elementName}_DropShadow${i}.offsetY = ${filter.getOffset().y / referenceHeight} * imageHeight\n")
+                            code.append("        ${elementName}_DropShadow${i}.radius = ${filter.blurX / referenceWidth} * imageWidth\n")
+                            code.append("        ${elementName}_DropShadow${i}.color = new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})\n")
+                            if (i > 0) {
+                                code.append("        ${elementName}_DropShadow${i}.inputProperty().set(${lastFilterName})\n")
+                                code.append("        ${elementName}.effect = ${elementName}_DropShadow${i}\n")
+                            }
+                            lastFilterName = "${elementName}_DropShadow"
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    private void appendGroovyFxColor(StringBuilder code, Color color) {
+        code.append("new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255})")
+    }
+
+    private void appendGroovyFxStops(StringBuilder code, float[] fractions, Color[] colors) {
+        code.append("[")
+        fill.colors.eachWithIndex { color, i ->
+            code.append("new Stop(${fractions[i]}, new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255}))")
+            if (i.compareTo(fill.colors.length - 1) != 0) {
+                code.append(", ")
+            }
+        }
+        code.append("]")
     }
 }

@@ -127,6 +127,37 @@ class FxgPath extends FxgShape {
                 appendCanvasFilter(code, name)
                 return code.toString()
 
+            case Language.GROOVYFX:
+                code.append("        def $name = new Path()\n")
+                final PathIterator PATH_ITERATOR = path.getPathIterator(null);
+                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.fillRule = FillRule.EVEN_ODD\n" : "        ${name}.fillRule = FillRule.NON_ZERO\n")
+                while (!PATH_ITERATOR.isDone()) {
+                    final double[] COORDINATES = new double[6];
+                    PATH_ITERATOR.windingRule
+                    switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
+                        case PathIterator.SEG_MOVETO:
+                            code.append("        ${name}.elements.add(new MoveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight))\n")
+                            break;
+                        case PathIterator.SEG_LINETO:
+                            code.append("        ${name}.elements.add(new LineTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight))\n")
+                            break;
+                        case PathIterator.SEG_QUADTO:
+                            code.append("        ${name}.elements.add(new QuadCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight))\n")
+                            break;
+                        case PathIterator.SEG_CUBICTO:
+                            code.append("        ${name}.elements.add(new CubicCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight, ${COORDINATES[4] / referenceWidth} * imageWidth, ${COORDINATES[5] / referenceHeight} * imageHeight))\n")
+                            break;
+                        case PathIterator.SEG_CLOSE:
+                            code.append("        ${name}.elements.add(new ClosePath())\n")
+                            break;
+                    }
+                    PATH_ITERATOR.next();
+                }
+                appendGroovyFxFillAndStroke(code, name)
+                appendGroovyFxFilter(code, name)
+                code.append("\n")
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

@@ -28,7 +28,7 @@ class FxgRectangle extends FxgShape {
         String name = "${layerName}_${shapeName}"
         switch (LANGUAGE) {
             case Language.JAVA:
-                if (radiusX.compareTo(0).is(0) && radiusY.compareTo(0).is(0)) {
+                if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
                     code.append("        final Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 } else {
                     code.append("        final RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
@@ -61,7 +61,7 @@ class FxgRectangle extends FxgShape {
             case Language.CANVAS:
                 code.append("\n")
                 code.append("        //${name}\n")
-                if (radiusX.compareTo(0).is(0) && radiusY.compareTo(0).is(0)) {
+                if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
                     code.append("        ctx.save();\n")
                     code.append("        ctx.beginPath();\n")
                     code.append("        ctx.rect(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
@@ -89,6 +89,19 @@ class FxgRectangle extends FxgShape {
                     appendCanvasStroke(code, name)
                 }
                 appendCanvasFilter(code, name)
+                return code.toString()
+
+            case Language.GROOVYFX:
+                code.append("        def ${name} = new Rectangle(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight)\n")
+                if (radiusX > 0) {
+                    code.append("        ${name}.arcWidth = ${radiusX * 2 / referenceWidth} * imageWidth\n")
+                }
+                if (radiusY > 0) {
+                    code.append("        ${name}.arcHeight = ${radiusY * 2 / referenceHeight} * imageHeight\n")
+                }
+                appendGroovyFxFillAndStroke(code, name)
+                appendGroovyFxFilter(code, name)
+                code.append("\n")
                 return code.toString()
 
             default:

@@ -11,5 +11,6 @@ enum Language {
     JAVA,
     JAVAFX,
     GWT,
-    CANVAS
+    CANVAS,
+    GROOVYFX
 }
