@@ -36,7 +36,7 @@ public class $className extends JComponent {
     public static final String VALUE_PROPERTY = "Value";
     private double value;
     private PropertyChangeSupport propertySupport;
-    private final Rectangle INNER_BOUNDS = new Rectangle(0, 0, 809, 372);
+    private final Rectangle INNER_BOUNDS = new Rectangle(0, 0, $minimumWidth, $minimumHeight);
     private final Point2D CENTER;
 $imageDeclaration
     private boolean square;

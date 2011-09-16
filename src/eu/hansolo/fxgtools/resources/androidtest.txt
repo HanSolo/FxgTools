@@ -1,0 +1,11 @@
+import android.app.Activity;
+import android.os.Bundle;
+
+public class FxgTest extends Activity {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        $className test = new $className(this, $width, $height);
+		setContentView(test);
+    }
+}

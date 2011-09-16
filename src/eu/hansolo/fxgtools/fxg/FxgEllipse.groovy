@@ -92,6 +92,27 @@ class FxgEllipse extends FxgShape {
                 code.append("\n")
                 return code.toString()
 
+            case Language.ANDROID:
+                appendAndroidFillAndStroke(code, name, type)
+                if (width.compareTo(height) == 0) {
+                    if (filled) {
+                        code.append("        canvas.drawCircle(${center.x / referenceWidth}f * imageWidth, ${center.y / referenceHeight}f * imageHeight, ${getRadiusX() / referenceWidth}f * imageWidth, paint);\n")
+                    }
+                    if (stroked) {
+                        code.append("        canvas.drawCircle(${center.x / referenceWidth}f * imageWidth, ${center.y / referenceHeight}f * imageHeight, ${getRadiusX() / referenceWidth}f * imageWidth, stroke);\n")
+                    }
+                } else {
+                    code.append("        RectF ${name} = new RectF(${x / referenceWidth}f * imageWidth, ${y / referenceHeight}f * imageHeight, ${x / referenceWidth}f * imageWidth + ${width / referenceWidth}f * imageWidth, ${y / referenceHeight}f * imageHeight + ${height / referenceHeight}f * imageHeight);\n")
+                    if (filled) {
+                        code.append("        canvas.drawOval(${name}, paint);\n")
+                    }
+                    if (stroked) {
+                        code.append("        canvas.drawOval(${name}, stroke);\n")
+                    }
+                }
+                appendAndroidFilter(code, name)
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

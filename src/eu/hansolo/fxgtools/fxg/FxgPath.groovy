@@ -158,6 +158,41 @@ class FxgPath extends FxgShape {
                 code.append("\n")
                 return code.toString()
 
+            case Language.ANDROID:
+                appendAndroidFillAndStroke(code, name, type)
+                code.append("        Path $name = new Path();\n")
+                final PathIterator PATH_ITERATOR = path.getPathIterator(null);
+                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setFillType(FillType.EVEN_ODD);\n" : "        ${name}.setFillType(FillType.WINDING);\n")
+                while (!PATH_ITERATOR.isDone()) {
+                    final double[] COORDINATES = new double[6];
+                    switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
+                        case PathIterator.SEG_MOVETO:
+                            code.append("        ${name}.moveTo(${COORDINATES[0] / referenceWidth}f * imageWidth, ${COORDINATES[1] / referenceHeight}f * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_LINETO:
+                            code.append("        ${name}.lineTo(${COORDINATES[0] / referenceWidth}f * imageWidth, ${COORDINATES[1] / referenceHeight}f * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_QUADTO:
+                            code.append("        ${name}.quadTo(${COORDINATES[0] / referenceWidth}f * imageWidth, ${COORDINATES[1] / referenceHeight}f * imageHeight, ${COORDINATES[2] / referenceWidth}f * imageWidth, ${COORDINATES[3] / referenceHeight}f * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_CUBICTO:
+                            code.append("        ${name}.cubicTo(${COORDINATES[0] / referenceWidth}f * imageWidth, ${COORDINATES[1] / referenceHeight}f * imageHeight, ${COORDINATES[2] / referenceWidth}f * imageWidth, ${COORDINATES[3] / referenceHeight}f * imageHeight, ${COORDINATES[4] / referenceWidth}f * imageWidth, ${COORDINATES[5] / referenceHeight}f * imageHeight);\n")
+                            break;
+                        case PathIterator.SEG_CLOSE:
+                            code.append("        ${name}.close();\n")
+                            break;
+                    }
+                    PATH_ITERATOR.next();
+                }
+                if (filled) {
+                    code.append("        canvas.drawPath($name, paint);\n")
+                }
+                if (stroked) {
+                    code.append("        canvas.drawPath($name, stroke);\n")
+                }
+                appendAndroidFilter(code, name)
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

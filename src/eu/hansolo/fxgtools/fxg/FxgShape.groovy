@@ -335,6 +335,7 @@ abstract class FxgShape {
         if (filled) {
             appendGroovyFxPaint(code, elementName)
         }
+
         if (stroked) {
             if (stroke.stroke.lineWidth < 2) {
                 code.append("        ${elementName}.strokeType = StrokeType.OUTSIDE\n")
@@ -444,5 +445,115 @@ abstract class FxgShape {
             }
         }
         code.append("]")
+    }
+
+    // ANDROID
+    protected void appendAndroidFillAndStroke(StringBuilder code, String elementName, FxgShapeType shapeType) {
+        code.append("\n");
+        if (filled) {
+            code.append("        paint.reset();\n")
+            code.append("        paint.setAntiAlias(true);\n")
+            code.append("        paint.setStyle(Style.FILL);\n")
+            switch(fill.type) {
+                case FxgFillType.SOLID_COLOR:
+                    code.append("        paint.setColor(")
+                    appendAndroidColor(code, fill.color)
+                    code.append(");\n")
+                    break
+                case FxgFillType.LINEAR_GRADIENT:
+                    code.append("        paint.setShader(new LinearGradient(${fill.start.x / referenceWidth}f * imageWidth, ${fill.start.y / referenceHeight}f * imageHeight, ${fill.stop.x / referenceWidth}f * imageWidth, ${fill.stop.y / referenceHeight}f * imageHeight")
+                    appendAndroidColors(code, fill.colors)
+                    appendAndroidFractions(code, fill.fractions)
+                    code.append(", Shader.TileMode.CLAMP));\n")
+                    break
+                case FxgFillType.RADIAL_GRADIENT:
+                    code.append("        paint.setShader(new RadialGradient(${fill.center.x / referenceWidth}f * imageWidth, ${fill.center.y / referenceHeight}f * imageHeight")
+                    code.append(", ${fill.radius / referenceWidth}f * imageWidth")
+                    appendAndroidColors(code, fill.colors)
+                    appendAndroidFractions(code, fill.fractions)
+                    code.append(", Shader.TileMode.CLAMP));\n")
+                    break
+                default:
+                    code.append("        paint.setColor(0x000000);\n")
+                    break
+            }
+        }
+
+        if (stroked) {
+            code.append("        stroke.reset();\n")
+            code.append("        stroke.setAntiAlias(true);\n")
+            code.append("        stroke.setStyle(Style.STROKE);\n")
+            switch (stroke.stroke.endCap) {
+                case BasicStroke.CAP_BUTT:
+                    code.append("        stroke.setStrokeCap(Cap.BUTT);\n")
+                    break
+                case BasicStroke.CAP_ROUND:
+                    code.append("        stroke.setStrokeCap(Cap.ROUND);\n")
+                    break
+                case BasicStroke.CAP_SQUARE:
+                    code.append("        stroke.setStrokeCap(Cap.SQUARE);\n")
+                    break
+            }
+            switch (stroke.stroke.lineJoin) {
+                case BasicStroke.JOIN_BEVEL:
+                    code.append("        stroke.setStrokeJoin(Join.BEVEL);\n")
+                    break
+                case BasicStroke.JOIN_ROUND:
+                    code.append("        stroke.setStrokeJoin(Join.ROUND);\n")
+                    break
+                case BasicStroke.JOIN_MITER:
+                    code.append("        stroke.setStrokeJoin(Join.MITER);\n")
+                    break
+            }
+            code.append("        stroke.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth}f * imageWidth);\n")
+            code.append("        stroke.setColor(")
+            appendAndroidColor(code, stroke.color)
+            code.append(");\n")
+        }
+    }
+
+    protected void appendAndroidFilter(StringBuilder code, String elementName) {
+        if (!filters.isEmpty()) {
+            filters.each { filter ->
+                switch(filter.type) {
+                    case FxgFilterType.SHADOW:
+                        if (filter.inner) {
+                            code.append("        paint.setMaskFilter(new BlurMaskFilter(${filter.blurX / referenceWidth}f * imageWidth, android.graphics.BlurMaskFilter.Blur.INNER));\n")
+                            code.append("        canvas.drawPath(${elementName}, paint);\n")
+                        } else {
+                            code.append("        paint.setColor(Color.argb(${filter.color.alpha}, ${filter.color.red}, ${filter.color.green}, ${filter.color.blue}));\n")
+                            code.append("        paint.setMaskFilter(new BlurMaskFilter(${filter.blurX / referenceWidth}f * imageWidth, Blur.OUTER));\n")
+                            code.append("        canvas.drawPath(${elementName}, paint);\n")
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    private void appendAndroidFractions(StringBuilder code, float[] fractions) {
+        code.append(", new float[]{")
+        fill.fractions.eachWithIndex { fraction, i ->
+            code.append(fraction).append("f")
+            if (i.compareTo(fill.fractions.length - 1) != 0) {
+                code.append(", ")
+            }
+        }
+        code.append("}")
+    }
+
+    private void appendAndroidColors(StringBuilder code, Color[] colors) {
+        code.append(", new int[]{")
+        fill.colors.eachWithIndex { color, i ->
+            code.append("Color.argb(${color.alpha}, ${color.red}, ${color.green}, ${color.blue})")
+            if (i.compareTo(fill.colors.length - 1) != 0) {
+                code.append(", ")
+            }
+        }
+        code.append("}")
+    }
+
+    private void appendAndroidColor(StringBuilder code, Color color) {
+        code.append("Color.argb(${color.alpha}, ${color.red}, ${color.green}, ${color.blue})")
     }
 }

@@ -3,6 +3,7 @@ package eu.hansolo.fxgtools.fxg
 import java.awt.Font
 import java.text.AttributedString
 import java.awt.font.TextAttribute
+import java.awt.Color
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,6 +27,7 @@ class FxgRichText extends FxgShape{
     String text
     String fontFamily
     double alpha
+    Color color
 
     AttributedString getAttributedString() {
         AttributedString string = new AttributedString(text)
@@ -127,6 +129,34 @@ class FxgRichText extends FxgShape{
                 appendGroovyFxPaint(code, name)
                 appendGroovyFxFilter(code, name)
                 code.append("\n")
+                return code.toString()
+
+            case Language.ANDROID:
+                code.append("        paint.setColor(Color.argb(${color.alpha}, ${color.red}, ${color.green}, ${color.blue}));\n")
+                String fontWeight
+                if (bold && italic) {
+                    fontWeight = "Typeface.BOLD_ITALIC"
+                } else if (bold) {
+                    fontWeight = "Typeface.BOLD"
+                } else if (italic) {
+                    fontWeight = "Typeface.ITALIC"
+                } else {
+                    fontWeight = "Typeface.NORMAL"
+                }
+
+                code.append("        Typeface ${name}_TypeFace = Typeface.create(\"${font.family}\", ${fontWeight});\n")
+                code.append("        paint.setTypeface(${name}_TypeFace);\n")
+                code.append("        Paint.FontMetrics ${name}_Metrics = paint.getFontMetrics();\n")
+			    code.append("        paint.setTextSize(${font.size2D / referenceWidth}f * imageWidth);\n")
+                if (underline) {
+                    code.append("        paint.setUnderlineText(true);\n")
+                }
+                if (lineThrough) {
+                    code.append("        paint.setStrikeThruText(true);\n")
+                }
+                code.append("        canvas.drawText(\"${text.trim()}\", ${x / referenceWidth}f * imageWidth, ${y / referenceHeight}f * imageHeight - ${name}_Metrics.descent, paint);\n")
+                code.append("        paint.setUnderlineText(false);\n")
+                code.append("        paint.setStrikeThruText(false);\n")
                 return code.toString()
 
             default:

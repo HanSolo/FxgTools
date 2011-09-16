@@ -1,0 +1,118 @@
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
+import android.graphics.BlurMaskFilter.Blur;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Join;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Path.FillType;
+import android.graphics.RadialGradient;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.Typeface;
+import android.view.View;
+
+
+public class $className extends View {
+    private int xMax;
+    private int yMax;
+    private boolean square;
+    private float aspectRatio;
+    private int originalWidth;
+    private int originalHeight;
+    private Paint paint;
+    private Paint stroke;
+	private Paint transparentPaint;
+$imageDeclaration
+
+    public $className(Context context, int imageWidth, int imageHeight) {
+        super(context);
+        originalWidth = imageWidth;
+        originalHeight = imageHeight;
+        square = imageWidth == imageHeight;
+        aspectRatio = (float) (imageHeight) / (float) (imageWidth);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+$imageCreation
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // Clear the entire screen before starting drawing.
+        transparentPaint = new Paint();
+        transparentPaint.setColor(0x00000000);
+        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), transparentPaint);
+
+$drawImage
+        invalidate();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int measuredWidth = measureWidth(widthMeasureSpec);
+        int measuredHeight = measureHeight(heightMeasureSpec);
+
+        setMeasuredDimension(measuredWidth, measuredHeight);
+    }
+
+    private int measureHeight(int measureSpec) {
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        // Default size if no limits are specified
+        int result = $minimumHeight;
+
+        if (specMode == MeasureSpec.AT_MOST) {
+            result = specSize;
+        } else if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        }
+        return result;
+    }
+
+    private int measureWidth(int measureSpec) {
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        // Default size if no limits are specified
+        int result = $minimumWidth;
+
+        if (specMode == MeasureSpec.AT_MOST) {
+            result = specSize;
+        } else if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        }
+        return result;
+    }
+
+    @Override
+    public void onSizeChanged(int w, int h, int oldW, int oldH) {
+        xMax = w-1;
+        yMax = h-1;
+        int size = xMax <= yMax ? xMax : yMax;
+        int width;
+        int height;
+        if (originalWidth <= originalHeight) {
+            width = (int) (yMax / aspectRatio);
+            height = yMax;
+        } else {
+            width = xMax;
+            height = (int) (xMax * aspectRatio);
+        }
+        if (square) {
+$resizeImagesSquare
+        } else {
+$resizeImages
+        }
+        invalidate();
+    }
+
+$creationMethods
+}

@@ -104,6 +104,27 @@ class FxgRectangle extends FxgShape {
                 code.append("\n")
                 return code.toString()
 
+            case Language.ANDROID:
+                appendAndroidFillAndStroke(code, name, type)
+                code.append("        RectF ${name} = new RectF(${x / referenceWidth}f * imageWidth, ${y / referenceHeight}f * imageHeight, ${x / referenceWidth}f * imageWidth + ${width / referenceWidth}f * imageWidth, ${y / referenceHeight}f * imageHeight + ${height / referenceHeight}f * imageHeight);\n")
+                if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
+                    if (filled) {
+                        code.append("        canvas.drawRect(${name}, paint);\n")
+                    }
+                    if (stroked) {
+                        code.append("        canvas.drawRect(${name}, stroke);\n")
+                    }
+                } else {
+                    if (filled) {
+                        code.append("        canvas.drawRoundRect(${name}, ${radiusX / referenceWidth}f * imageWidth, ${radiusY / referenceHeight}f * imageHeight, paint);\n")
+                    }
+                    if (stroked) {
+                        code.append("        canvas.drawRoundRect(${name}, ${radiusX / referenceWidth}f * imageWidth, ${radiusY / referenceHeight}f * imageHeight, stroke);\n")
+                    }
+                }
+                appendAndroidFilter(code, name)
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

@@ -723,7 +723,7 @@ class FxgParser {
                     elementName += "_${i}"
                     def fxgText = parseRichText(node)
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
-                    fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily)
+                    fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily, color: fxgText.color)
                     lastNodeType = "RichText"
                     fxgShape.fill = fxgFill
                     break

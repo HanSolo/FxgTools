@@ -71,6 +71,17 @@ class FxgLine extends FxgShape {
                 code.append("\n")
                 return code.toString()
 
+            case Language.ANDROID:
+                appendAndroidFillAndStroke(code, name, type)
+                if (filled) {
+                    code.append("        canvas.drawLine(${x1 / referenceWidth}f * imageWidth, ${y1 / referenceHeight}f * imageHeight, ${x2 / referenceWidth}f * imageWidth, ${y2 / referenceHeight}f * imageHeight, paint);\n")
+                }
+                if (stroked) {
+                    code.append("        canvas.drawLine(${x1 / referenceWidth}f * imageWidth, ${y1 / referenceHeight}f * imageHeight, ${x2 / referenceWidth}f * imageWidth, ${y2 / referenceHeight}f * imageHeight, stroke);\n")
+                }
+                appendAndroidFilter(code, name)
+                return code.toString()
+
             default:
                 return "NOT SUPPORTED"
         }

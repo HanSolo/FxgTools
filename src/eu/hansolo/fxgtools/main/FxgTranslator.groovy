@@ -70,7 +70,13 @@ class FxgTranslator {
                 codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.groovy')
                 break
-
+            case Language.ANDROID:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(desktopPath.append('AndroidTest.java').toString(), androidTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
+                }
+                codeToExport.append(androidTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                exportFileName.append('.java')
+                break
             default:
                 fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
                 throw Exception
@@ -414,6 +420,86 @@ class FxgTranslator {
         }
     }
 
+    // ANDROID
+    private String androidTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+           def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
+           String codeToExport = template.text
+
+           StringBuilder imageDeclaration = new StringBuilder()
+           //StringBuilder imageInitialization = new StringBuilder()
+           StringBuilder resizeImagesSquare = new StringBuilder()
+           StringBuilder resizeImages = new StringBuilder()
+           StringBuilder imageCreation = new StringBuilder()
+           StringBuilder drawImage = new StringBuilder()
+
+           layerMap.keySet().each {String layerName ->
+               if (layerSelection.contains(layerName)) {
+                   imageDeclaration.append("    private Bitmap ${layerName}Image;\n")
+                   //imageInitialization.append("        ${layerName}Image = Bitmap.createBitmap(${WIDTH}, ${HEIGHT}, Bitmap.Config.ARGB_8888);\n")
+                   resizeImagesSquare.append("            ${layerName}Image = create_${layerName}_Image(size, size);\n")
+                   resizeImages.append("            ${layerName}Image = create_${layerName}_Image(width, height);\n")
+                   imageCreation.append("        ${layerName}Image = create_${layerName}_Image(imageWidth, imageHeight);\n")
+                   drawImage.append("        canvas.drawBitmap(${layerName}Image, 0, 0, paint);\n")
+               }
+           }
+
+           codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+           codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
+           codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
+           codeToExport = codeToExport.replace("\$imageDeclaration", imageDeclaration.toString())
+           //codeToExport = codeToExport.replace("\$imageInitialization", imageInitialization.toString())
+           codeToExport = codeToExport.replace("\$resizeImagesSquare", resizeImagesSquare.toString())
+           codeToExport = codeToExport.replace("\$resizeImages", resizeImages.toString())
+           codeToExport = codeToExport.replace("\$imageCreation", imageCreation.toString())
+           codeToExport = codeToExport.replace("\$drawImage", drawImage.toString())
+           codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
+
+           return codeToExport
+       }
+
+    private String androidLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    private Bitmap create_${LAYER_NAME}_Image(int imageWidth, int imageHeight) {\n")
+        layerCode.append("        Bitmap image = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);\n")
+        layerCode.append("        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
+        layerCode.append("        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
+        layerCode.append("        Canvas canvas = new Canvas(image);\n")
+        layerCode.append("\n")
+        return layerCode.toString()
+   }
+
+    private String androidLayerMethodStop() {
+       StringBuilder layerCode = new StringBuilder()
+       layerCode.append("        return image;\n")
+       layerCode.append("    }\n\n")
+       return layerCode.toString()
+   }
+
+    private String androidTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/androidtest.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
+
+        return codeToExport
+    }
+
+    private void androidSplitLayer(String layerName, int splitNumber, StringBuilder code) {
+           if (splitNumber.is(1)) {
+               code.append("        addSplit_${layerName}_${splitNumber}(canvas, paint, stroke,  imageWidth, imageHeight);\n\n")
+               code.append("        return image;\n")
+               code.append("    }\n\n")
+               code.append("    private void addSplit_${layerName}_${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
+           } else {
+               code.append("        addSplit_${layerName}_${splitNumber}(canvas, paint, stroke, imageWidth, imageHeight);\n\n")
+               code.append("    }\n\n")
+               code.append("    private void addSplit_${layerName}_${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
+           }
+       }
+
+
 
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -433,6 +519,9 @@ class FxgTranslator {
                     case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
                         break
                     case Language.GROOVYFX: code.append(groovyFxLayerMethodStart(layer))
+                        break
+                    case Language.ANDROID: code.append(androidLayerMethodStart(layer))
+                        break
                 }
 
                 layerMap[layer].each {FxgElement element ->
@@ -462,6 +551,9 @@ class FxgTranslator {
                         }
                         if (LANGUAGE.is(Language.GWT)) {
                             gwtSplitLayer(layer, splitNumber, code)
+                        }
+                        if (LANGUAGE.is(Language.ANDROID)) {
+                            androidSplitLayer(layer, splitNumber, code)
                         }
                     }
                 }
@@ -507,6 +599,13 @@ class FxgTranslator {
                         }
                         code.append(javaFxLayerMethodStop(layer))
                         allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
+                        break
+                    case Language.ANDROID:
+                        if (splitNumber > 0) {
+                            code.append("    }\n\n")
+                        } else {
+                            code.append(androidLayerMethodStop())
+                        }
                         break
                 }
             }
