@@ -99,12 +99,17 @@ $drawImage
         int size = xMax <= yMax ? xMax : yMax;
         int width;
         int height;
-        if (originalWidth <= originalHeight) {
-            width = (int) (yMax / aspectRatio);
-            height = yMax;
+        if (originalWidth < xMax && originalHeight < yMax) {
+            width = originalWidth;
+            height = originalHeight;
         } else {
-            width = xMax;
-            height = (int) (xMax * aspectRatio);
+            if (originalWidth <= originalHeight) {
+                width = (int) (yMax / aspectRatio);
+                height = yMax;
+            } else {
+                width = xMax;
+                height = (int) (xMax * aspectRatio);
+            }
         }
         if (square) {
 $resizeImagesSquare
