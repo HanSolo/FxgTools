@@ -105,13 +105,13 @@ class FxgTranslator {
 
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName)) {
-                imageDeclaration.append("    private BufferedImage ${layerName}Image;\n")
-                imageInitialization.append("        ${layerName}Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
-                imageCreation.append("        if (${layerName}Image != null) {\n")
-                imageCreation.append("            ${layerName}Image.flush();\n")
+                imageDeclaration.append("    private BufferedImage ${layerName.toLowerCase()}_Image;\n")
+                imageInitialization.append("        ${layerName.toLowerCase()}_Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
+                imageCreation.append("        if (${layerName.toLowerCase()}_Image != null) {\n")
+                imageCreation.append("            ${layerName.toLowerCase()}_Image.flush();\n")
                 imageCreation.append("        }\n")
-                imageCreation.append("        ${layerName}Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
-                drawImage.append("        G2.drawImage(${layerName}Image, 0, 0, null);\n")
+                imageCreation.append("        ${layerName.toLowerCase()}_Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
+                drawImage.append("        G2.drawImage(${layerName.toLowerCase()}_Image, 0, 0, null);\n")
             }
         }
 
