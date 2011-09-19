@@ -22,6 +22,10 @@ class FxgTranslator {
 
     // Translate given elements to given language
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
+        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT)
+    }
+
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = (FILE_NAME.contains(".") ? FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) : FILE_NAME).capitalize()
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -42,7 +46,7 @@ class FxgTranslator {
                 if (EXPORT_TO_FILE) {
                     writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
                 }
-                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, TYPE))
                 exportFileName.append('.java')
                 break
             case Language.JAVAFX:
@@ -98,7 +102,7 @@ class FxgTranslator {
     }
 
     // JAVA
-    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
         String codeToExport = template.text
 
@@ -120,6 +124,8 @@ class FxgTranslator {
             }
         }
 
+        codeToExport = codeToExport.replace("\$componentImport", TYPE.IMPORT_STATEMENT);
+        codeToExport = codeToExport.replace("\$componentType", TYPE.CODE)
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
         codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)

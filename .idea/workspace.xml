@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/COMPONENT_TYPE.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -72,25 +72,25 @@
       <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="97" column="9" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0">
+            <state line="104" column="97" selection-start="5267" selection-end="5267" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.groovy" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
+      <file leaf-file-name="java.txt" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="67" selection-start="1027" selection-end="1027" vertical-scroll-proportion="0.0">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="android.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/android.txt">
+      <file leaf-file-name="COMPONENT_TYPE.groovy" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/COMPONENT_TYPE.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="105" column="50" selection-start="3302" selection-end="3302" vertical-scroll-proportion="0.0">
+            <state line="14" column="77" selection-start="358" selection-end="358" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -141,10 +141,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FxgParser.groovy" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FxgParser.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="675" column="74" selection-start="28950" selection-end="28950" vertical-scroll-proportion="0.53125">
+            <state line="675" column="74" selection-start="28950" selection-end="28950" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -179,7 +179,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javashadow.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/JavaShadow.java" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/groovyfx.txt" />
@@ -193,8 +192,9 @@
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgPath.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/android.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" />
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/COMPONENT_TYPE.groovy" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
       </list>
     </option>
   </component>
@@ -247,7 +247,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -298,31 +297,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FxgTools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FxgTools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fxgtools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Favorites" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -573,7 +551,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="969" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -590,7 +568,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39975476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15389332" sideWeight="0.70725995" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15389332" sideWeight="0.70725995" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29274005" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -649,16 +627,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/groovyfxtest.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="40" selection-start="143" selection-end="143" vertical-scroll-proportion="0.0842627" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/Language.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="11" selection-start="269" selection-end="269" vertical-scroll-proportion="0.18959108" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShapeType.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="5" selection-start="190" selection-end="190" vertical-scroll-proportion="0.06174334" />
@@ -679,6 +647,11 @@
         <state line="11" column="6" selection-start="214" selection-end="214" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="67" selection-start="1027" selection-end="1027" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/android.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="105" column="50" selection-start="3302" selection-end="3302" vertical-scroll-proportion="0.0" />
@@ -687,6 +660,11 @@
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="121" column="169" selection-start="8278" selection-end="8278" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="48" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
@@ -704,33 +682,33 @@
         <state line="105" column="33" selection-start="5023" selection-end="5023" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="675" column="74" selection-start="28950" selection-end="28950" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgPath.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="188" column="34" selection-start="12788" selection-end="12788" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/COMPONENT_TYPE.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="67" selection-start="1027" selection-end="1027" vertical-scroll-proportion="0.0">
+        <state line="14" column="77" selection-start="358" selection-end="358" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="9" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0">
+        <state line="104" column="97" selection-start="5267" selection-end="5267" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy">
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="48" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="675" column="74" selection-start="28950" selection-end="28950" vertical-scroll-proportion="0.53125">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>

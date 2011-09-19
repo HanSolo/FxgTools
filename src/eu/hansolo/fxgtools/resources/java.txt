@@ -29,10 +29,10 @@ import java.awt.geom.GeneralPath;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.AttributedString;
-import javax.swing.JComponent;
+$componentImport
 
 
-public class $className extends JComponent {
+public class $className extends $componentType {
     public static final String VALUE_PROPERTY = "Value";
     private double value;
     private PropertyChangeSupport propertySupport;
