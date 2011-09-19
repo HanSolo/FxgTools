@@ -3,7 +3,6 @@ package eu.hansolo.fxgtools.main
 import groovy.xml.Namespace
 import groovy.transform.TupleConstructor
 
-import java.awt.AlphaComposite
 import java.awt.GraphicsConfiguration
 import java.awt.GraphicsEnvironment
 import java.awt.RenderingHints
@@ -61,6 +60,8 @@ class FxgParser {
     private final Namespace FXG = new Namespace("http://ns.adobe.com/fxg/2008")
     private final Pattern E_PATTERN = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
     private final Pattern RR_PATTERN = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern VAR_PATTERN = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
     private final Matcher E_MATCHER = E_PATTERN.matcher("")
     private final Matcher RR_MATCHER = RR_PATTERN.matcher("")
     private String lastNodeType
@@ -158,6 +159,8 @@ class FxgParser {
         String layerName
         layers.eachWithIndex {def layer, int i ->
             layerName = images.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
+            layerName = layerName.replaceAll(VAR_PATTERN, "")
+            layerName = layerName.replaceAll(SPACE_PATTERN, "_")
             images[layerName] = createImage((int)(originalWidth * scaleFactorX), (int) (originalHeight * scaleFactorY), Transparency.TRANSLUCENT)
 
             final Graphics2D G2 = images[layerName].createGraphics()
@@ -216,6 +219,8 @@ class FxgParser {
         int shapeIndex = 0
         layers.eachWithIndex {def layer, int i ->
             layerName = elements.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
+            layerName = layerName.replaceAll(VAR_PATTERN, "")
+            layerName = layerName.replaceAll(SPACE_PATTERN, "_")
             List shapes = []
             shapeIndex = convertLayer(layerName, layer, elements, shapes, shapeIndex)
         }

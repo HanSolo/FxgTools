@@ -93,6 +93,10 @@ class FxgTranslator {
         layerSelection.addAll(selectedLayers)
     }
 
+    private String createVarName(String varName) {
+        "${varName.charAt(0).toLowerCase()}${varName.substring(1)}"
+    }
+
     // JAVA
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
@@ -105,13 +109,14 @@ class FxgTranslator {
 
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName)) {
-                imageDeclaration.append("    private BufferedImage ${layerName.toLowerCase()}_Image;\n")
-                imageInitialization.append("        ${layerName.toLowerCase()}_Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
-                imageCreation.append("        if (${layerName.toLowerCase()}_Image != null) {\n")
-                imageCreation.append("            ${layerName.toLowerCase()}_Image.flush();\n")
+                String varName = createVarName(layerName)
+                imageDeclaration.append("    private BufferedImage ${varName}_Image;\n")
+                imageInitialization.append("        ${varName}_Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
+                imageCreation.append("        if (${varName}_Image != null) {\n")
+                imageCreation.append("            ${varName}_Image.flush();\n")
                 imageCreation.append("        }\n")
-                imageCreation.append("        ${layerName.toLowerCase()}_Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
-                drawImage.append("        G2.drawImage(${layerName.toLowerCase()}_Image, 0, 0, null);\n")
+                imageCreation.append("        ${varName}_Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
+                drawImage.append("        G2.drawImage(${varName}_Image, 0, 0, null);\n")
             }
         }
 
