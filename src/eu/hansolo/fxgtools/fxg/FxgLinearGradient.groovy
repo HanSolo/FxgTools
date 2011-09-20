@@ -19,6 +19,6 @@ class FxgLinearGradient extends FxgFill {
     Color[] colors
 
     LinearGradientPaint getLinearGradient() {
-            return new LinearGradientPaint(start, stop, fractions, colors)
-        }
+        return new LinearGradientPaint(start, stop, fractions, colors)
+    }
 }

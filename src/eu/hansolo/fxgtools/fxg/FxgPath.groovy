@@ -17,14 +17,20 @@ class FxgPath extends FxgShape {
     GeneralPath path
     double alpha
 
-    String translateTo(final Language LANGUAGE) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                if (transformed) {
+                    code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
+                    code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
+                    code.append("        ${name}_Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        G2.setTransform(${name}_Transform);\n")
+                }
                 code.append("        final GeneralPath $name = new GeneralPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setWindingRule(Path2D.WIND_EVEN_ODD);\n" : "        ${name}.setWindingRule(Path2D.WIND_NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
@@ -54,13 +60,16 @@ class FxgPath extends FxgShape {
                     appendJavaStroke(code, name)
                 }
                 appendJavaFilter(code, name)
+                if (transformed) {
+                    code.append("        G2.setTransform(transformBefore${name});\n")
+                }
                 code.append("\n")
                 return code.toString()
 
             case Language.JAVAFX:
                 code.append("        Path $name = new Path();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     PATH_ITERATOR.windingRule
@@ -83,6 +92,16 @@ class FxgPath extends FxgShape {
                     }
                     PATH_ITERATOR.next();
                 }
+                if (transformed) {
+                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
+                    code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
+                    code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
+                    code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
+                }
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
@@ -94,6 +113,9 @@ class FxgPath extends FxgShape {
                 code.append("\n")
                 code.append("        //${name}\n")
                 code.append("        ctx.save();\n")
+                if (transformed) {
+                    code.append("        ctx.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * imageWidth, ${transform.translateY / referenceHeight} * imageHeight);\n")
+                }
                 code.append("        ctx.beginPath();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
                 while (!PATH_ITERATOR.isDone()) {
@@ -117,20 +139,20 @@ class FxgPath extends FxgShape {
                     }
                     PATH_ITERATOR.next();
                 }
-                code.append("        ctx.restore();\n")
                 if (filled) {
-                    appendCanvasFill(code, name, LANGUAGE.is(Language.GWT))
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
                 }
                 appendCanvasFilter(code, name)
+                code.append("        ctx.restore();\n")
                 return code.toString()
 
             case Language.GROOVYFX:
                 code.append("        def $name = new Path()\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.fillRule = FillRule.EVEN_ODD\n" : "        ${name}.fillRule = FillRule.NON_ZERO\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.fillRule = FillRule.EVEN_ODD\n" : "        ${name}.fillRule = FillRule.NON_ZERO\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     PATH_ITERATOR.windingRule
@@ -153,6 +175,16 @@ class FxgPath extends FxgShape {
                     }
                     PATH_ITERATOR.next();
                 }
+                if (transformed) {
+                    code.append("        def ${name}_Transform = new Affine()\n")
+                    code.append("        ${name}_Transform.mxx = ${transform.scaleX}\n")
+                    code.append("        ${name}_Transform.myx = ${transform.shearY}\n")
+                    code.append("        ${name}_Transform.mxy = ${transform.shearX}\n")
+                    code.append("        ${name}_Transform.myy = ${transform.scaleY}\n")
+                    code.append("        ${name}_Transform.tx = ${transform.translateX / referenceWidth} * imageWidth\n")
+                    code.append("        ${name}_Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
+                    code.append("        ${name}.transforms.add(${name}_Transform)\n")
+                }
                 appendGroovyFxFillAndStroke(code, name)
                 appendGroovyFxFilter(code, name)
                 code.append("\n")
@@ -162,7 +194,7 @@ class FxgPath extends FxgShape {
                 appendAndroidFillAndStroke(code, name, type)
                 code.append("        Path $name = new Path();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
-                code.append(PATH_ITERATOR.windingRule.is(Path2D.WIND_EVEN_ODD) ? "        ${name}.setFillType(FillType.EVEN_ODD);\n" : "        ${name}.setFillType(FillType.WINDING);\n")
+                code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setFillType(FillType.EVEN_ODD);\n" : "        ${name}.setFillType(FillType.WINDING);\n")
                 while (!PATH_ITERATOR.isDone()) {
                     final double[] COORDINATES = new double[6];
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {

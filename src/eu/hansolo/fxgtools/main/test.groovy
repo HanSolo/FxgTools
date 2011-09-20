@@ -12,7 +12,7 @@ import eu.hansolo.fxgtools.fxg.Language
 
 
 
-fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/gradients2.fxg'
+fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/Prototype_DesignByKeyboard.fxg'
 fxg = new XmlParser().parse(new File(fxgFile))
 selectedLayer = 'Layer_1'
 keepAspect = true
@@ -25,9 +25,7 @@ Map<String, BufferedImage> allLayerImages = parser.parse(fxgFile, width, height,
 //Map<String, List<FxgElement>> layerMap = parser.getElements(fxg)
 //translator = new FxgTranslator()
 
-//translator.translate("Test.java", layerMap, Language.ANDROID, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight), true)
-String varName = "Background_Layer"
-println "${varName.charAt(0).toLowerCase()}${varName.substring(1)}"
+//translator.translate("Test.java", layerMap, Language.JAVA, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight), true)
 
 
 JFrame frame = new JFrame();

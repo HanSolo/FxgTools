@@ -3,6 +3,7 @@ package eu.hansolo.fxgtools.fxg
 import java.awt.Color
 
 import java.awt.BasicStroke
+import java.awt.geom.AffineTransform
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,10 +21,12 @@ abstract class FxgShape {
     List<FxgFilter> filters = []
     boolean filled
     boolean stroked
+    boolean transformed
     double referenceWidth
     double referenceHeight
+    AffineTransform transform
 
-    abstract String translateTo(final Language LANGUAGE)
+    abstract String translateTo(final Language LANGUAGE, final int SHAPE_INDEX)
 
     protected StringBuilder makeNicer(StringBuilder code) {
         // replace: 0.0 * imageWidth -> 0.0

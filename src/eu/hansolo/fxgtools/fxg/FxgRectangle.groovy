@@ -23,11 +23,17 @@ class FxgRectangle extends FxgShape {
         return new RoundRectangle2D.Double(x, y, width, height, radiusX * 2, radiusY * 2)
     }
 
-    String translateTo(final Language LANGUAGE) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                if (transformed) {
+                    code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
+                    code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
+                    code.append("        ${name}_Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        G2.setTransform(${name}_Transform);\n")
+                }
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
                     code.append("        final Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 } else {
@@ -40,6 +46,9 @@ class FxgRectangle extends FxgShape {
                     appendJavaStroke(code, name)
                 }
                 appendJavaFilter(code, name)
+                if (transformed) {
+                    code.append("        G2.setTransform(transformBefore${name});\n")
+                }
                 code.append("\n")
                 return code.toString()
 
@@ -51,6 +60,16 @@ class FxgRectangle extends FxgShape {
                 if (radiusY > 0) {
                     code.append("        ${name}.setArcHeight(${radiusY * 2 / referenceHeight} * imageHeight);\n")
                 }
+                if (transformed) {
+                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
+                    code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
+                    code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
+                    code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
+                }
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
@@ -61,14 +80,15 @@ class FxgRectangle extends FxgShape {
             case Language.CANVAS:
                 code.append("\n")
                 code.append("        //${name}\n")
+                code.append("        ctx.save();\n")
+                if (transformed) {
+                    code.append("        ctx.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * imageWidth, ${transform.translateY / referenceHeight} * imageHeight);\n")
+                }
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
-                    code.append("        ctx.save();\n")
                     code.append("        ctx.beginPath();\n")
                     code.append("        ctx.rect(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
                     code.append("        ctx.closePath();\n")
-                    code.append("        ctx.restore();\n")
                 } else {
-                    code.append("        ctx.save();\n")
                     code.append("        ctx.beginPath();\n")
                     code.append("        ctx.moveTo(${x / referenceWidth} * imageWidth + ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                     code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth + ${width / referenceWidth} * imageWidth - ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
@@ -80,15 +100,15 @@ class FxgRectangle extends FxgShape {
                     code.append("        ctx.lineTo(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight + ${radiusX / referenceWidth} * imageWidth);\n")
                     code.append("        ctx.quadraticCurveTo(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${x / referenceWidth} * imageWidth + ${radiusX / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                     code.append("        ctx.closePath();\n")
-                    code.append("        ctx.restore();\n")
                 }
                 if (filled) {
-                    appendCanvasFill(code, name, LANGUAGE.is(Language.GWT))
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                 }
                 if (stroked) {
                     appendCanvasStroke(code, name)
                 }
                 appendCanvasFilter(code, name)
+                code.append("        ctx.restore();\n")
                 return code.toString()
 
             case Language.GROOVYFX:
@@ -98,6 +118,16 @@ class FxgRectangle extends FxgShape {
                 }
                 if (radiusY > 0) {
                     code.append("        ${name}.arcHeight = ${radiusY * 2 / referenceHeight} * imageHeight\n")
+                }
+                if (transformed) {
+                    code.append("        def ${name}_Transform = new Affine()\n")
+                    code.append("        ${name}_Transform.mxx = ${transform.scaleX}\n")
+                    code.append("        ${name}_Transform.myx = ${transform.shearY}\n")
+                    code.append("        ${name}_Transform.mxy = ${transform.shearX}\n")
+                    code.append("        ${name}_Transform.myy = ${transform.scaleY}\n")
+                    code.append("        ${name}_Transform.tx = ${transform.translateX / referenceWidth} * imageWidth\n")
+                    code.append("        ${name}_Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
+                    code.append("        ${name}.transforms.add(${name}_Transform)\n")
                 }
                 appendGroovyFxFillAndStroke(code, name)
                 appendGroovyFxFilter(code, name)

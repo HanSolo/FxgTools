@@ -19,6 +19,6 @@ class FxgRadialGradient extends FxgFill {
     Color[] colors
 
     RadialGradientPaint getRadialGradient() {
-            return new RadialGradientPaint(center, radius, fractions, colors)
-        }
+        return new RadialGradientPaint(center, radius, fractions, colors)
+    }
 }

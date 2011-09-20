@@ -126,6 +126,11 @@ class FxgTranslator {
 
         codeToExport = codeToExport.replace("\$componentImport", TYPE.IMPORT_STATEMENT);
         codeToExport = codeToExport.replace("\$componentType", TYPE.CODE)
+        if (TYPE == COMPONENT_TYPE.TOPCOMPONENT) {
+            codeToExport = codeToExport.replace("\$topComponentConstructor", "        setDisplayName(\"\$className\");")
+        } else {
+            codeToExport = codeToExport.replace("\$topComponentConstructor", "")
+        }
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
         codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
@@ -172,7 +177,7 @@ class FxgTranslator {
     }
 
     private void javaSplitLayer(String layerName, int splitNumber, StringBuilder code) {
-        if (splitNumber.is(1)) {
+        if (splitNumber == 1 ) {
             code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("        G2.dispose();\n\n")
             code.append("        return IMAGE;\n")
@@ -227,7 +232,7 @@ class FxgTranslator {
     }
 
     private void javaFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
-        if (splitNumber.is(1)) {
+        if (splitNumber == 1) {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
@@ -292,7 +297,7 @@ class FxgTranslator {
     }
 
     private void gwtSplitLayer(String layerName, int splitNumber, StringBuilder code) {
-        if (splitNumber.is(1)) {
+        if (splitNumber == 1) {
             code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("        ctx.restore();\n\n")
             code.append("    }\n\n")
@@ -403,7 +408,7 @@ class FxgTranslator {
     }
 
     private void groovyFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
-        if (splitNumber.is(1)) {
+        if (splitNumber == 1) {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
@@ -498,7 +503,7 @@ class FxgTranslator {
     }
 
     private void androidSplitLayer(String layerName, int splitNumber, StringBuilder code) {
-           if (splitNumber.is(1)) {
+           if (splitNumber == 1) {
                code.append("        addSplit_${layerName}_${splitNumber}(canvas, paint, stroke,  imageWidth, imageHeight);\n\n")
                code.append("        return image;\n")
                code.append("    }\n\n")
@@ -520,6 +525,7 @@ class FxgTranslator {
         layerMap.keySet().each {String layer->
             if (layerSelection.contains(layer)) {
                 splitNumber = 0
+                int shapeIndex = 0
                 switch(LANGUAGE) {
                     case Language.JAVA: code.append(javaLayerMethodStart(layer))
                         break
@@ -536,10 +542,10 @@ class FxgTranslator {
                 }
 
                 layerMap[layer].each {FxgElement element ->
-                    code.append(element.shape.translateTo(LANGUAGE))
-
-                    if (LANGUAGE.is(Language.JAVAFX) || LANGUAGE.is(LANGUAGE.GROOVYFX)){
-                        allElements.append("${layer}_${element.shape.shapeName}").append(",\n")
+                    shapeIndex += 1
+                    code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
+                    if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
+                        allElements.append("${layer}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
                         for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }
@@ -551,19 +557,19 @@ class FxgTranslator {
                         splitCounter = 0
                         splitNumber += 1
 
-                        if (LANGUAGE.is(Language.JAVA)) {
+                        if (LANGUAGE == Language.JAVA) {
                             javaSplitLayer(layer, splitNumber, code)
                         }
-                        if (LANGUAGE.is(Language.JAVAFX)) {
+                        if (LANGUAGE == Language.JAVAFX) {
                             javaFxSplitLayer(layer, splitNumber, code, allElements)
                         }
-                        if (LANGUAGE.is(Language.GROOVYFX)) {
+                        if (LANGUAGE == Language.GROOVYFX) {
                             groovyFxSplitLayer(layer, splitNumber, code, allElements)
                         }
-                        if (LANGUAGE.is(Language.GWT)) {
+                        if (LANGUAGE == Language.GWT) {
                             gwtSplitLayer(layer, splitNumber, code)
                         }
-                        if (LANGUAGE.is(Language.ANDROID)) {
+                        if (LANGUAGE == Language.ANDROID) {
                             androidSplitLayer(layer, splitNumber, code)
                         }
                     }

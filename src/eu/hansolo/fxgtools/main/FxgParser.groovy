@@ -47,6 +47,10 @@ import eu.hansolo.fxgtools.fxg.FxgNoFill
 import eu.hansolo.fxgtools.fxg.FxgShadow
 import eu.hansolo.fxgtools.fxg.JavaShadow
 import java.awt.Dimension
+import java.awt.geom.AffineTransform
+import java.awt.font.FontRenderContext
+import java.awt.geom.Rectangle2D
+import java.awt.font.GlyphVector
 
 /**
  * User: han.solo at muenster.de
@@ -79,6 +83,8 @@ class FxgParser {
     private double groupOffsetX
     private double groupOffsetY
     private double lastShapeAlpha
+    private AffineTransform oldTransform
+    private AffineTransform groupTransform
     @TupleConstructor()
     private class FxgStroke {
         BasicStroke stroke
@@ -165,6 +171,7 @@ class FxgParser {
 
             final Graphics2D G2 = images[layerName].createGraphics()
             addRenderingHints(G2)
+            oldTransform = G2.getTransform()
             convertLayer(layer, G2)
             G2.dispose()
         }
@@ -183,7 +190,7 @@ class FxgParser {
         final BufferedImage IMAGE = createImage((int) WIDTH, (int) HEIGHT, Transparency.TRANSLUCENT)
         final Graphics2D G2 = IMAGE.createGraphics()
         addRenderingHints(G2)
-
+        oldTransform = G2.getTransform()
         convertLayer(layer, G2)
 
         G2.dispose()
@@ -403,7 +410,22 @@ class FxgParser {
         fxgStroke.color = color
         return fxgStroke
     }
-    
+
+    private AffineTransform parseTransform(final NODE) {
+        AffineTransform transform = new AffineTransform()
+        if (NODE.transform.Transform.matrix.Matrix) {
+            def matrix = NODE.transform.Transform.matrix.Matrix
+            double a = ((matrix.@a[0] ?: 0.0).toDouble()) // scaleX
+            double b = ((matrix.@b[0] ?: 0.0).toDouble()) // shearY
+            double c = ((matrix.@c[0] ?: 0.0).toDouble()) // shearX
+            double d = ((matrix.@d[0] ?: 0.0).toDouble()) // scaleY
+            double tx = ((matrix.@tx[0] ?: 0.0).toDouble() + groupOffsetX) * scaleFactorX // translateX
+            double ty = ((matrix.@ty[0] ?: 0.0).toDouble() + groupOffsetY) * scaleFactorY // translateY
+            transform.setTransform(a, b, c, d, tx, ty)
+         }
+        return transform
+    }
+
     private void parseFilter(final NODE, final Graphics2D G2, final Shape SHAPE, final Paint SHAPE_PAINT) {
         if (NODE.DropShadowFilter) {
             BufferedImage innerShadowImage = null
@@ -458,7 +480,7 @@ class FxgParser {
     }
 
     private Color parseColor(final String COLOR, final int ALPHA) {
-        assert COLOR.size().is(7)
+        assert COLOR.size() == 7
         int red = Integer.valueOf(COLOR[1..2], 16).intValue()
         int green = Integer.valueOf(COLOR[3..4], 16).intValue()
         int blue = Integer.valueOf(COLOR[5..6], 16).intValue()
@@ -569,6 +591,9 @@ class FxgParser {
     }
 
     private void paintShape(final Graphics2D G2, final SHAPE, final NODE) {
+        if (NODE.transform) {
+            G2.setTransform(parseTransform(NODE))
+        }
         if (NODE.fill) {
             G2.setPaint(parseFill(NODE).paint)
             G2.fill(SHAPE)
@@ -595,6 +620,8 @@ class FxgParser {
                     groupOffsetX = (node.@x ?: 0).toDouble()
                     groupOffsetY = (node.@y ?: 0).toDouble()
                     elementName = node.attribute(D.userLabel)
+                    G2.setTransform(oldTransform)
+                    paintShape(G2, null, node)
                     convertLayer(node, G2)
                     break
                 case FXG.Rect:
@@ -602,18 +629,21 @@ class FxgParser {
                     offsetX = shape.bounds2D.x
                     offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
+                    G2.setTransform(oldTransform)
                     break
                 case FXG.Ellipse:
                     shape = parseEllipse(node)
                     offsetX = shape.bounds2D.x
                     offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
+                    G2.setTransform(oldTransform)
                     break
                 case FXG.Line:
                     shape = parseLine(node)
                     offsetX = shape.bounds2D.x
                     offsetY = shape.bounds2D.y
                     paintShape(G2, shape, node)
+                    G2.setTransform(oldTransform)
                     break
                 case FXG.Path:
                     offsetX = groupOffsetX
@@ -632,12 +662,19 @@ class FxgParser {
                         }
                     }
                     paintShape(G2, shape, node)
+                    G2.setTransform(oldTransform)
                     break
                 case FXG.RichText:
                     def fxgText = parseRichText(node)
+                    AffineTransform oldTransform = new AffineTransform()
+                    boolean transformActive = false
+                    if (node.transform) {
+                        oldTransform = G2.getTransform()
+                        G2.setTransform(parseTransform(node))
+                        transformActive = true
+                    }
+
                     final AttributedString STRING = new AttributedString(fxgText.text)
-                    STRING.addAttribute(TextAttribute.FONT, fxgText.fontFamily)
-                    STRING.addAttribute(TextAttribute.SIZE, (float) fxgText.fontSize)
                     STRING.addAttribute(TextAttribute.FONT, fxgText.font)
                     if (fxgText.bold){
                         STRING.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD)
@@ -650,8 +687,13 @@ class FxgParser {
                     }
                     G2.setPaint(fxgText.color)
                     G2.setFont(fxgText.font)
+
                     float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.font, G2.fontRenderContext)).descent
+
                     G2.drawString(STRING.iterator, fxgText.x, offsetY)
+                    if (transformActive) {
+                        G2.setTransform(oldTransform)
+                    }
                     break
             }
         }
@@ -670,6 +712,12 @@ class FxgParser {
                     lastNodeType = "Group"
                     groupOffsetX = (node.@x ?: 0).toDouble()
                     groupOffsetY = (node.@y ?: 0).toDouble()
+                    // Take group transforms into account
+                    if (node.transform) {
+                        groupTransform = parseTransform(node)
+                    } else {
+                        groupTransform = null
+                    }
                     convertLayer(LAYER_NAME, node, elements, shapes, index)
                     break
                 case FXG.Rect:
@@ -734,6 +782,13 @@ class FxgParser {
                     break
             }
             if (fxgShape != null) {
+                if (node.transform) {
+                    fxgShape.transform = parseTransform(node)
+                    fxgShape.transformed = true
+                } else if (groupTransform != null) {
+                    fxgShape.transform = groupTransform
+                    fxgShape.transformed = true
+                }
                 if (node.fill) {
                     FxgFill fxgFill
                     paint = parseFill(node).paint
@@ -765,10 +820,40 @@ class FxgParser {
                 fxgShape.referenceWidth = originalWidth
                 fxgShape.referenceHeight = originalHeight
                 shapes.add(new FxgElement(name: elementName, shape: fxgShape))
+
+                groupTransform = null
             }
         }
         elements.put(LAYER_NAME, shapes)
         return index
+    }
+
+    public Shape rotateTextAroundCenter(final Graphics2D G2, final String TEXT, final int TEXT_POSITION_X, final int TEXT_POSITION_Y, final double ROTATION_ANGLE) {
+        final FontRenderContext RENDER_CONTEXT = new FontRenderContext(null, true, true)
+        final TextLayout TEXT_LAYOUT = new TextLayout(TEXT, G2.getFont(), RENDER_CONTEXT)
+
+        // Check if need to take the fonts descent into account
+        final float DESCENT
+        IS_NUMBER_MATCHER.reset(TEXT)
+        if (IS_NUMBER_MATCHER.matches()) {
+            DESCENT = TEXT_LAYOUT.getDescent()
+        } else {
+            DESCENT = 0
+        }
+        final Rectangle2D TEXT_BOUNDS = new Rectangle2D.Double(TEXT_LAYOUT.getBounds().getMinX(), TEXT_LAYOUT.getBounds().getMinY(), TEXT_LAYOUT.getBounds().getWidth(), TEXT_LAYOUT.getBounds().getHeight() + DESCENT / 2)
+        final GlyphVector GLYPH_VECTOR = G2.getFont().createGlyphVector(RENDER_CONTEXT, TEXT)
+
+        final java.awt.Shape GLYPH = GLYPH_VECTOR.getOutline((int) -TEXT_BOUNDS.getCenterX(), 2 * (int) TEXT_BOUNDS.getCenterY())
+
+        final AffineTransform OLD_TRANSFORM = G2.getTransform()
+        G2.translate(TEXT_POSITION_X, TEXT_POSITION_Y + TEXT_BOUNDS.getHeight())
+
+        G2.rotate(Math.toRadians(ROTATION_ANGLE), -TEXT_BOUNDS.getCenterX() + TEXT_BOUNDS.getWidth() / 2, TEXT_BOUNDS.getCenterY() - (TEXT_BOUNDS.getHeight() + DESCENT) / 2)
+        G2.fill(GLYPH)
+
+        G2.setTransform(OLD_TRANSFORM)
+
+        return GLYPH
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {

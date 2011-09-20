@@ -46,18 +46,22 @@ class FxgRichText extends FxgShape{
         return string
     }
 
-    String translateTo(final Language LANGUAGE) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                if (transformed) {
+                    code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
+                    code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
+                    code.append("        ${name}_Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        G2.setTransform(${name}_Transform);\n")
+                }
                 StringBuilder style = new StringBuilder();
                 style.append(font.bold ? "Font.BOLD" : "Font.PLAIN")
                 style.append(font.italic ? " | Font.ITALIC" : "")
                 code.append("        final Font ${name}_Font = new Font(\"${font.family}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
                 code.append("        final AttributedString ${name} = new AttributedString(\"${text.trim()}\");\n")
-                code.append("        ${name}.addAttribute(TextAttribute.FONT, \"${fontFamily}\");\n")
-                code.append("        ${name}.addAttribute(TextAttribute.SIZE, (float)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
                 code.append("        ${name}.addAttribute(TextAttribute.FONT, ${name}_Font);\n")
                 if (bold){
                     code.append("        ${name}.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);\n")
@@ -72,8 +76,11 @@ class FxgRichText extends FxgShape{
                     appendJavaPaint(code, name, type)
                 }
                 code.append("        G2.setFont(${name}_Font);\n")
-                code.append("        float ${name}_offsetY = (float)(${y / referenceHeight} * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
-                code.append("        G2.drawString(${name}.getIterator(), (float)(${x / referenceWidth} * IMAGE_WIDTH), ${name}_offsetY);\n")
+                code.append("        float ${name}_offsetY = (${y / referenceHeight}f * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
+                code.append("        G2.drawString(${name}.getIterator(), (${x / referenceWidth}f * IMAGE_WIDTH), ${name}_offsetY);\n")
+                if (transformed) {
+                    code.append("        G2.setTransform(transformBefore${name});\n")
+                }
                 code.append("\n")
                 return code.toString()
 
@@ -88,6 +95,16 @@ class FxgRichText extends FxgShape{
                 code.append("        ${name}.setTextOrigin(VPos.BOTTOM);\n")
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
+                if (transformed) {
+                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
+                    code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
+                    code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
+                    code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
+                }
                 appendJavaFxPaint(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
@@ -98,8 +115,12 @@ class FxgRichText extends FxgShape{
             case Language.CANVAS:
                 code.append("\n")
                 code.append("        //${name}\n")
+                code.append("        ctx.save();\n")
+                if (transformed) {
+                    code.append("        ctx.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * imageWidth, ${transform.translateY / referenceHeight} * imageHeight);\n")
+                }
                 if (fill.type != null) {
-                    appendCanvasFill(code, name, LANGUAGE.is(Language.GWT))
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
                     code.append("        ctx.font = '")
                     italic ? code.append("italic "):code.append("")
                     bold ? code.append("bold "):code.append("")
@@ -113,6 +134,7 @@ class FxgRichText extends FxgShape{
                     code.append("        ctx.strokeText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                 }
                 appendCanvasFilter(code, name)
+                code.append("        ctx.restore();\n")
                 return code.toString()
 
             case Language.GROOVYFX:
@@ -126,6 +148,16 @@ class FxgRichText extends FxgShape{
                 code.append("        ${name}.textOrigin = VPos.BOTTOM\n")
                 code.append(lineThrough ? "        ${name}.strikeThrough = true\n" : "")
                 code.append(underline ? "        ${name}.underline = true\n" : "")
+                if (transformed) {
+                    code.append("        def ${name}_Transform = new Affine()\n")
+                    code.append("        ${name}_Transform.mxx = ${transform.scaleX}\n")
+                    code.append("        ${name}_Transform.myx = ${transform.shearY}\n")
+                    code.append("        ${name}_Transform.mxy = ${transform.shearX}\n")
+                    code.append("        ${name}_Transform.myy = ${transform.scaleY}\n")
+                    code.append("        ${name}_Transform.tx = ${transform.translateX / referenceWidth} * imageWidth\n")
+                    code.append("        ${name}_Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
+                    code.append("        ${name}.transforms.add(${name}_Transform)\n")
+                }
                 appendGroovyFxPaint(code, name)
                 appendGroovyFxFilter(code, name)
                 code.append("\n")

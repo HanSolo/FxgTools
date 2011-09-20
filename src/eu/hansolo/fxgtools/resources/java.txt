@@ -19,6 +19,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -74,6 +75,7 @@ $imageDeclaration
         CENTER = new Point2D.Double();
 $imageInitialization
         square = false;
+$topComponentConstructor
     }
 
     public final void init(final int WIDTH, final int HEIGHT) {
@@ -116,7 +118,9 @@ $drawImage
 
     @Override
     public void addPropertyChangeListener(final PropertyChangeListener LISTENER) {
-        propertySupport.addPropertyChangeListener(LISTENER);
+        if (isShowing()) {
+            propertySupport.addPropertyChangeListener(LISTENER);
+        }
     }
 
     @Override
