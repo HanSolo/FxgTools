@@ -16,6 +16,9 @@ class FxgRichText extends FxgShape{
     FxgShapeType type = FxgShapeType.TEXT
     double x
     double y
+    double rotation
+    double scaleX
+    double scaleY
     double descent
     double fontSize
     AttributedString string
@@ -77,7 +80,19 @@ class FxgRichText extends FxgShape{
                 }
                 code.append("        G2.setFont(${name}_Font);\n")
                 code.append("        float ${name}_offsetY = (${y / referenceHeight}f * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
+
+                if (rotation != 0) {
+                    code.append("        TextLayout ${name}_TextLayout = new TextLayout(\"${text.trim()}\", G2.getFont(), G2.getFontRenderContext());\n")
+                    code.append("        Rectangle2D ${name}_TextBounds = ${name}_TextLayout.getBounds();\n")
+                    code.append("        G2.rotate(${Math.toRadians(rotation)}, (${x / referenceWidth}f * IMAGE_WIDTH) + ${name}_TextBounds.getCenterX(), ${name}_offsetY + ${name}_TextBounds.getCenterY());\n")
+                }
+
                 code.append("        G2.drawString(${name}.getIterator(), (${x / referenceWidth}f * IMAGE_WIDTH), ${name}_offsetY);\n")
+
+                if (rotation != 0) {
+                    code.append("        G2.rotate(${Math.toRadians(-rotation)}, (${x / referenceWidth}f * IMAGE_WIDTH) + ${name}_TextBounds.getCenterX(), ${name}_offsetY + ${name}_TextBounds.getCenterY());\n")
+                }
+
                 if (transformed) {
                     code.append("        G2.setTransform(transformBefore${name});\n")
                 }

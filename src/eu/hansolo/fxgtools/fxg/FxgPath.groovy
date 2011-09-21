@@ -15,6 +15,9 @@ import java.awt.geom.Path2D
 class FxgPath extends FxgShape {
     FxgShapeType type = FxgShapeType.PATH
     GeneralPath path
+    double rotation
+    double scaleX
+    double scaleY
     double alpha
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {

@@ -13,6 +13,9 @@ class FxgRectangle extends FxgShape {
     FxgShapeType type = FxgShapeType.RECT
     double x
     double y
+    double rotation
+    double scaleX
+    double scaleY
     double width
     double height
     double radiusX

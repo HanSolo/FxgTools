@@ -12,12 +12,12 @@ import eu.hansolo.fxgtools.fxg.Language
 
 
 
-fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/Prototype_DesignByKeyboard.fxg'
+fxgFile = '/Volumes/Macintosh HD/Users/hansolo/Desktop/InSync/Java Apps/FXG Converter/fxg files/ForGerrit.fxg'
 fxg = new XmlParser().parse(new File(fxgFile))
 selectedLayer = 'Layer_1'
 keepAspect = true
-width = 400
-height = 400
+width = 640
+height = 640
 
 parser = new FxgParser()
 Map<String, BufferedImage> allLayerImages = parser.parse(fxgFile, width, height, keepAspect)

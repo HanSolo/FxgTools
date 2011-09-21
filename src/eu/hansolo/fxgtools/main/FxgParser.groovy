@@ -94,6 +94,9 @@ class FxgParser {
     private class FxgText {
         float x
         float y
+        double rotation
+        double scaleX
+        double scaleY
         float fontSize
         AttributedString string
         Font font
@@ -256,9 +259,9 @@ class FxgParser {
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
         double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        //double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        //double scaleY = (NODE.@scaleY ?: 0).toDouble()
-        //double rotation = (NODE.@rotation ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 0).toDouble()
+        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
         double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
@@ -271,9 +274,9 @@ class FxgParser {
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
         double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        //double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        //double scaleY = (NODE.@scaleY ?: 0).toDouble()
-        //double rotation = (NODE.@rotation ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 0).toDouble()
+        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
 
         return new Ellipse2D.Double(x, y, width, height)
@@ -284,9 +287,9 @@ class FxgParser {
         double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double yTo = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
-        //double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        //double scaleY = (NODE.@scaleY ?: 0).toDouble()
-        //double rotation = (NODE.@rotation ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 0).toDouble()
+        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
 
         return new Line2D.Double(xFrom, yFrom, xTo, yTo)
@@ -296,9 +299,9 @@ class FxgParser {
         String data = NODE.@data ?: ''
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        //double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        //double scaleY = (NODE.@scaleY ?: 0).toDouble()
-        //double rotation = (NODE.@rotation ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 0).toDouble()
+        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         String winding = (NODE.@winding ?: 'evenOdd')
         final GeneralPath PATH = new GeneralPath()
@@ -321,17 +324,35 @@ class FxgParser {
     private FxgText parseRichText(final NODE) {
         FxgText fxgText = new FxgText()
         def fxgLabel = NODE.content[0].p[0]
+        String text
+        double fontSize
+        String colorString
+        if (fxgLabel.span) {
+            // Adobe Illustrator
+            text = NODE.content[0].p[0].span[0].text()
+            fontSize = (NODE.@fontSize ?: 10).toDouble() * scaleFactorX
+            colorString = (NODE.@color ?: '#000000')
+        } else {
+            // Adobe Fireworks
+            text = fxgLabel.text()
+            fontSize = (fxgLabel.@fontSize ?: 10).toDouble() * scaleFactorX
+            colorString = (NODE.content.p.@color[0] ?: '#000000')
+        }
         float x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * (float) scaleFactorX
         float y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * (float) scaleFactorY
+        double rotation = ((NODE.@rotation ?: 0).toDouble())
+        double scaleX = (NODE.@scaleX ?: 0).toDouble()
+        double scaleY = (NODE.@scaleY ?: 0).toDouble()
         String fontFamily = (fxgLabel.@fontFamily ?: 'sans-serif')
         String fontStyle = (NODE.@fontStyle ?: 'normal')
         String textDecoration = (NODE.@textDecoration ?: 'none')
         String lineThrough = (NODE.@lineThrough ?: 'false')
-        double fontSize = (fxgLabel.@fontSize ?: 10).toDouble() * scaleFactorX
-        String colorString = (NODE.content.p.@color[0] ?: '#000000')
         int alpha = (NODE.@alpha ?: 1).toDouble() * 255
         fxgText.x = x
         fxgText.y = (y + (float) fontSize)
+        fxgText.rotation = rotation
+        fxgText.scaleX = scaleX
+        fxgText.scaleY = scaleY
         fxgText.fontSize = fontSize
         fxgText.fontFamily = fontFamily
         fxgText.color = parseColor(colorString, alpha)
@@ -341,7 +362,7 @@ class FxgParser {
         fxgText.lineThrough = lineThrough == 'true'
         int style = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
         fxgText.font = new Font(fontFamily, style, (float) fontSize)
-        fxgText.text = fxgLabel.text()
+        fxgText.text = text
 
         return fxgText
     }
@@ -666,14 +687,6 @@ class FxgParser {
                     break
                 case FXG.RichText:
                     def fxgText = parseRichText(node)
-                    AffineTransform oldTransform = new AffineTransform()
-                    boolean transformActive = false
-                    if (node.transform) {
-                        oldTransform = G2.getTransform()
-                        G2.setTransform(parseTransform(node))
-                        transformActive = true
-                    }
-
                     final AttributedString STRING = new AttributedString(fxgText.text)
                     STRING.addAttribute(TextAttribute.FONT, fxgText.font)
                     if (fxgText.bold){
@@ -685,14 +698,27 @@ class FxgParser {
                     if (fxgText.lineThrough) {
                         STRING.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON)
                     }
-                    G2.setPaint(fxgText.color)
                     G2.setFont(fxgText.font)
-
                     float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.font, G2.fontRenderContext)).descent
+                    G2.setPaint(fxgText.color)
+                    AffineTransform oldTransform = new AffineTransform()
+                    boolean transformActive = false
+                    if (node.transform) {
+                        oldTransform = G2.getTransform()
+                        G2.setTransform(parseTransform(node))
+                        transformActive = true
+                    }
+                    if (fxgText.rotation != 0) {
+                        G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
+                    }
 
                     G2.drawString(STRING.iterator, fxgText.x, offsetY)
+
                     if (transformActive) {
                         G2.setTransform(oldTransform)
+                    }
+                    if (fxgText.rotation != 0) {
+                        G2.rotate(Math.toRadians(-fxgText.rotation), fxgText.x, offsetY)
                     }
                     break
             }
@@ -776,7 +802,7 @@ class FxgParser {
                     elementName += "_${i}"
                     def fxgText = parseRichText(node)
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
-                    fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily, color: fxgText.color)
+                    fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily, color: fxgText.color, rotation: fxgText.rotation)
                     lastNodeType = "RichText"
                     fxgShape.fill = fxgFill
                     break
@@ -826,34 +852,6 @@ class FxgParser {
         }
         elements.put(LAYER_NAME, shapes)
         return index
-    }
-
-    public Shape rotateTextAroundCenter(final Graphics2D G2, final String TEXT, final int TEXT_POSITION_X, final int TEXT_POSITION_Y, final double ROTATION_ANGLE) {
-        final FontRenderContext RENDER_CONTEXT = new FontRenderContext(null, true, true)
-        final TextLayout TEXT_LAYOUT = new TextLayout(TEXT, G2.getFont(), RENDER_CONTEXT)
-
-        // Check if need to take the fonts descent into account
-        final float DESCENT
-        IS_NUMBER_MATCHER.reset(TEXT)
-        if (IS_NUMBER_MATCHER.matches()) {
-            DESCENT = TEXT_LAYOUT.getDescent()
-        } else {
-            DESCENT = 0
-        }
-        final Rectangle2D TEXT_BOUNDS = new Rectangle2D.Double(TEXT_LAYOUT.getBounds().getMinX(), TEXT_LAYOUT.getBounds().getMinY(), TEXT_LAYOUT.getBounds().getWidth(), TEXT_LAYOUT.getBounds().getHeight() + DESCENT / 2)
-        final GlyphVector GLYPH_VECTOR = G2.getFont().createGlyphVector(RENDER_CONTEXT, TEXT)
-
-        final java.awt.Shape GLYPH = GLYPH_VECTOR.getOutline((int) -TEXT_BOUNDS.getCenterX(), 2 * (int) TEXT_BOUNDS.getCenterY())
-
-        final AffineTransform OLD_TRANSFORM = G2.getTransform()
-        G2.translate(TEXT_POSITION_X, TEXT_POSITION_Y + TEXT_BOUNDS.getHeight())
-
-        G2.rotate(Math.toRadians(ROTATION_ANGLE), -TEXT_BOUNDS.getCenterX() + TEXT_BOUNDS.getWidth() / 2, TEXT_BOUNDS.getCenterY() - (TEXT_BOUNDS.getHeight() + DESCENT) / 2)
-        G2.fill(GLYPH)
-
-        G2.setTransform(OLD_TRANSFORM)
-
-        return GLYPH
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {

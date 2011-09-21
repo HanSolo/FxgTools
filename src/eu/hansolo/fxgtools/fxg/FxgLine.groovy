@@ -15,6 +15,9 @@ class FxgLine extends FxgShape {
     double y1
     double x2
     double y2
+    double rotation
+    double scaleX
+    double scaleY
     double alpha
 
     Line2D getLine() {

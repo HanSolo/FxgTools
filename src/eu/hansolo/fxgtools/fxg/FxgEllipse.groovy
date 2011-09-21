@@ -15,6 +15,9 @@ class FxgEllipse extends FxgShape {
     FxgShapeType type = FxgShapeType.ELLIPSE
     double x
     double y
+    double rotation
+    double scaleX
+    double scaleY
     double width
     double height
     double alpha
