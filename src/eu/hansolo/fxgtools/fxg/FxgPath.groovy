@@ -4,6 +4,9 @@ import java.awt.geom.GeneralPath
 import java.awt.geom.PathIterator
 
 import java.awt.geom.Path2D
+import java.awt.Shape
+import java.awt.geom.Ellipse2D
+import java.awt.geom.RoundRectangle2D
 
 /**
  * Created by IntelliJ IDEA.
