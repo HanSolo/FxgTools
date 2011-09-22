@@ -88,24 +88,6 @@ class FxgParser {
         Color color
     }
     @TupleConstructor()
-    private class FxgText {
-        float x
-        float y
-        double rotation
-        double scaleX
-        double scaleY
-        float fontSize
-        AttributedString string
-        Font font
-        String fontFamily
-        boolean underline
-        boolean italic
-        boolean bold
-        boolean lineThrough
-        Color color
-        String text
-    }
-    @TupleConstructor()
     private class FxgPaint {
         Point2D start
         Point2D stop
@@ -172,7 +154,7 @@ class FxgParser {
             final Graphics2D G2 = images[layerName].createGraphics()
             addRenderingHints(G2)
             oldTransform = G2.getTransform()
-            convertLayer(layer, G2)
+            convertLayer(layer, layerName, G2)
             G2.dispose()
         }
         return images
@@ -324,8 +306,12 @@ class FxgParser {
         return new FxgPath(layerName: LAYER_NAME, shapeName: ELEMENT_NAME, path: PATH, rotation: rotation, scaleX: scaleX, scaleY: scaleY)
     }
 
-    private FxgText parseFxgRichText(final NODE) {
-        FxgText fxgText = new FxgText()
+    private FxgRichText parseFxgRichText(final NODE, final String LAYER_NAME, final int INDEX) {
+        String elementName = NODE.attribute(D.userLabel)?:"Font"
+        elementName += "_${INDEX}"
+        FxgRichText fxgText = new FxgRichText()
+        fxgText.layerName = LAYER_NAME
+        fxgText.shapeName = elementName
         def fxgLabel = NODE.content[0].p[0]
         String text
         double fontSize
@@ -366,7 +352,6 @@ class FxgParser {
         int style = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
         fxgText.font = new Font(fontFamily, style, (float) fontSize)
         fxgText.text = text
-
         return fxgText
     }
 
@@ -692,7 +677,7 @@ class FxgParser {
         }
     }
 
-    private void convertLayer(final LAYER, final Graphics2D G2) {
+    private void convertLayer(final LAYER, final String LAYER_NAME, final Graphics2D G2) {
         String elementName
         LAYER.each {Node node->
             Shape shape
@@ -705,7 +690,7 @@ class FxgParser {
                     elementName = node.attribute(D.userLabel)
                     G2.setTransform(oldTransform)
                     paintShape(G2, null, node)
-                    convertLayer(node, G2)
+                    convertLayer(node, LAYER_NAME, G2)
                     break
                 case FXG.Rect:
                     shape = parseRectangle(node)
@@ -748,7 +733,7 @@ class FxgParser {
                     G2.setTransform(oldTransform)
                     break
                 case FXG.RichText:
-                    def fxgText = parseFxgRichText(node)
+                    def fxgText = parseFxgRichText(node, LAYER_NAME, 0)
                     final AttributedString STRING = new AttributedString(fxgText.text)
                     STRING.addAttribute(TextAttribute.FONT, fxgText.font)
                     if (fxgText.bold){
@@ -773,7 +758,7 @@ class FxgParser {
                     G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
                     G2.scale(fxgText.scaleX, fxgText.scaleY)
 
-                    G2.drawString(STRING.iterator, fxgText.x, offsetY)
+                    G2.drawString(STRING.iterator, (float) fxgText.x, offsetY)
 
                     if (transformActive) {
                         G2.setTransform(oldTransform)
@@ -850,9 +835,8 @@ class FxgParser {
                 case FXG.RichText:
                     elementName = node.attribute(D.userLabel)?:"Text"
                     elementName += "_${i}"
-                    def fxgText = parseFxgRichText(node)
-                    FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgText.color.RGB) & 0x00ffffff), alpha: (float)(fxgText.color.alpha / 255), color: fxgText.color)
-                    fxgShape = new FxgRichText(layerName: LAYER_NAME, shapeName: elementName, x: fxgText.x, y: fxgText.y, text: fxgText.text, fill: fxgFill, font: fxgText.font, italic: fxgText.italic, bold: fxgText.bold, underline: fxgText.underline, lineThrough: fxgText.lineThrough, fontFamily: fxgText.fontFamily, color: fxgText.color, rotation: fxgText.rotation)
+                    fxgShape = parseFxgRichText(node, LAYER_NAME, i)
+                    FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 255), color: fxgShape.color)
                     lastNodeType = "RichText"
                     fxgShape.fill = fxgFill
                     break

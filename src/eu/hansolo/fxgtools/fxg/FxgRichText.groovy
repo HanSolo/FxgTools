@@ -145,8 +145,9 @@ class FxgRichText extends FxgShape{
                 if (rotation != 0) {
                     code.append("        ctx.translate(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                     code.append("        ctx.rotate(${Math.toRadians(rotation)});\n")
+                    code.append("        ctx.translate(${-x / referenceWidth} * imageWidth, ${-y / referenceHeight} * imageHeight);\n")
                 }
-                if (scaleX != 1 || scaleY || 1) {
+                if (scaleX != 1 || scaleY != 1) {
                     code.append("        ctx.scale(${scaleX}, ${scaleY});\n")
                 }
                 if (fill.type != null) {
@@ -164,12 +165,8 @@ class FxgRichText extends FxgShape{
                     code.append("        ctx.strokeText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                 }
                 appendCanvasFilter(code, name)
-                if (scaleX != 1 || scaleY || 1) {
+                if (scaleX != 1 || scaleY != 1) {
                     code.append("        ctx.scale(${-scaleX}, ${-scaleY});\n")
-                }
-                if (rotation != 0) {
-                    code.append("        ctx.rotate(${Math.toRadians(-rotation)});\n")
-                    code.append("        ctx.translate(${-x / referenceWidth} * imageWidth, ${-y / referenceHeight} * imageHeight);\n")
                 }
                 code.append("        ctx.restore();\n")
                 return code.toString()
