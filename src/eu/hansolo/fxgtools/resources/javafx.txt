@@ -25,6 +25,8 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate
+import javafx.scene.transform.Scale
 
 public class $className extends Parent {
     public $className(int imageWidth, int imageHeight) {

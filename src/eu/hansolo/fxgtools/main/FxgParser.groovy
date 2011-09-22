@@ -259,8 +259,8 @@ class FxgParser {
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
         double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY = (NODE.@scaleY ?: 1).toDouble()
         double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
@@ -276,8 +276,8 @@ class FxgParser {
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
         double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY = (NODE.@scaleY ?: 1).toDouble()
         double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
 
@@ -291,8 +291,8 @@ class FxgParser {
         double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double yTo = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
-        double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY = (NODE.@scaleY ?: 1).toDouble()
         double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         return new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: xFrom, y1: yFrom, x2: xTo, y2: yTo, alpha: lastShapeAlpha, rotation: rotation, scaleX: scaleX, scaleY: scaleY)
@@ -302,8 +302,8 @@ class FxgParser {
         String data = NODE.@data ?: ''
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY = (NODE.@scaleY ?: 1).toDouble()
         double rotation = (NODE.@rotation ?: 0).toDouble()
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         String winding = (NODE.@winding ?: 'evenOdd')
@@ -344,8 +344,8 @@ class FxgParser {
         float x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * (float) scaleFactorX
         float y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * (float) scaleFactorY
         double rotation = ((NODE.@rotation ?: 0).toDouble())
-        double scaleX = (NODE.@scaleX ?: 0).toDouble()
-        double scaleY = (NODE.@scaleY ?: 0).toDouble()
+        double scaleX = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY = (NODE.@scaleY ?: 1).toDouble()
         String fontFamily = (fxgLabel.@fontFamily ?: 'sans-serif')
         String fontStyle = (NODE.@fontStyle ?: 'normal')
         String textDecoration = (NODE.@textDecoration ?: 'none')
@@ -770,9 +770,8 @@ class FxgParser {
                         G2.setTransform(parseTransform(node))
                         transformActive = true
                     }
-                    if (fxgText.rotation != 0) {
-                        G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
-                    }
+                    G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
+                    G2.scale(fxgText.scaleX, fxgText.scaleY)
 
                     G2.drawString(STRING.iterator, fxgText.x, offsetY)
 

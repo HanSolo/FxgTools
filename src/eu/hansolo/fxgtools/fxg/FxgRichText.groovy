@@ -80,19 +80,23 @@ class FxgRichText extends FxgShape{
                 }
                 code.append("        G2.setFont(${name}_Font);\n")
                 code.append("        float ${name}_offsetY = (${y / referenceHeight}f * IMAGE_HEIGHT) - (new TextLayout(\"$text\", G2.getFont(), G2.getFontRenderContext()).getDescent());\n")
-
                 if (rotation != 0) {
                     code.append("        TextLayout ${name}_TextLayout = new TextLayout(\"${text.trim()}\", G2.getFont(), G2.getFontRenderContext());\n")
                     code.append("        Rectangle2D ${name}_TextBounds = ${name}_TextLayout.getBounds();\n")
                     code.append("        G2.rotate(${Math.toRadians(rotation)}, (${x / referenceWidth}f * IMAGE_WIDTH) + ${name}_TextBounds.getCenterX(), ${name}_offsetY + ${name}_TextBounds.getCenterY());\n")
                 }
+                if (scaleX != 1 || scaleY != 1) {
+                    code.append("        G2.scale(${scaleX}, ${scaleY});\n")
+                }
 
                 code.append("        G2.drawString(${name}.getIterator(), (${x / referenceWidth}f * IMAGE_WIDTH), ${name}_offsetY);\n")
 
+                if (scaleX != 1 || scaleY != 1) {
+                    code.append("        G2.scale(${-scaleX}, ${-scaleY});\n")
+                }
                 if (rotation != 0) {
                     code.append("        G2.rotate(${Math.toRadians(-rotation)}, (${x / referenceWidth}f * IMAGE_WIDTH) + ${name}_TextBounds.getCenterX(), ${name}_offsetY + ${name}_TextBounds.getCenterY());\n")
                 }
-
                 if (transformed) {
                     code.append("        G2.setTransform(transformBefore${name});\n")
                 }
@@ -120,6 +124,10 @@ class FxgRichText extends FxgShape{
                     code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
+
+                code.append("        ${name}.getTransforms().add(new Rotate(${rotation}, ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight));\n")
+                code.append("        ${name}.getTransforms().add(new Scale(${scaleX}, ${scaleY}));\n")
+
                 appendJavaFxPaint(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
@@ -133,6 +141,13 @@ class FxgRichText extends FxgShape{
                 code.append("        ctx.save();\n")
                 if (transformed) {
                     code.append("        ctx.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * imageWidth, ${transform.translateY / referenceHeight} * imageHeight);\n")
+                }
+                if (rotation != 0) {
+                    code.append("        ctx.translate(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
+                    code.append("        ctx.rotate(${Math.toRadians(rotation)});\n")
+                }
+                if (scaleX != 1 || scaleY || 1) {
+                    code.append("        ctx.scale(${scaleX}, ${scaleY}")
                 }
                 if (fill.type != null) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
@@ -149,6 +164,13 @@ class FxgRichText extends FxgShape{
                     code.append("        ctx.strokeText('${text.trim()}', ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight);\n")
                 }
                 appendCanvasFilter(code, name)
+                if (scaleX != 1 || scaleY || 1) {
+                    code.append("        ctx.scale(${-scaleX}, ${-scaleY}")
+                }
+                if (rotation != 0) {
+                    code.append("        ctx.rotate(${Math.toRadians(-rotation)});\n")
+                    code.append("        ctx.translate(${-x / referenceWidth} * imageWidth, ${-y / referenceHeight} * imageHeight);\n")
+                }
                 code.append("        ctx.restore();\n")
                 return code.toString()
 
@@ -173,6 +195,8 @@ class FxgRichText extends FxgShape{
                     code.append("        ${name}_Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
                     code.append("        ${name}.transforms.add(${name}_Transform)\n")
                 }
+                code.append("        ${name}.transforms.add(new Rotate(${rotation}, ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight))\n")
+                code.append("        ${name}.transforms.add(new Scale(${scaleX}, ${scaleY}))\n")
                 appendGroovyFxPaint(code, name)
                 appendGroovyFxFilter(code, name)
                 code.append("\n")
