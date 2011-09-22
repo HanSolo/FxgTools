@@ -147,7 +147,7 @@ class FxgRichText extends FxgShape{
                     code.append("        ctx.rotate(${Math.toRadians(rotation)});\n")
                 }
                 if (scaleX != 1 || scaleY || 1) {
-                    code.append("        ctx.scale(${scaleX}, ${scaleY}")
+                    code.append("        ctx.scale(${scaleX}, ${scaleY});\n")
                 }
                 if (fill.type != null) {
                     appendCanvasFill(code, name, LANGUAGE == Language.GWT)
@@ -165,7 +165,7 @@ class FxgRichText extends FxgShape{
                 }
                 appendCanvasFilter(code, name)
                 if (scaleX != 1 || scaleY || 1) {
-                    code.append("        ctx.scale(${-scaleX}, ${-scaleY}")
+                    code.append("        ctx.scale(${-scaleX}, ${-scaleY});\n")
                 }
                 if (rotation != 0) {
                     code.append("        ctx.rotate(${Math.toRadians(-rotation)});\n")

@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx.txt" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,10 +66,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FxgParser.groovy" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FxgParser.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="694" column="64" selection-start="30215" selection-end="30215" vertical-scroll-proportion="1.3135068">
+            <state line="694" column="64" selection-start="30215" selection-end="30215" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -141,10 +138,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FxgRichText.groovy" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="FxgRichText.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="71" selection-start="1439" selection-end="1439" vertical-scroll-proportion="0.0">
+            <state line="167" column="77" selection-start="9418" selection-end="9418" vertical-scroll-proportion="0.8992443">
               <folding />
             </state>
           </provider>
@@ -243,6 +240,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Favorites" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -339,7 +338,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -368,7 +366,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -384,9 +381,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -601,6 +598,7 @@
       <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32910627" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="J2D Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.7107728" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
@@ -617,7 +615,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39929742" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -699,9 +696,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="35" selection-start="1036" selection-end="1036" vertical-scroll-proportion="0.5898389">
-          <folding />
-        </state>
+        <state line="28" column="35" selection-start="1036" selection-end="1036" vertical-scroll-proportion="0.5898389" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
@@ -739,16 +734,16 @@
         <state line="17" column="17" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy">
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="71" selection-start="1439" selection-end="1439" vertical-scroll-proportion="0.0">
+        <state line="694" column="64" selection-start="30215" selection-end="30215" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="694" column="64" selection-start="30215" selection-end="30215" vertical-scroll-proportion="1.3135068">
+        <state line="167" column="77" selection-start="9418" selection-end="9418" vertical-scroll-proportion="0.8992443">
           <folding />
         </state>
       </provider>
