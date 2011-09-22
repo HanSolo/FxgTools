@@ -173,7 +173,7 @@ class FxgParser {
         final Graphics2D G2 = IMAGE.createGraphics()
         addRenderingHints(G2)
         oldTransform = G2.getTransform()
-        convertLayer(layer, G2)
+        convertLayer(layer, LAYER_NAME, G2)
 
         G2.dispose()
 

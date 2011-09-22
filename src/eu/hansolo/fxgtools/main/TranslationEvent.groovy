@@ -6,7 +6,8 @@ package eu.hansolo.fxgtools.main
  * Time  : 12:31
  */
 class TranslationEvent extends EventObject{
-  private final TranslationState STATE
+    private static final long serialVersionUID = 1L;
+    private final TranslationState STATE
 
   public TranslationEvent(final Object SOURCE, final TranslationState STATE)
   {
