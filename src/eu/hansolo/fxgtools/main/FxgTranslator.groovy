@@ -92,6 +92,10 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
+    String getDrawingCode(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        return code(layerMap, LANGUAGE)
+    }
+
     void setLayerSelection(List<String> selectedLayers) {
         layerSelection.clear()
         layerSelection.addAll(selectedLayers)
@@ -436,6 +440,7 @@ class FxgTranslator {
         }
     }
 
+
     // ANDROID
     private String androidTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
            def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
@@ -514,7 +519,6 @@ class FxgTranslator {
                code.append("    private void addSplit_${layerName}_${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
            }
        }
-
 
 
     // CODE
