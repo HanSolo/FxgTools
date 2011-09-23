@@ -662,18 +662,20 @@ class FxgParser {
         if (NODE.transform) {
             G2.setTransform(parseTransform(NODE))
         }
-        if (NODE.fill) {
-            G2.setPaint(parseFill(NODE).paint)
-            G2.fill(SHAPE)
-        }
-        if (NODE.filters) {
-            parseFilter(NODE.filters, G2, SHAPE, G2.paint)
-        }
-        if (NODE.stroke) {
-            FxgStroke fxgStroke = parseStroke(NODE)
-            G2.setColor(fxgStroke.color)
-            G2.setStroke(fxgStroke.stroke)
-            G2.draw(SHAPE)
+        if (SHAPE != null) {
+            if (NODE.fill) {
+                G2.setPaint(parseFill(NODE).paint)
+                G2.fill(SHAPE)
+            }
+            if (NODE.filters) {
+                parseFilter(NODE.filters, G2, SHAPE, G2.paint)
+            }
+            if (NODE.stroke) {
+                FxgStroke fxgStroke = parseStroke(NODE)
+                G2.setColor(fxgStroke.color)
+                G2.setStroke(fxgStroke.stroke)
+                G2.draw(SHAPE)
+            }
         }
     }
 
