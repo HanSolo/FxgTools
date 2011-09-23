@@ -21,11 +21,11 @@ class FxgTranslator {
     private List<String> layerSelection = []
 
     // Translate given elements to given language
-    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
-        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "")
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT) {
+        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, COMPONENT_TYPE.JCOMPONENT, "")
     }
 
-    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE, final String NAME_PREFIX) {
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final COMPONENT_TYPE TYPE, final String NAME_PREFIX) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = (FILE_NAME.contains(".") ? (FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) + NAME_PREFIX) : (FILE_NAME + NAME_PREFIX)).capitalize()
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -43,16 +43,12 @@ class FxgTranslator {
         // Export the header of the language specific template
         switch(LANGUAGE) {
             case Language.JAVA:
-                if (EXPORT_TO_FILE) {
-                    writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
-                }
+                writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
                 codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, TYPE))
                 exportFileName.append('.java')
                 break
             case Language.JAVAFX:
-                if (EXPORT_TO_FILE) {
-                    writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                }
+                writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.java')
                 break
@@ -61,23 +57,17 @@ class FxgTranslator {
                 exportFileName.append('.java')
                 break
             case Language.CANVAS:
-                if (EXPORT_TO_FILE) {
-                    writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                }
+                writeToFile(exportFileName + '.html', htmlTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append(".js")
                 break
             case Language.GROOVYFX:
-                if (EXPORT_TO_FILE) {
-                    writeToFile(desktopPath.append('FxgTest.groovy').toString(), groovyFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                }
+                writeToFile(desktopPath.append('FxgTest.groovy').toString(), groovyFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.groovy')
                 break
             case Language.ANDROID:
-                if (EXPORT_TO_FILE) {
-                    writeToFile(desktopPath.append('AndroidTest.java').toString(), androidTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                }
+                writeToFile(desktopPath.append('AndroidTest.java').toString(), androidTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 codeToExport.append(androidTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.java')
                 break
@@ -85,15 +75,15 @@ class FxgTranslator {
                 fireTranslationEvent(new TranslationEvent(this, TranslationState.ERROR))
                 throw Exception
         }
-        if (EXPORT_TO_FILE) {
-            writeToFile(exportFileName.toString(), codeToExport.toString())
-        }
+        writeToFile(exportFileName.toString(), codeToExport.toString())
         fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
         return codeToExport.toString()
     }
 
     String getDrawingCode(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        return code(layerMap, LANGUAGE)
+        String result = code(layerMap, LANGUAGE)
+        fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
+        return result
     }
 
     void setLayerSelection(List<String> selectedLayers) {
