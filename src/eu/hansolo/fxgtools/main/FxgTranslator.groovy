@@ -151,7 +151,7 @@ class FxgTranslator {
 
     private String javaLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    private BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
+        layerCode.append("    public BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
         layerCode.append("        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();\n")
         layerCode.append("        if (WIDTH <= 0 || HEIGHT <= 0) {\n")
         layerCode.append("            return GFX_CONF.createCompatibleImage(1, 1, java.awt.Transparency.TRANSLUCENT);\n")
@@ -215,7 +215,7 @@ class FxgTranslator {
     private String javaFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("\n")
-        layerCode.append("    private Group create_${LAYER_NAME}_Layer(int imageWidth, int imageHeight) {\n")
+        layerCode.append("    public Group create_${LAYER_NAME}_Layer(int imageWidth, int imageHeight) {\n")
         layerCode.append("        Group $LAYER_NAME = new Group();\n")
         return layerCode.toString()
     }
@@ -390,7 +390,7 @@ class FxgTranslator {
     private String groovyFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("\n")
-        layerCode.append("    private Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
+        layerCode.append("    public Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
         layerCode.append("        def $LAYER_NAME = new Group()\n")
         return layerCode.toString()
     }
@@ -482,7 +482,7 @@ class FxgTranslator {
 
     private String androidLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    private Bitmap create_${LAYER_NAME}_Image(int imageWidth, int imageHeight) {\n")
+        layerCode.append("    public Bitmap create_${LAYER_NAME}_Image(int imageWidth, int imageHeight) {\n")
         layerCode.append("        Bitmap image = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);\n")
         layerCode.append("        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
         layerCode.append("        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
