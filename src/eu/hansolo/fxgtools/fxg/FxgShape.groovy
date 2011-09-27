@@ -60,7 +60,7 @@ abstract class FxgShape {
                 break
             case FxgFillType.RADIAL_GRADIENT:
                 code.append("        G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
-                code.append("(float)(${fill.radius / referenceWidth} * IMAGE_WIDTH), ")
+                code.append("(${fill.radius / referenceWidth}f * IMAGE_WIDTH), ")
                 appendJavaFractions(code, fill.fractions)
                 appendJavaColors(code, fill.colors)
                 code.append("));\n")
@@ -73,7 +73,7 @@ abstract class FxgShape {
         code.append("        G2.setPaint(")
         appendJavaColor(code, stroke.color)
         code.append(");\n")
-        code.append("        G2.setStroke(new BasicStroke((float)(${stroke.stroke.lineWidth / referenceWidth} * IMAGE_WIDTH), ${stroke.stroke.endCap}, ${stroke.stroke.lineJoin}));\n")
+        code.append("        G2.setStroke(new BasicStroke((${stroke.stroke.lineWidth / referenceWidth}f * IMAGE_WIDTH), ${stroke.stroke.endCap}, ${stroke.stroke.lineJoin}));\n")
         code.append("        G2.draw(${elementName});\n")
     }
 
