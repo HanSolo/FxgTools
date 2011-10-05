@@ -71,7 +71,7 @@ class FxgTranslator {
                 if (EXPORT_TO_FILE) {
                     writeToFile(desktopPath.append('FxgTest.groovy').toString(), groovyFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                 }
-                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                codeToExport.append(groovyFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('.groovy')
                 break
             case Language.ANDROID:
@@ -202,7 +202,20 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx.txt')
         String codeToExport = template.text
 
+        StringBuilder groupDeclaration = new StringBuilder()
+        StringBuilder groupInitialization = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            if (layerSelection.contains(layerName)) {
+                String varName = createVarName(layerName)
+                groupDeclaration.append("    private Group ${varName};\n")
+                groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight);\n")
+            }
+        }
+
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
+        codeToExport = codeToExport.replace("\$groupInitialization", groupInitialization.toString())
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
         if (allLayers.length() > 31) {
             allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
@@ -214,9 +227,11 @@ class FxgTranslator {
 
     private String javaFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
+
         layerCode.append("\n")
         layerCode.append("    public Group create_${LAYER_NAME}_Layer(int imageWidth, int imageHeight) {\n")
-        layerCode.append("        Group $LAYER_NAME = new Group();\n")
+        layerCode.append("        Group ${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)} = new Group();\n")
+
         return layerCode.toString()
     }
 
@@ -238,31 +253,32 @@ class FxgTranslator {
     }
 
     private void javaFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
+        String varName = createVarName(layerName)
         if (splitNumber == 1) {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
-            code.append("        ${layerName}.getChildren().addAll(")
+            code.append("        ${varName}.getChildren().addAll(")
             code.append(allElements.toString())
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight);\n\n")
-            code.append("        return ${layerName};\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight);\n\n")
+            code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${layerName}, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, int imageWidth, int imageHeight) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
-            code.append("        ${layerName}.getChildren().addAll(")
+            code.append("        ${varName}.getChildren().addAll(")
             code.append(allElements.toString())
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${layerName}, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, int imageWidth, int imageHeight) {\n")
         }
     }
 
@@ -377,7 +393,20 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfx.txt')
         String codeToExport = template.text
 
+        StringBuilder groupDeclaration = new StringBuilder()
+        StringBuilder groupInitialization = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            if (layerSelection.contains(layerName)) {
+                String varName = createVarName(layerName)
+                groupDeclaration.append("    private Group ${varName}\n")
+                groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight)\n")
+            }
+        }
+
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
+        codeToExport = codeToExport.replace("\$groupInitialization", groupInitialization.toString())
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
         if (allLayers.length() > 31) {
             allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
@@ -390,14 +419,13 @@ class FxgTranslator {
     private String groovyFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("\n")
-        layerCode.append("    public Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
-        layerCode.append("        def $LAYER_NAME = new Group()\n")
+        layerCode.append("    public final Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
+        layerCode.append("        def ${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)} = new Group()\n")
         return layerCode.toString()
     }
 
     private String groovyFxLayerMethodStop(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("        return $LAYER_NAME")
         layerCode.append("    }\n")
         return layerCode.toString()
     }
@@ -414,6 +442,7 @@ class FxgTranslator {
     }
 
     private void groovyFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
+        String varName = createVarName(layerName)
         if (splitNumber == 1) {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
@@ -423,22 +452,22 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight)\n\n")
-            code.append("        return ${layerName};\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
+            code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${layerName}, imageWidth, imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
-            code.append("        ${layerName}.children.addAll(")
+            code.append("        ${varName}.children.addAll(")
             code.append(allElements.toString())
             code.append(")\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${layerName}, imageWidth, imageHeight)\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${layerName}, imageWidth, imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
         }
     }
 
@@ -523,36 +552,42 @@ class FxgTranslator {
        }
 
 
+    // VAADIN
+
+
+
     // CODE
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
         allLayers.length = 0
         allElements.length = 0
-        layerMap.keySet().each {String layer->
-            if (layerSelection.contains(layer)) {
+        String varName
+        layerMap.keySet().each {String layerName->
+            if (layerSelection.contains(layerName)) {
                 splitNumber = 0
                 int shapeIndex = 0
+                varName = createVarName(layerName)
                 switch(LANGUAGE) {
-                    case Language.JAVA: code.append(javaLayerMethodStart(layer))
+                    case Language.JAVA: code.append(javaLayerMethodStart(layerName))
                         break
-                    case Language.JAVAFX: code.append(javaFxLayerMethodStart(layer))
+                    case Language.JAVAFX: code.append(javaFxLayerMethodStart(layerName))
                         break
-                    case Language.GWT: code.append(gwtLayerMethodStart(layer))
+                    case Language.GWT: code.append(gwtLayerMethodStart(layerName))
                         break
-                    case Language.CANVAS: code.append(canvasLayerMethodStart(layer))
+                    case Language.CANVAS: code.append(canvasLayerMethodStart(layerName))
                         break
-                    case Language.GROOVYFX: code.append(groovyFxLayerMethodStart(layer))
+                    case Language.GROOVYFX: code.append(groovyFxLayerMethodStart(layerName))
                         break
-                    case Language.ANDROID: code.append(androidLayerMethodStart(layer))
+                    case Language.ANDROID: code.append(androidLayerMethodStart(layerName))
                         break
                 }
 
-                layerMap[layer].each {FxgElement element ->
+                layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        allElements.append("${layer}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
-                        for(def n = 0 ; n < layer.length() + 30 ; n+=1) {
+                        allElements.append("${layerName}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
+                        for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }
                     }
@@ -564,19 +599,19 @@ class FxgTranslator {
                         splitNumber += 1
 
                         if (LANGUAGE == Language.JAVA) {
-                            javaSplitLayer(layer, splitNumber, code)
+                            javaSplitLayer(layerName, splitNumber, code)
                         }
                         if (LANGUAGE == Language.JAVAFX) {
-                            javaFxSplitLayer(layer, splitNumber, code, allElements)
+                            javaFxSplitLayer(layerName, splitNumber, code, allElements)
                         }
                         if (LANGUAGE == Language.GROOVYFX) {
-                            groovyFxSplitLayer(layer, splitNumber, code, allElements)
+                            groovyFxSplitLayer(layerName, splitNumber, code, allElements)
                         }
                         if (LANGUAGE == Language.GWT) {
-                            gwtSplitLayer(layer, splitNumber, code)
+                            gwtSplitLayer(layerName, splitNumber, code)
                         }
                         if (LANGUAGE == Language.ANDROID) {
-                            androidSplitLayer(layer, splitNumber, code)
+                            androidSplitLayer(layerName, splitNumber, code)
                         }
                     }
                 }
@@ -590,18 +625,18 @@ class FxgTranslator {
                         }
                         break
                     case Language.JAVAFX:
-                        if (allElements.length() > layer.length() + 32) {
-                            allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                        if (allElements.length() > layerName.length() + 32) {
+                            allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
                         }
-                        code.append("        ${layer}.getChildren().addAll(")
+                        code.append("        ${varName}.getChildren().addAll(")
                         code.append(allElements.toString())
                         code.append(");\n")
                         allElements.length = 0
                         if (splitNumber == 0) {
-                            code.append("        return ${layer};\n")
+                            code.append("        return ${varName};\n")
                         }
-                        code.append(javaFxLayerMethodStop(layer))
-                        allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
+                        code.append(javaFxLayerMethodStop(layerName))
+                        allLayers.append(createVarName(layerName)).append(",\n                             ")
                         break
                     case Language.GWT:
                         code.append(gwtLayerMethodStop())
@@ -610,18 +645,18 @@ class FxgTranslator {
                         code.append(canvasLayerMethodStop())
                         break
                     case Language.GROOVYFX:
-                        if (allElements.length() > layer.length() + 32) {
-                            allElements.replace(allElements.length() - (layer.length() + 32), allElements.length(), "")
+                        if (allElements.length() > layerName.length() + 32) {
+                            allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
                         }
-                        code.append("        ${layer}.children.addAll(")
+                        code.append("        ${varName}.children.addAll(")
                         code.append(allElements.toString())
                         code.append(")\n")
                         allElements.length = 0
                         if (splitNumber == 0) {
-                            code.append("        return ${layer}\n")
+                            code.append("        return ${varName}\n")
                         }
-                        code.append(javaFxLayerMethodStop(layer))
-                        allLayers.append("create_${layer}_Layer(imageWidth, imageHeight)").append(",\n                             ")
+                        code.append(javaFxLayerMethodStop(layerName))
+                        allLayers.append(createVarName(layerName)).append(",\n                             ")
                         break
                     case Language.ANDROID:
                         if (splitNumber > 0) {
