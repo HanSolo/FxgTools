@@ -146,7 +146,7 @@ $drawImage
     }
 
     @Override
-    public java.awt.Dimension getMinimumSize() {
+    public Dimension getMinimumSize() {
         /* Return the default size of the component
          * which will be used by ui-editors for initialization
          */
