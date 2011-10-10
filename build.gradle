@@ -1,0 +1,15 @@
+apply plugin:'groovy'
+apply plugin:'idea'
+
+repositories { mavenCentral() }
+
+dependencies {
+	groovy  'org.codehaus.groovy:groovy-all:1.8.2'
+	
+}
+
+sourceSets.main.groovy { srcDir 'src' }
+
+task wrap(type:Wrapper, description:"create a gradlew") {
+    gradleVersion = '1.0-milestone-4'	
+}
