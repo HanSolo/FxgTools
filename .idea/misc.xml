@@ -6,6 +6,7 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="IdProvider" IDEtalkID="805C4D3DD7208D71D76A806F4B382539" />
   <component name="J2DDesignerComponent">
     <graphics>
       <graphicsVar>graphics</graphicsVar>
@@ -58,5 +59,6 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
 </project>
 

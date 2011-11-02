@@ -70,11 +70,11 @@ $imageDeclaration
 
     public $className() {
         super();
-        addComponentListener(COMPONENT_LISTENER);
         propertySupport = new PropertyChangeSupport(this);
         CENTER = new Point2D.Double();
 $imageInitialization
         square = false;
+        addComponentListener(COMPONENT_LISTENER);
 $topComponentConstructor
     }
 

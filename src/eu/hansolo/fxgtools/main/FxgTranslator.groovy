@@ -121,7 +121,7 @@ class FxgTranslator {
             if (layerSelection.contains(layerName)) {
                 String varName = createVarName(layerName)
                 imageDeclaration.append("    private BufferedImage ${varName}_Image;\n")
-                imageInitialization.append("        ${varName}_Image = createImage(${WIDTH}, ${HEIGHT}, Transparency.TRANSLUCENT);\n")
+                imageInitialization.append("        ${varName}_Image = createImage(INNER_BOUNDS.width, INNER_BOUNDS.height, Transparency.TRANSLUCENT);\n")
                 imageCreation.append("        if (${varName}_Image != null) {\n")
                 imageCreation.append("            ${varName}_Image.flush();\n")
                 imageCreation.append("        }\n")
