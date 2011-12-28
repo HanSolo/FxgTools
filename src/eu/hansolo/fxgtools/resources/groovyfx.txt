@@ -1,3 +1,5 @@
+$packageInfo
+
 import groovyx.javafx.GroovyFX
 import groovyx.javafx.SceneGraphBuilder
 

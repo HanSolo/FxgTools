@@ -56,12 +56,12 @@ class FxgRectangle extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight, ${width / referenceWidth} * imageWidth, ${height / referenceHeight} * imageHeight);\n")
+                code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
                 if (radiusX > 0) {
-                    code.append("        ${name}.setArcWidth(${radiusX * 2 / referenceWidth} * imageWidth);\n")
+                    code.append("        ${name}.setArcWidth(${radiusX * 2 / referenceWidth} * WIDTH);\n")
                 }
                 if (radiusY > 0) {
-                    code.append("        ${name}.setArcHeight(${radiusY * 2 / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}.setArcHeight(${radiusY * 2 / referenceHeight} * HEIGHT);\n")
                 }
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")
@@ -69,8 +69,8 @@ class FxgRectangle extends FxgShape {
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
                     code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)

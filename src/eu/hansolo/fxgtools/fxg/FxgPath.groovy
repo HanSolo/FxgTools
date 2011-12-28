@@ -81,16 +81,16 @@ class FxgPath extends FxgShape {
                     PATH_ITERATOR.windingRule
                     switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
                         case PathIterator.SEG_MOVETO:
-                            code.append("        ${name}.getElements().add(new MoveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight));\n")
+                            code.append("        ${name}.getElements().add(new MoveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_LINETO:
-                            code.append("        ${name}.getElements().add(new LineTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight));\n")
+                            code.append("        ${name}.getElements().add(new LineTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_QUADTO:
-                            code.append("        ${name}.getElements().add(new QuadCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight));\n")
+                            code.append("        ${name}.getElements().add(new QuadCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_CUBICTO:
-                            code.append("        ${name}.getElements().add(new CubicCurveTo(${COORDINATES[0] / referenceWidth} * imageWidth, ${COORDINATES[1] / referenceHeight} * imageHeight, ${COORDINATES[2] / referenceWidth} * imageWidth, ${COORDINATES[3] / referenceHeight} * imageHeight, ${COORDINATES[4] / referenceWidth} * imageWidth, ${COORDINATES[5] / referenceHeight} * imageHeight));\n")
+                            code.append("        ${name}.getElements().add(new CubicCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT, ${COORDINATES[4] / referenceWidth} * WIDTH, ${COORDINATES[5] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_CLOSE:
                             code.append("        ${name}.getElements().add(new ClosePath());\n")
@@ -104,8 +104,8 @@ class FxgPath extends FxgShape {
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
                     code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)

@@ -108,9 +108,9 @@ class FxgRichText extends FxgShape{
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
                 code.append("        Text ${name} = new Text();\n")
                 code.append("        ${name}.setText(\"${text.trim()}\");\n")
-                code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * imageWidth));\n")
-                code.append("        ${name}.setX(${x / referenceWidth} * imageWidth);\n")
-                code.append("        ${name}.setY(${y / referenceHeight} * imageHeight);\n")
+                code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * WIDTH));\n")
+                code.append("        ${name}.setX(${x / referenceWidth} * WIDTH);\n")
+                code.append("        ${name}.setY(${y / referenceHeight} * HEIGHT);\n")
                 code.append("        ${name}.setTextOrigin(VPos.BOTTOM);\n")
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
@@ -120,12 +120,12 @@ class FxgRichText extends FxgShape{
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
                     code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
 
-                code.append("        ${name}.getTransforms().add(new Rotate(${rotation}, ${x / referenceWidth} * imageWidth, ${y / referenceHeight} * imageHeight));\n")
+                code.append("        ${name}.getTransforms().add(new Rotate(${rotation}, ${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT));\n")
                 code.append("        ${name}.getTransforms().add(new Scale(${scaleX}, ${scaleY}));\n")
 
                 appendJavaFxPaint(code, name)

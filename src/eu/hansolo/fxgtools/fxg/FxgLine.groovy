@@ -50,15 +50,15 @@ class FxgLine extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Line ${name} = new Line(${x1 / referenceWidth} * imageWidth, ${y1 / referenceHeight} * imageHeight, ${x2 / referenceWidth} * imageWidth, ${y2 / referenceHeight} * imageHeight);\n")
+                code.append("        Line ${name} = new Line(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT, ${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")
                     code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
                     code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)

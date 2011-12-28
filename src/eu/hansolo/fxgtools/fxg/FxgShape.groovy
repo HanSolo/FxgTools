@@ -152,7 +152,7 @@ abstract class FxgShape {
                     code.append("        ${elementName}.setStrokeLineJoin(StrokeLineJoin.MITER);\n")
                     break
             }
-            code.append("        ${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * imageWidth);\n")
+            code.append("        ${elementName}.setStrokeWidth(${stroke.stroke.lineWidth / referenceWidth} * WIDTH);\n")
             code.append("        ${elementName}.setStroke(")
             appendJavaFxColor(code, stroke.color)
             code.append(");\n")
@@ -169,14 +169,14 @@ abstract class FxgShape {
                 code.append(");\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
-                code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * imageWidth, ${fill.start.y / referenceHeight} * imageHeight, ${fill.stop.x / referenceWidth} * imageWidth, ${fill.stop.y / referenceHeight} * imageHeight, ")
+                code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * WIDTH, ${fill.start.y / referenceHeight} * HEIGHT, ${fill.stop.x / referenceWidth} * WIDTH, ${fill.stop.y / referenceHeight} * HEIGHT, ")
                 code.append("false, CycleMethod.NO_CYCLE, ")
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
-                code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * imageWidth, ${fill.center.y / referenceHeight} * imageHeight, ")
-                code.append("${fill.radius / referenceWidth} * imageWidth, ")
+                code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * WIDTH, ${fill.center.y / referenceHeight} * HEIGHT, ")
+                code.append("${fill.radius / referenceWidth} * WIDTH, ")
                 code.append("false, CycleMethod.NO_CYCLE, ")
                 appendJavaFxStops(code, fill.fractions, fill.colors)
                 code.append("));\n")
@@ -194,7 +194,7 @@ abstract class FxgShape {
                 switch(filter.type) {
                     case FxgFilterType.SHADOW:
                         if (filter.inner) {
-                            code.append("        InnerShadow ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * imageWidth, ${filter.getOffset().x / referenceWidth} * imageWidth, ${filter.getOffset().y / referenceHeight} * imageHeight, ")
+                            code.append("        InnerShadow ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * WIDTH, ${filter.getOffset().x / referenceWidth} * WIDTH, ${filter.getOffset().y / referenceHeight} * HEIGHT, ")
                             code.append("new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
                             code.append(");\n")
                             if (i > 0) {
@@ -204,9 +204,9 @@ abstract class FxgShape {
                             lastFilterName = "${elementName}_InnerShadow${i}"
                         } else {
                             code.append("        DropShadow ${elementName}_DropShadow${i} = new DropShadow();\n")
-                            code.append("        ${elementName}_DropShadow${i}.setOffsetX(${filter.getOffset().x / referenceWidth} * imageWidth);\n")
-                            code.append("        ${elementName}_DropShadow${i}.setOffsetY(${filter.getOffset().y / referenceHeight} * imageHeight);\n")
-                            code.append("        ${elementName}_DropShadow${i}.setRadius(${filter.blurX / referenceWidth} * imageWidth);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setOffsetX(${filter.getOffset().x / referenceWidth} * WIDTH);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setOffsetY(${filter.getOffset().y / referenceHeight} * HEIGHT);\n")
+                            code.append("        ${elementName}_DropShadow${i}.setRadius(${filter.blurX / referenceWidth} * WIDTH);\n")
                             code.append("        ${elementName}_DropShadow${i}.setColor(new Color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
                             if (i > 0) {
                                 code.append("        ${elementName}_DropShadow${i}.inputProperty().set(${lastFilterName});\n")
@@ -221,18 +221,16 @@ abstract class FxgShape {
     }
 
     private void appendJavaFxColor(StringBuilder code, Color color) {
-        code.append("new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255})")
+        code.append("Color.color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255})")
     }
 
     private void appendJavaFxStops(StringBuilder code, float[] fractions, Color[] colors) {
-        code.append("new Stop[]{")
         fill.colors.eachWithIndex { color, i ->
-            code.append("new Stop(${fractions[i]}, new Color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255}))")
+            code.append("new Stop(${fractions[i]}, Color.color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255}))")
             if (i.compareTo(fill.colors.length - 1) != 0) {
                 code.append(", ")
             }
         }
-        code.append("}")
     }
 
     // CANVAS & GWT

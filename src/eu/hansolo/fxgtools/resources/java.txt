@@ -1,3 +1,5 @@
+$packageInfo
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -191,7 +193,7 @@ $drawImage
 
 	@Override
 	public void setBounds(final Rectangle BOUNDS) {
-	    final int SIZE = BOUNDS.width <= BOUNDS.height ? BOUNDS.width : BOUNDS.height;        
+	    final int SIZE = BOUNDS.width <= BOUNDS.height ? BOUNDS.width : BOUNDS.height;
 	    if (square) {
 	        super.setBounds(BOUNDS.x, BOUNDS.y, SIZE, SIZE);
 	    } else {
@@ -231,7 +233,7 @@ $drawImage
 
 	// Image methods
 $creationMethods
-	
+
 	@Override
 	public String toString() {
 		return "$className";

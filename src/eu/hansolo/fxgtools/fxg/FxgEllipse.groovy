@@ -65,9 +65,9 @@ class FxgEllipse extends FxgShape {
 
             case Language.JAVAFX:
                 if (width.compareTo(height) == 0) {
-                    code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${getRadiusX() / referenceWidth} * imageWidth);\n")
+                    code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
                 } else {
-                    code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight);\n")
+                    code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
                 }
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")
@@ -75,8 +75,8 @@ class FxgEllipse extends FxgShape {
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
                     code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * imageWidth);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * imageHeight);\n")
+                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
                     code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)

@@ -1,0 +1,11 @@
+$packageInfo
+
+import com.sun.javafx.scene.control.behavior.BehaviorBase;
+
+
+public class $classNameBehavior extends BehaviorBase<$className> {
+
+    public $classNameBehavior(final $className CONTROL) {
+        super(CONTROL);
+    }
+}

@@ -13,12 +13,13 @@ import javax.swing.event.EventListenerList
  */
 class FxgTranslator {
     private EventListenerList eventListenerList = new EventListenerList()
-    private StringBuilder allLayers = new StringBuilder()
-    private StringBuilder allElements = new StringBuilder()
-    private int splitCounter = 0
-    private int nextSplit = 50000
-    private int splitNumber = 0
-    private List<String> layerSelection = []
+    private StringBuilder allLayers             = new StringBuilder()
+    private StringBuilder allElements           = new StringBuilder()
+    private int splitCounter                    = 0
+    private int nextSplit                       = 50000
+    private int splitNumber                     = 0
+    private String packageInfo                  = "eu.hansolo.fx"
+    private List<String> layerSelection         = []
 
     // Translate given elements to given language
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
@@ -51,10 +52,14 @@ class FxgTranslator {
                 break
             case Language.JAVAFX:
                 if (EXPORT_TO_FILE) {
+                    String path = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator).toString()
                     writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
+                    writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME))
+                    writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
+                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), javaFxCssTemplate(CLASS_NAME))
                 }
-                codeToExport.append(javaFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
-                exportFileName.append('.java')
+                codeToExport.append(javaFxSkinTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                exportFileName.append('Skin.java')
                 break
             case Language.GWT:
                 codeToExport.append(gwtTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
@@ -98,6 +103,10 @@ class FxgTranslator {
         return result
     }
 
+    void setPackageInfo(final String PACKAGE_INFO) {
+        packageInfo = PACKAGE_INFO.isEmpty() ? "eu.hansolo.fx" : PACKAGE_INFO;
+    }
+
     void setLayerSelection(List<String> selectedLayers) {
         layerSelection.clear()
         layerSelection.addAll(selectedLayers)
@@ -137,6 +146,7 @@ class FxgTranslator {
         } else {
             codeToExport = codeToExport.replace("\$topComponentConstructor", "")
         }
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
         codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
@@ -179,6 +189,7 @@ class FxgTranslator {
     private String javaShadowFile() {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javashadow.txt')
         String codeToExport = template.text
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         return codeToExport
     }
 
@@ -198,24 +209,28 @@ class FxgTranslator {
 
 
     // JAVAFX
-    private String javaFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx.txt')
+    private String javaFxSkinTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_skin.txt')
         String codeToExport = template.text
 
         StringBuilder groupDeclaration = new StringBuilder()
         StringBuilder groupInitialization = new StringBuilder()
+        StringBuilder groupUpdate = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName)) {
                 String varName = createVarName(layerName)
-                groupDeclaration.append("    private Group ${varName};\n")
-                groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight);\n")
+                groupDeclaration.append("    private Group        ${varName};\n")
+                groupInitialization.append("        ${varName} = new Group();\n")
+                groupUpdate.append("        draw${layerName}();\n")
             }
         }
 
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
         codeToExport = codeToExport.replace("\$groupInitialization", groupInitialization.toString())
+        codeToExport = codeToExport.replace("\$groupUpdate", groupUpdate.toString())
         codeToExport = codeToExport.replace("\$drawingCode", code(layerMap, LANGUAGE))
         if (allLayers.length() > 31) {
             allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
@@ -225,13 +240,62 @@ class FxgTranslator {
         return codeToExport
     }
 
+    private String javaFxControlTemplate(final String CLASS_NAME) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_control.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$styleClass", CLASS_NAME.toLowerCase())
+
+        return codeToExport
+    }
+
+    private String javaFxCssTemplate(final String CLASS_NAME) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
+        String codeToExport = template.text
+        codeToExport = codeToExport.replace("\$packageInfo", packageInfo)
+        codeToExport = codeToExport.replace("\$styleClass", CLASS_NAME.toLowerCase());
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+
+        return codeToExport
+    }
+
+    private String javaFxBehaviorTemplate(final String CLASS_NAME) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_behavior.txt')
+        String codeToExport = template.text
+
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+
+        return codeToExport
+    }
+
+    private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+            def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafxtest.txt')
+            String codeToExport = template.text
+
+            codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
+            codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+            codeToExport = codeToExport.replace("\$width", WIDTH)
+            codeToExport = codeToExport.replace("\$height", HEIGHT)
+
+            return codeToExport
+        }
+
     private String javaFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-
+        String lowerLayerName = createVarName(LAYER_NAME);
         layerCode.append("\n")
-        layerCode.append("    public Group create_${LAYER_NAME}_Layer(int imageWidth, int imageHeight) {\n")
-        layerCode.append("        Group ${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)} = new Group();\n")
-
+        layerCode.append("    public final void draw${LAYER_NAME}() {\n")
+        layerCode.append("        final double SIZE = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
+        layerCode.append("        final double WIDTH = square ? SIZE : control.getPrefWidth();\n")
+        layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n")
+        layerCode.append("        ${lowerLayerName}.getChildren().clear();\n")
+        layerCode.append("        final Shape IFRAME = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
+        layerCode.append("        IFRAME.setOpacity(0.0);\n")
+        layerCode.append("        IFRAME.setStroke(null);\n")
+        layerCode.append("        ${lowerLayerName}.getChildren().add(IFRAME);\n")
         return layerCode.toString()
     }
 
@@ -239,17 +303,6 @@ class FxgTranslator {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("    }\n")
         return layerCode.toString()
-    }
-
-    private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
-        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafxtest.txt')
-        String codeToExport = template.text
-
-        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
-        codeToExport = codeToExport.replace("\$width", WIDTH)
-        codeToExport = codeToExport.replace("\$height", HEIGHT)
-
-        return codeToExport
     }
 
     private void javaFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
@@ -295,6 +348,7 @@ class FxgTranslator {
             }
         }
 
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$originalWidth", WIDTH)
         codeToExport = codeToExport.replace("\$originalHeight", HEIGHT)
@@ -404,6 +458,7 @@ class FxgTranslator {
             }
         }
 
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
         codeToExport = codeToExport.replace("\$groupInitialization", groupInitialization.toString())
@@ -434,6 +489,7 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfxtest.txt')
         String codeToExport = template.text
 
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$width", WIDTH)
         codeToExport = codeToExport.replace("\$height", HEIGHT)
@@ -474,40 +530,41 @@ class FxgTranslator {
 
     // ANDROID
     private String androidTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-           def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
-           String codeToExport = template.text
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
+        String codeToExport = template.text
 
-           StringBuilder imageDeclaration = new StringBuilder()
-           //StringBuilder imageInitialization = new StringBuilder()
-           StringBuilder resizeImagesSquare = new StringBuilder()
-           StringBuilder resizeImages = new StringBuilder()
-           StringBuilder imageCreation = new StringBuilder()
-           StringBuilder drawImage = new StringBuilder()
+        StringBuilder imageDeclaration = new StringBuilder()
+        //StringBuilder imageInitialization = new StringBuilder()
+        StringBuilder resizeImagesSquare = new StringBuilder()
+        StringBuilder resizeImages = new StringBuilder()
+        StringBuilder imageCreation = new StringBuilder()
+        StringBuilder drawImage = new StringBuilder()
 
-           layerMap.keySet().each {String layerName ->
-               if (layerSelection.contains(layerName)) {
-                   imageDeclaration.append("    private Bitmap ${layerName}Image;\n")
-                   //imageInitialization.append("        ${layerName}Image = Bitmap.createBitmap(${WIDTH}, ${HEIGHT}, Bitmap.Config.ARGB_8888);\n")
-                   resizeImagesSquare.append("            ${layerName}Image = create_${layerName}_Image(size, size);\n")
-                   resizeImages.append("            ${layerName}Image = create_${layerName}_Image(width, height);\n")
-                   imageCreation.append("        ${layerName}Image = create_${layerName}_Image(imageWidth, imageHeight);\n")
-                   drawImage.append("        canvas.drawBitmap(${layerName}Image, 0, 0, paint);\n")
-               }
+        layerMap.keySet().each {String layerName ->
+           if (layerSelection.contains(layerName)) {
+               imageDeclaration.append("    private Bitmap ${layerName}Image;\n")
+               //imageInitialization.append("        ${layerName}Image = Bitmap.createBitmap(${WIDTH}, ${HEIGHT}, Bitmap.Config.ARGB_8888);\n")
+               resizeImagesSquare.append("            ${layerName}Image = create_${layerName}_Image(size, size);\n")
+               resizeImages.append("            ${layerName}Image = create_${layerName}_Image(width, height);\n")
+               imageCreation.append("        ${layerName}Image = create_${layerName}_Image(imageWidth, imageHeight);\n")
+               drawImage.append("        canvas.drawBitmap(${layerName}Image, 0, 0, paint);\n")
            }
+        }
 
-           codeToExport = codeToExport.replace("\$className", CLASS_NAME)
-           codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
-           codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
-           codeToExport = codeToExport.replace("\$imageDeclaration", imageDeclaration.toString())
-           //codeToExport = codeToExport.replace("\$imageInitialization", imageInitialization.toString())
-           codeToExport = codeToExport.replace("\$resizeImagesSquare", resizeImagesSquare.toString())
-           codeToExport = codeToExport.replace("\$resizeImages", resizeImages.toString())
-           codeToExport = codeToExport.replace("\$imageCreation", imageCreation.toString())
-           codeToExport = codeToExport.replace("\$drawImage", drawImage.toString())
-           codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
+        codeToExport = codeToExport.replace("\$className", CLASS_NAME)
+        codeToExport = codeToExport.replace("\$minimumWidth", WIDTH)
+        codeToExport = codeToExport.replace("\$minimumHeight", HEIGHT)
+        codeToExport = codeToExport.replace("\$imageDeclaration", imageDeclaration.toString())
+        //codeToExport = codeToExport.replace("\$imageInitialization", imageInitialization.toString())
+        codeToExport = codeToExport.replace("\$resizeImagesSquare", resizeImagesSquare.toString())
+        codeToExport = codeToExport.replace("\$resizeImages", resizeImages.toString())
+        codeToExport = codeToExport.replace("\$imageCreation", imageCreation.toString())
+        codeToExport = codeToExport.replace("\$drawImage", drawImage.toString())
+        codeToExport = codeToExport.replace("\$creationMethods", code(layerMap, LANGUAGE))
 
-           return codeToExport
-       }
+       return codeToExport
+    }
 
     private String androidLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
@@ -531,6 +588,7 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/androidtest.txt')
         String codeToExport = template.text
 
+        codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$width", WIDTH)
         codeToExport = codeToExport.replace("\$height", HEIGHT)
@@ -586,7 +644,8 @@ class FxgTranslator {
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        allElements.append("${layerName}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
+                        String lowerLayerName = createVarName(layerName)
+                        allElements.append("${lowerLayerName}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
                         for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }
@@ -632,9 +691,6 @@ class FxgTranslator {
                         code.append(allElements.toString())
                         code.append(");\n")
                         allElements.length = 0
-                        if (splitNumber == 0) {
-                            code.append("        return ${varName};\n")
-                        }
                         code.append(javaFxLayerMethodStop(layerName))
                         allLayers.append(createVarName(layerName)).append(",\n                             ")
                         break

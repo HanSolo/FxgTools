@@ -1,3 +1,5 @@
+$packageInfo
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,7 +17,7 @@ import java.awt.image.WritableRaster;
 
 public enum JavaShadow {
     INSTANCE;
-    
+
     public BufferedImage createInnerShadow(final Shape SHAPE, final Paint SHAPE_PAINT, final int DISTANCE, final float ALPHA, final Color SHADOW_COLOR, final int BLUR, final int ANGLE) {
         final float COLOR_CONSTANT = 1f / 255f;
         final float RED = COLOR_CONSTANT * SHADOW_COLOR.getRed();

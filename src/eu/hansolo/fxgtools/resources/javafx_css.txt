@@ -1,0 +1,3 @@
+.$styleClass {
+    -fx-skin: "$packageInfo.$classNameSkin";
+}

@@ -1,0 +1,117 @@
+$packageInfo
+
+import com.sun.javafx.scene.control.skin.SkinBase;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.VPos;
+import javafx.scene.effect.InnerShadow;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.Control;
+import javafx.scene.control.Skin;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.ClosePath;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.FillRule;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+
+
+public class $classNameSkin<C extends Control> extends SkinBase<$className, $classNameBehavior> {
+    private $className control;
+    private boolean      square;
+    private boolean      isDirty;
+    private boolean      initialized;
+$groupDeclaration
+
+    // ******************** Constructors **************************************
+    public $classNameSkin(final $className CONTROL) {
+        super(CONTROL, new $classNameBehavior(CONTROL));
+        control     = CONTROL;
+        square      = control.isSquare();
+        initialized = false;
+        isDirty     = false;
+$groupInitialization
+        init();
+    }
+
+    private void init() {
+        control.prefWidthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+                isDirty = true;
+            }
+        });
+
+        control.prefHeightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+                isDirty = true;
+            }
+        });
+
+        control.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+                isDirty = true;
+            }
+        });
+
+        initialized = true;
+        paint();
+    }
+
+
+    // ******************** Methods *******************************************
+    public final void paint() {
+        if (!initialized) {
+            init();
+        }
+        getChildren().clear();
+$groupUpdate
+        getChildren().addAll($layerList);
+    }
+
+    @Override
+    public void layoutChildren() {
+        if (isDirty) {
+            paint();
+            isDirty = false;
+        }
+        super.layoutChildren();
+    }
+
+    @Override
+    public final $className getSkinnable() {
+        return control;
+    }
+
+    @Override
+    public final void dispose() {
+        control = null;
+    }
+
+
+    // ******************** Drawing related ***********************************    $drawingCode
+}
