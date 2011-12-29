@@ -226,6 +226,8 @@ class FxgTranslator {
             }
         }
 
+        codeToExport = codeToExport.replace("\$width", WIDTH);
+        codeToExport = codeToExport.replace("\$height", HEIGHT);
         codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
