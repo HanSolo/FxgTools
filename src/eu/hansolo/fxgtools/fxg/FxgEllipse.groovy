@@ -40,9 +40,10 @@ class FxgEllipse extends FxgShape {
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName.charAt(0).toLowerCase()}${layerName.substring(1)}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -64,10 +65,11 @@ class FxgEllipse extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (width.compareTo(height) == 0) {
-                    code.append("        Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
+                    code.append("        final Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
                 } else {
-                    code.append("        Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
+                    code.append("        final Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
                 }
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")

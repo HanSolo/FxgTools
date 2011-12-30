@@ -26,9 +26,10 @@ class FxgLine extends FxgShape {
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName.charAt(0).toLowerCase()}${layerName.substring(1)}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -50,7 +51,8 @@ class FxgLine extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Line ${name} = new Line(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT, ${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                code.append("        final Line ${name} = new Line(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT, ${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")
                     code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")

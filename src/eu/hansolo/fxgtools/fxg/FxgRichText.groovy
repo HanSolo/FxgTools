@@ -51,9 +51,10 @@ class FxgRichText extends FxgShape{
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName.charAt(0).toLowerCase()}${layerName.substring(1)}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -104,9 +105,10 @@ class FxgRichText extends FxgShape{
                 return code.toString()
 
             case Language.JAVAFX:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.NORMAL")
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
-                code.append("        Text ${name} = new Text();\n")
+                code.append("        final Text ${name} = new Text();\n")
                 code.append("        ${name}.setText(\"${text.trim()}\");\n")
                 code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * WIDTH));\n")
                 code.append("        ${name}.setX(${x / referenceWidth} * WIDTH);\n")

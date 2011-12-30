@@ -25,9 +25,10 @@ class FxgPath extends FxgShape {
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName.charAt(0).toLowerCase()}${layerName.substring(1)}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -73,7 +74,8 @@ class FxgPath extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Path $name = new Path();\n")
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                code.append("        final Path $name = new Path();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
                 code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
                 while (!PATH_ITERATOR.isDone()) {

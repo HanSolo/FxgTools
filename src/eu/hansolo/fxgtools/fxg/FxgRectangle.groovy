@@ -28,9 +28,10 @@ class FxgRectangle extends FxgShape {
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName.charAt(0).toLowerCase()}${layerName.substring(1)}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
         switch (LANGUAGE) {
             case Language.JAVA:
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -56,7 +57,8 @@ class FxgRectangle extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                code.append("        Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
+                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                code.append("        final Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
                 if (radiusX > 0) {
                     code.append("        ${name}.setArcWidth(${radiusX * 2 / referenceWidth} * WIDTH);\n")
                 }

@@ -3,6 +3,8 @@ package eu.hansolo.fxgtools.main
 import eu.hansolo.fxgtools.fxg.FxgElement
 import eu.hansolo.fxgtools.fxg.Language
 import javax.swing.event.EventListenerList
+import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 /**
  * Created by IntelliJ IDEA.
@@ -112,8 +114,19 @@ class FxgTranslator {
         layerSelection.addAll(selectedLayers)
     }
 
-    private String createVarName(String varName) {
-        "${varName.charAt(0).toLowerCase()}${varName.substring(1)}"
+    private String createVarName(final String VAR_NAME) {
+        String varName
+        if (VAR_NAME.contains("_")) {
+            String[] varNameParts = VAR_NAME.toLowerCase().split("_")
+            StringBuilder output = new StringBuilder()
+            varNameParts.each {output.append(it.capitalize())}
+            varName = output.substring(0,1).toLowerCase() + output.substring(1)
+        } else if (VAR_NAME == VAR_NAME.capitalize()) {
+            varName = "${VAR_NAME.charAt(0).toLowerCase()}${VAR_NAME.substring(1)}"
+        } else {
+            varName = VAR_NAME
+        }
+        return varName
     }
 
     // JAVA
@@ -170,7 +183,7 @@ class FxgTranslator {
         layerCode.append("        final Graphics2D G2 = IMAGE.createGraphics();\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);\n")
-        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);\n")
+        layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);\n")
         layerCode.append("\n")
         layerCode.append("        final int IMAGE_WIDTH = IMAGE.getWidth();\n")
@@ -646,8 +659,7 @@ class FxgTranslator {
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        String lowerLayerName = createVarName(layerName)
-                        allElements.append("${lowerLayerName}_${element.shape.shapeName}_${shapeIndex}").append(",\n")
+                        allElements.append("${layerName}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
                         for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }
