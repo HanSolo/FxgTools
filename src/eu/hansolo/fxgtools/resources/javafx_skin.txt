@@ -57,7 +57,7 @@ $groupInitialization
     }
 
     private void init() {
-        if (control.getPrefWidth() == -1 | control.getPrefHeight() == -1) {
+        if (control.getPrefWidth() < 0 | control.getPrefHeight() < 0) {
             control.setPrefSize($width, $height);
         }
 

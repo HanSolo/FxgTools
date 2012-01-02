@@ -659,7 +659,7 @@ class FxgTranslator {
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        allElements.append("${layerName}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
+                        allElements.append("${layerName.toUpperCase()}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
                         for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }

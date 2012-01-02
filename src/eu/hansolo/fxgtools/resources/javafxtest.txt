@@ -13,13 +13,14 @@ public class FxgTest extends Application {
         // depracted but needed as a workaround for custom components
         // see also http://javafx-jira.kenai.com/browse/RT-16647
         control.impl_processCSS(true);
+        control.setPrefSize($width, $height);
+
         Scene scene = new Scene(control, $width, $height);
         SCENE.fillProperty().set(Color.DARKGREY);
         stage.setTitle("JavaFX Custom Control");
         stage.setScene(scene);
         stage.show();
 
-        control.setPrefSize($width, $height);
         //control.setValue(1.0);
     }
 
