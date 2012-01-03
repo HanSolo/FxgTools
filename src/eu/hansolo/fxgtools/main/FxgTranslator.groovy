@@ -307,10 +307,10 @@ class FxgTranslator {
         layerCode.append("        final double WIDTH = square ? SIZE : control.getPrefWidth();\n")
         layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n")
         layerCode.append("        ${lowerLayerName}.getChildren().clear();\n")
-        layerCode.append("        final Shape IFRAME = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
-        layerCode.append("        IFRAME.setOpacity(0.0);\n")
-        layerCode.append("        IFRAME.setStroke(null);\n")
-        layerCode.append("        ${lowerLayerName}.getChildren().add(IFRAME);\n")
+        layerCode.append("        final Shape IBOUNDS = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
+        layerCode.append("        IBOUNDS.setOpacity(0.0);\n")
+        layerCode.append("        IBOUNDS.setStroke(null);\n")
+        layerCode.append("        ${lowerLayerName}.getChildren().add(IBOUNDS);\n")
         return layerCode.toString()
     }
 

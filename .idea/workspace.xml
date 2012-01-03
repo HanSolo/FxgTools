@@ -19,8 +19,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShadow.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShadow.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,11 +83,77 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FxgShape.groovy" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="FxgShape.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="210" column="60" selection-start="10853" selection-end="10853" vertical-scroll-proportion="0.59006214">
+            <state line="208" column="75" selection-start="10532" selection-end="10532" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="663" column="49" selection-start="35595" selection-end="35595" vertical-scroll-proportion="0.31801242">
+              <folding>
+                <element signature="e#2069#2133#0" expanded="false" />
+                <element signature="e#2403#2522#0" expanded="false" />
+                <element signature="e#2801#3465#0" expanded="false" />
+                <element signature="e#3980#4134#0" expanded="false" />
+                <element signature="e#4409#4594#0" expanded="false" />
+                <element signature="e#4874#5060#0" expanded="false" />
+                <element signature="e#5446#5533#0" expanded="false" />
+                <element signature="e#6317#6596#0" expanded="false" />
+                <element signature="e#6641#6736#0" expanded="false" />
+                <element signature="e#6742#6784#0" expanded="false" />
+                <element signature="e#7430#8245#0" expanded="false" />
+                <element signature="e#7503#8235#0" expanded="false" />
+                <element signature="e#8459#8591#0" expanded="false" />
+                <element signature="e#8597#8689#0" expanded="false" />
+                <element signature="n#!!block;n#javaLayerMethodStart#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+                <element signature="e#11836#12249#0" expanded="false" />
+                <element signature="e#12255#12564#0" expanded="false" />
+                <element signature="e#13120#13508#0" expanded="false" />
+                <element signature="e#13193#13498#0" expanded="false" />
+                <element signature="e#14207#14297#0" expanded="false" />
+                <element signature="n#!!block;n#javaFxLayerMethodStart#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+                <element signature="n#!!block;n#javaFxSplitLayer#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+                <element signature="e#18645#19321#0" expanded="false" />
+                <element signature="e#18711#18838#0" expanded="false" />
+                <element signature="e#19741#19959#0" expanded="false" />
+                <element signature="e#19813#19949#0" expanded="false" />
+                <element signature="e#21179#21521#0" expanded="false" />
+                <element signature="e#21527#21815#0" expanded="false" />
+                <element signature="e#22365#23055#0" expanded="false" />
+                <element signature="e#22438#23045#0" expanded="false" />
+                <element signature="e#25118#25468#0" expanded="false" />
+                <element signature="e#25191#25458#0" expanded="false" />
+                <element signature="e#25954#26044#0" expanded="false" />
+                <element signature="e#27575#28293#0" expanded="false" />
+                <element signature="e#27641#27768#0" expanded="false" />
+                <element signature="e#28299#28958#0" expanded="false" />
+                <element signature="e#28365#28492#0" expanded="false" />
+                <element signature="e#29686#30456#0" expanded="false" />
+                <element signature="e#29758#30446#0" expanded="false" />
+                <element signature="e#33056#33456#0" expanded="false" />
+                <element signature="e#33462#33807#0" expanded="false" />
+                <element signature="e#35759#36744#0" expanded="false" />
+                <element signature="e#35956#36056#0" expanded="false" />
+                <element signature="e#36114#36229#0" expanded="false" />
+                <element signature="e#36289#36406#0" expanded="false" />
+                <element signature="e#36461#36560#0" expanded="false" />
+                <element signature="e#36619#36722#0" expanded="false" />
+                <element signature="e#36884#36964#0" expanded="false" />
+                <element signature="e#36970#37060#0" expanded="false" />
+                <element signature="e#38182#38333#0" expanded="false" />
+                <element signature="e#38605#38703#0" expanded="false" />
+                <element signature="e#39002#39082#0" expanded="false" />
+                <element signature="e#39088#39181#0" expanded="false" />
+                <element signature="e#39425#39476#0" expanded="false" />
+                <element signature="e#40007#40161#0" expanded="false" />
+                <element signature="e#40064#40155#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -123,11 +189,11 @@
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" />
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShadow.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
       </list>
     </option>
   </component>
@@ -192,6 +258,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -220,7 +287,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -268,6 +334,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="fxgtools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fxgtools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -520,7 +608,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="964" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -539,7 +627,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39975476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19240196" sideWeight="0.7112426" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18995099" sideWeight="0.7112426" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28875738" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -646,16 +734,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgLinearGradient.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="6" selection-start="279" selection-end="279" vertical-scroll-proportion="0.10391198" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgEllipse.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="65" selection-start="909" selection-end="965" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgStroke.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="6" selection-start="237" selection-end="237" vertical-scroll-proportion="0.10391198" />
@@ -703,36 +781,101 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShadow.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="114" selection-start="575" selection-end="575" vertical-scroll-proportion="0.33251834">
-          <folding />
-        </state>
+        <state line="23" column="114" selection-start="575" selection-end="575" vertical-scroll-proportion="0.33251834" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgPath.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="20" selection-start="2298" selection-end="2298" vertical-scroll-proportion="0.021118013">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="661" column="69" selection-start="35391" selection-end="35391" vertical-scroll-proportion="0.021118013">
-          <folding />
-        </state>
+        <state line="45" column="20" selection-start="2298" selection-end="2298" vertical-scroll-proportion="0.021118013" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="653" column="57" selection-start="29317" selection-end="29317" vertical-scroll-proportion="0.4804401">
+        <state line="653" column="57" selection-start="29317" selection-end="29317" vertical-scroll-proportion="0.4804401" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgEllipse.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="65" selection-start="909" selection-end="965" vertical-scroll-proportion="-0.3801242">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgElement.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="7" selection-start="211" selection-end="211" vertical-scroll-proportion="0.083129585">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="210" column="60" selection-start="10853" selection-end="10853" vertical-scroll-proportion="0.59006214">
+        <state line="208" column="75" selection-start="10532" selection-end="10532" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="663" column="49" selection-start="35595" selection-end="35595" vertical-scroll-proportion="0.31801242">
+          <folding>
+            <element signature="e#2069#2133#0" expanded="false" />
+            <element signature="e#2403#2522#0" expanded="false" />
+            <element signature="e#2801#3465#0" expanded="false" />
+            <element signature="e#3980#4134#0" expanded="false" />
+            <element signature="e#4409#4594#0" expanded="false" />
+            <element signature="e#4874#5060#0" expanded="false" />
+            <element signature="e#5446#5533#0" expanded="false" />
+            <element signature="e#6317#6596#0" expanded="false" />
+            <element signature="e#6641#6736#0" expanded="false" />
+            <element signature="e#6742#6784#0" expanded="false" />
+            <element signature="e#7430#8245#0" expanded="false" />
+            <element signature="e#7503#8235#0" expanded="false" />
+            <element signature="e#8459#8591#0" expanded="false" />
+            <element signature="e#8597#8689#0" expanded="false" />
+            <element signature="n#!!block;n#javaLayerMethodStart#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+            <element signature="e#11836#12249#0" expanded="false" />
+            <element signature="e#12255#12564#0" expanded="false" />
+            <element signature="e#13120#13508#0" expanded="false" />
+            <element signature="e#13193#13498#0" expanded="false" />
+            <element signature="e#14207#14297#0" expanded="false" />
+            <element signature="n#!!block;n#javaFxLayerMethodStart#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+            <element signature="n#!!block;n#javaFxSplitLayer#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+            <element signature="e#18645#19321#0" expanded="false" />
+            <element signature="e#18711#18838#0" expanded="false" />
+            <element signature="e#19741#19959#0" expanded="false" />
+            <element signature="e#19813#19949#0" expanded="false" />
+            <element signature="e#21179#21521#0" expanded="false" />
+            <element signature="e#21527#21815#0" expanded="false" />
+            <element signature="e#22365#23055#0" expanded="false" />
+            <element signature="e#22438#23045#0" expanded="false" />
+            <element signature="e#25118#25468#0" expanded="false" />
+            <element signature="e#25191#25458#0" expanded="false" />
+            <element signature="e#25954#26044#0" expanded="false" />
+            <element signature="e#27575#28293#0" expanded="false" />
+            <element signature="e#27641#27768#0" expanded="false" />
+            <element signature="e#28299#28958#0" expanded="false" />
+            <element signature="e#28365#28492#0" expanded="false" />
+            <element signature="e#29686#30456#0" expanded="false" />
+            <element signature="e#29758#30446#0" expanded="false" />
+            <element signature="e#33056#33456#0" expanded="false" />
+            <element signature="e#33462#33807#0" expanded="false" />
+            <element signature="e#35759#36744#0" expanded="false" />
+            <element signature="e#35956#36056#0" expanded="false" />
+            <element signature="e#36114#36229#0" expanded="false" />
+            <element signature="e#36289#36406#0" expanded="false" />
+            <element signature="e#36461#36560#0" expanded="false" />
+            <element signature="e#36619#36722#0" expanded="false" />
+            <element signature="e#36884#36964#0" expanded="false" />
+            <element signature="e#36970#37060#0" expanded="false" />
+            <element signature="e#38182#38333#0" expanded="false" />
+            <element signature="e#38605#38703#0" expanded="false" />
+            <element signature="e#39002#39082#0" expanded="false" />
+            <element signature="e#39088#39181#0" expanded="false" />
+            <element signature="e#39425#39476#0" expanded="false" />
+            <element signature="e#40007#40161#0" expanded="false" />
+            <element signature="e#40064#40155#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
