@@ -21,6 +21,6 @@ class FxgShadow extends FxgFilter{
     Color color
 
     Point2D getOffset() {
-        return new Point2D.Double(distance * Math.cos(Math.toRadians(-angle)), distance * Math.sin(Math.toRadians(-angle)))
+        return new Point2D.Double(distance * Math.cos(Math.toRadians(-angle)), distance * Math.sin(Math.toRadians(angle)))
     }
 }

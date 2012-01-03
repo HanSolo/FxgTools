@@ -197,7 +197,7 @@ abstract class FxgShape {
                             code.append("        InnerShadow ${elementName}_InnerShadow${i} = new InnerShadow(${filter.blurX / referenceWidth} * WIDTH, ${filter.getOffset().x / referenceWidth} * WIDTH, ${filter.getOffset().y / referenceHeight} * HEIGHT, ")
                             code.append("Color.color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255})")
                             code.append(");\n")
-                            if (i > 0) {
+                            if (i > 0 || filters.size() == 1) {
                                 code.append("        ${elementName}_InnerShadow${i}.inputProperty().set(${lastFilterName});\n")
                                 code.append("        ${elementName}.setEffect(${elementName}_InnerShadow${i});\n")
                             }
@@ -208,7 +208,7 @@ abstract class FxgShape {
                             code.append("        ${elementName}_DropShadow${i}.setOffsetY(${filter.getOffset().y / referenceHeight} * HEIGHT);\n")
                             code.append("        ${elementName}_DropShadow${i}.setRadius(${filter.blurX / referenceWidth} * WIDTH);\n")
                             code.append("        ${elementName}_DropShadow${i}.setColor(Color.color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
-                            if (i > 0) {
+                            if (i > 0 || filters.size() == 1) {
                                 code.append("        ${elementName}_DropShadow${i}.inputProperty().set(${lastFilterName});\n")
                                 code.append("        ${elementName}.setEffect(${elementName}_DropShadow${i});\n")
                             }
