@@ -27,6 +27,12 @@ Map<String, BufferedImage> allLayerImages = parser.parse(fxgFile, width, height,
 
 //translator.translate("Test.java", layerMap, Language.JAVA, String.valueOf((int)parser.originalWidth), String.valueOf((int)parser.originalHeight), true)
 
+String replaced = "FOREGROUND_1_RR6_0_INDICATOR_FRAME_2_2.setStroke(null);"
+//def matcher = (replaced =~ /_?RR[0-9]+_([0-9]+_)?/)
+//replaced = matcher.replaceAll("_")
+replaced = replaced.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+System.out.println replaced
+
 
 JFrame frame = new JFrame();
 frame.setTitle("Groovy FXG-Parser")

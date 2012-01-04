@@ -5,6 +5,7 @@ import eu.hansolo.fxgtools.fxg.Language
 import javax.swing.event.EventListenerList
 import java.util.regex.Pattern
 import java.util.regex.Matcher
+import groovy.text.SimpleTemplateEngine
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,6 +23,7 @@ class FxgTranslator {
     private int splitNumber                     = 0
     private String packageInfo                  = "eu.hansolo.fx"
     private List<String> layerSelection         = []
+
 
     // Translate given elements to given language
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
@@ -93,7 +95,8 @@ class FxgTranslator {
                 throw Exception
         }
         if (EXPORT_TO_FILE) {
-            writeToFile(exportFileName.toString(), codeToExport.toString())
+            writeToFile(exportFileName.toString(), makeNicer(codeToExport.toString(), LANGUAGE))
+            //writeToFile(exportFileName.toString(), codeToExport.toString())
         }
         fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
         return codeToExport.toString()
@@ -152,7 +155,7 @@ class FxgTranslator {
             }
         }
 
-        codeToExport = codeToExport.replace("\$componentImport", TYPE.IMPORT_STATEMENT);
+        codeToExport = codeToExport.replace("\$componentImport", TYPE.IMPORT_STATEMENT)
         codeToExport = codeToExport.replace("\$componentType", TYPE.CODE)
         if (TYPE == COMPONENT_TYPE.TOPCOMPONENT) {
             codeToExport = codeToExport.replace("\$topComponentConstructor", "        setDisplayName(\"\$className\");")
@@ -239,8 +242,8 @@ class FxgTranslator {
             }
         }
 
-        codeToExport = codeToExport.replace("\$width", WIDTH);
-        codeToExport = codeToExport.replace("\$height", HEIGHT);
+        codeToExport = codeToExport.replace("\$width", WIDTH)
+        codeToExport = codeToExport.replace("\$height", HEIGHT)
         codeToExport = codeToExport.replace("\$packageInfo", "package " + packageInfo + ";")
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
         codeToExport = codeToExport.replace("\$groupDeclaration", groupDeclaration.toString())
@@ -270,7 +273,7 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
         String codeToExport = template.text
         codeToExport = codeToExport.replace("\$packageInfo", packageInfo)
-        codeToExport = codeToExport.replace("\$styleClass", CLASS_NAME.toLowerCase());
+        codeToExport = codeToExport.replace("\$styleClass", CLASS_NAME.toLowerCase())
         codeToExport = codeToExport.replace("\$className", CLASS_NAME)
 
         return codeToExport
@@ -300,7 +303,7 @@ class FxgTranslator {
 
     private String javaFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        String lowerLayerName = createVarName(LAYER_NAME);
+        String lowerLayerName = createVarName(LAYER_NAME)
         layerCode.append("\n")
         layerCode.append("    public final void draw${LAYER_NAME}() {\n")
         layerCode.append("        final double SIZE = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
@@ -585,8 +588,8 @@ class FxgTranslator {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("    public Bitmap create_${LAYER_NAME}_Image(int imageWidth, int imageHeight) {\n")
         layerCode.append("        Bitmap image = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);\n")
-        layerCode.append("        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
-        layerCode.append("        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);\n");
+        layerCode.append("        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);\n")
+        layerCode.append("        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);\n")
         layerCode.append("        Canvas canvas = new Canvas(image);\n")
         layerCode.append("\n")
         return layerCode.toString()
@@ -750,6 +753,62 @@ class FxgTranslator {
 }
 
 
+    // OPTIMIZE OUTPUT
+    private String makeNicer(final String CODE, final Language LANGUAGE) {
+
+        /* TEMPLATE ENGINE
+        String template = '${width}_${height}'
+        def width = 200
+        def height = 1000
+
+        def engine = new SimpleTemplateEngine()
+        def binding = [width:"${width}", height:"${height}"]
+        def result = engine.createTemplate(template).make(binding) // in the template, replace values of one and two from the binding
+
+        println result.toString()
+
+        */
+
+        String replaced = CODE;
+        switch (LANGUAGE) {
+            case Language.JAVA:
+                replaced = replaced.replace("0.0 * IMAGE_WIDTH", "0.0")
+                replaced = replaced.replace("0.0 * IMAGE_HEIGHT", "0.0")
+                replaced = replaced.replace("0.0 * SIZE", "0.0")
+                replaced = replaced.replace("1.0 * IMAGE_HEIGHT", "IMAGE_HEIGHT")
+                replaced = replaced.replace("1.0 * IMAGE_WEIGHT", "IMAGE_WIDTH")
+                replaced = replaced.replace("1.0 * SIZE", "SIZE")
+                replaced = replaced.replace("new Color(0, 0, 0)", "Color.BLACK")
+                replaced = replaced.replace("new Color(0.0f, 0.0f, 0.0f, 1f)", "Color.BLACK")
+                replaced = replaced.replace("new Color(0.0f, 0.0f, 0.0f, 1.0f)", "Color.BLACK")
+                replaced = replaced.replace("new Color(1, 1, 1)", "Color.WHITE")
+                replaced = replaced.replace("new Color(1.0f, 1.0f, 1.0f, 1f)", "Color.WHITE")
+                replaced = replaced.replace("new Color(1.0f, 1.0f, 1.0f, 1.0f)", "Color.WHITE")
+                break
+            case Language.JAVAFX:
+                replaced = replaced.replace("0.0 * WIDTH", "0.0")
+                replaced = replaced.replace("0.0 * HEIGHT", "0.0")
+                replaced = replaced.replace("0.0 * SIZE", "0.0")
+                replaced = replaced.replace("1.0 * HEIGHT", "HEIGHT")
+                replaced = replaced.replace("1.0 * WEIGHT", "WIDTH")
+                replaced = replaced.replace("1.0 * SIZE", "SIZE")
+                replaced = replaced.replace("Color.color(0, 0, 0, 1)", "Color.BLACK")
+                replaced = replaced.replace("Color.color(0.0, 0.0, 0.0, 1)", "Color.BLACK")
+                replaced = replaced.replace("Color.color(0.0, 0.0, 0.0, 1.0)", "Color.BLACK")
+                replaced = replaced.replace("Color.color(1, 1, 1, 1)", "Color.WHITE")
+                replaced = replaced.replace("Color.color(1.0, 1.0, 1.0, 1)", "Color.WHITE")
+                replaced = replaced.replace("Color.color(1.0, 1.0, 1.0, 1.0)", "Color.WHITE")
+                break
+        }
+        replaced = replaced.replace("0.5000000000000001", "0.5")
+        replaced = replaced.replace("_E_", "_")
+        def matcher = (replaced =~ /_?RR[0-9]+_([0-9]+_)?/)
+        replaced = matcher.replaceAll("_")
+
+        return replaced
+    }
+
+
     // TRANSLATION EVENT LISTENER
     public void addTranslationListener(TranslationListener listener) {
         eventListenerList.add(TranslationListener.class, listener)
@@ -762,7 +821,7 @@ class FxgTranslator {
     protected void fireTranslationEvent(TranslationEvent event) {
         Object[] listeners = eventListenerList.getListenerList()
     int max = listeners.length
-    for (int i = 0; i < max; i++) {
+    for (int i = 0 ; i < max ; i++) {
       if ( listeners[i] == TranslationListener.class ) {
         ((TranslationListener) listeners[i + 1]).translationEventPerformed(event)
       }
