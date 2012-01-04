@@ -19,7 +19,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -85,7 +84,7 @@
       <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="756" column="73" selection-start="39710" selection-end="39710" vertical-scroll-proportion="0.49253732">
+            <state line="777" column="79" selection-start="40510" selection-end="40510" vertical-scroll-proportion="0.3652174">
               <folding>
                 <element signature="n#!!block;n#translate#1;n#!!block;n#FxgTranslator#0" expanded="true" />
                 <element signature="e#2110#2174#0" expanded="false" />
@@ -127,7 +126,6 @@
                 <element signature="e#29893#30581#0" expanded="false" />
                 <element signature="e#33189#33589#0" expanded="false" />
                 <element signature="e#33595#33940#0" expanded="false" />
-                <element signature="e#33956#33965#0" expanded="false" />
                 <element signature="e#34235#39386#0" expanded="false" />
                 <element signature="e#34307#39376#0" expanded="false" />
                 <element signature="e#35232#36895#0" expanded="false" />
@@ -148,8 +146,8 @@
                 <element signature="e#39221#39314#0" expanded="false" />
                 <element signature="e#39558#39609#0" expanded="false" />
                 <element signature="e#39721#40127#0" expanded="false" />
-                <element signature="e#43014#43168#0" expanded="false" />
-                <element signature="e#43071#43162#0" expanded="false" />
+                <element signature="e#43012#43166#0" expanded="false" />
+                <element signature="e#43069#43160#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -159,9 +157,7 @@
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
           <provider selected="true" editor-type-id="text-editor">
             <state line="33" column="54" selection-start="1088" selection-end="1148" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#1380#1659#0" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -340,6 +336,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -368,7 +365,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Favorites" />
     </panes>
   </component>
@@ -387,9 +383,9 @@
     <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -599,7 +595,6 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289941" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -614,7 +609,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39975476" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18933824" sideWeight="0.712426" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18872549" sideWeight="0.712426" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28757396" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -622,6 +617,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289941" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32910627" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -787,23 +783,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="75" selection-start="10532" selection-end="10532" vertical-scroll-proportion="0.29565218">
-          <folding />
-        </state>
+        <state line="208" column="75" selection-start="10532" selection-end="10532" vertical-scroll-proportion="0.29565218" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/test.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="54" selection-start="1088" selection-end="1148" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#1380#1659#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="33" column="54" selection-start="1088" selection-end="1148" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="756" column="73" selection-start="39710" selection-end="39710" vertical-scroll-proportion="0.49253732">
+        <state line="777" column="79" selection-start="40510" selection-end="40510" vertical-scroll-proportion="0.3652174">
           <folding>
             <element signature="n#!!block;n#translate#1;n#!!block;n#FxgTranslator#0" expanded="true" />
             <element signature="e#2110#2174#0" expanded="false" />
@@ -845,7 +835,6 @@
             <element signature="e#29893#30581#0" expanded="false" />
             <element signature="e#33189#33589#0" expanded="false" />
             <element signature="e#33595#33940#0" expanded="false" />
-            <element signature="e#33956#33965#0" expanded="false" />
             <element signature="e#34235#39386#0" expanded="false" />
             <element signature="e#34307#39376#0" expanded="false" />
             <element signature="e#35232#36895#0" expanded="false" />
@@ -866,8 +855,8 @@
             <element signature="e#39221#39314#0" expanded="false" />
             <element signature="e#39558#39609#0" expanded="false" />
             <element signature="e#39721#40127#0" expanded="false" />
-            <element signature="e#43014#43168#0" expanded="false" />
-            <element signature="e#43071#43162#0" expanded="false" />
+            <element signature="e#43012#43166#0" expanded="false" />
+            <element signature="e#43069#43160#0" expanded="false" />
           </folding>
         </state>
       </provider>
