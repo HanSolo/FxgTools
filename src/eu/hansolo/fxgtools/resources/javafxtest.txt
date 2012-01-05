@@ -16,7 +16,7 @@ public class FxgTest extends Application {
         control.setPrefSize($width, $height);
 
         Scene scene = new Scene(control, $width, $height);
-        SCENE.fillProperty().set(Color.DARKGREY);
+        scene.fillProperty().set(Color.DARKGREY);
         stage.setTitle("JavaFX Custom Control");
         stage.setScene(scene);
         stage.show();

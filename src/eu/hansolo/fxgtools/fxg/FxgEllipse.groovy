@@ -44,13 +44,21 @@ class FxgEllipse extends FxgShape {
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.replace("_E_", "_")
+                int nameLength = name.length()
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
                     code.append("        ${name}_Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
                     code.append("        G2.setTransform(${name}_Transform);\n")
                 }
-                code.append("        final Ellipse2D $name = new Ellipse2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
+                code.append("        final Ellipse2D $name = new Ellipse2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT,\n")
+                code.append("        ")
+                for (int i = 0 ; i < nameLength ; i++) {
+                    code.append(" ")
+                }
+                code.append("                                        ")
+                code.append("${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 if (filled) {
                     appendJavaPaint(code, name, type)
                 }
@@ -66,10 +74,19 @@ class FxgEllipse extends FxgShape {
 
             case Language.JAVAFX:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.replace("_E_", "_")
+                int nameLength = name.length()
+
                 if (width.compareTo(height) == 0) {
                     code.append("        final Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
                 } else {
-                    code.append("        final Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
+                    code.append("        final Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT,\n")
+                    code.append("                      ")
+                    for (int i = 0 ; i < nameLength ; i++) {
+                        code.append(" ")
+                    }
+                    code.append("               ")
+                    code.append("${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
                 }
                 if (transformed) {
                     code.append("        Affine ${name}_Transform = new Affine();\n")

@@ -32,6 +32,9 @@ class FxgRectangle extends FxgShape {
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                int nameLength = name.length()
+
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -39,9 +42,27 @@ class FxgRectangle extends FxgShape {
                     code.append("        G2.setTransform(${name}_Transform);\n")
                 }
                 if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
-                    code.append("        final Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        final Rectangle2D ${name} = new Rectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT,\n")
+                    code.append("                          ")
+                    for (int i = 0 ; i < nameLength ; i++) {
+                        code.append(" ")
+                    }
+                    code.append("                          ")
+                    code.append("${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT);\n")
                 } else {
-                    code.append("        final RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT, ${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT, ${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        final RoundRectangle2D ${name} = new RoundRectangle2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT,\n")
+                    code.append("        ")
+                    for (int i = 0 ; i < nameLength ; i++) {
+                        code.append(" ")
+                    }
+                    code.append("                                                      ")
+                    code.append("${width / referenceWidth} * IMAGE_WIDTH, ${height / referenceHeight} * IMAGE_HEIGHT,\n")
+                    code.append("        ")
+                    for (int i = 0 ; i < nameLength ; i++) {
+                        code.append(" ")
+                    }
+                    code.append("                                                      ")
+                    code.append("${radiusX * 2 / referenceWidth} * IMAGE_WIDTH, ${radiusY * 2 / referenceHeight} * IMAGE_HEIGHT);\n")
                 }
                 if (filled) {
                     appendJavaPaint(code, name, type)
@@ -58,7 +79,17 @@ class FxgRectangle extends FxgShape {
 
             case Language.JAVAFX:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
-                code.append("        final Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
+                name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                int nameLength = name.length()
+
+                code.append("        final Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT,\n")
+                code.append("                        ")
+                for (int i = 0 ; i < nameLength ; i++) {
+                    code.append(" ")
+                }
+                code.append("                 ")
+                code.append("${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
+
                 if (radiusX > 0) {
                     code.append("        ${name}.setArcWidth(${radiusX * 2 / referenceWidth} * WIDTH);\n")
                 }

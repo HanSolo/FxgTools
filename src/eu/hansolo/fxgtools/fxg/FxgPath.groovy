@@ -29,6 +29,9 @@ class FxgPath extends FxgShape {
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                name = name.replace("_E_", "_")
+                int nameLength = name.length()
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -48,10 +51,28 @@ class FxgPath extends FxgShape {
                             code.append("        ${name}.lineTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_QUADTO:
-                            code.append("        ${name}.quadTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.quadTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT,\n")
+                            code.append("        ")
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("        ")
+                            code.append("${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_CUBICTO:
-                            code.append("        ${name}.curveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT, ${COORDINATES[4] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[5] / referenceHeight} * IMAGE_HEIGHT);\n")
+                            code.append("        ${name}.curveTo(${COORDINATES[0] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[1] / referenceHeight} * IMAGE_HEIGHT,\n")
+                            code.append("        ")
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("         ")
+                            code.append("${COORDINATES[2] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[3] / referenceHeight} * IMAGE_HEIGHT,\n")
+                            code.append("        ")
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("         ")
+                            code.append("${COORDINATES[4] / referenceWidth} * IMAGE_WIDTH, ${COORDINATES[5] / referenceHeight} * IMAGE_HEIGHT);\n")
                             break;
                         case PathIterator.SEG_CLOSE:
                             code.append("        ${name}.closePath();\n")
@@ -75,6 +96,10 @@ class FxgPath extends FxgShape {
 
             case Language.JAVAFX:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                name = name.replace("_E_", "_")
+                int nameLength = name.length()
+
                 code.append("        final Path $name = new Path();\n")
                 final PathIterator PATH_ITERATOR = path.getPathIterator(null);
                 code.append(PATH_ITERATOR.windingRule == Path2D.WIND_EVEN_ODD ? "        ${name}.setFillRule(FillRule.EVEN_ODD);\n" : "        ${name}.setFillRule(FillRule.NON_ZERO);\n")
@@ -89,10 +114,28 @@ class FxgPath extends FxgShape {
                             code.append("        ${name}.getElements().add(new LineTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_QUADTO:
-                            code.append("        ${name}.getElements().add(new QuadCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT));\n")
+                            code.append("        ${name}.getElements().add(new QuadCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT,\n")
+                            code.append("        ");
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("                                   ")
+                            code.append("${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_CUBICTO:
-                            code.append("        ${name}.getElements().add(new CubicCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT, ${COORDINATES[4] / referenceWidth} * WIDTH, ${COORDINATES[5] / referenceHeight} * HEIGHT));\n")
+                            code.append("        ${name}.getElements().add(new CubicCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT,\n")
+                            code.append("        ")
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("                                    ")
+                            code.append("${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT,\n")
+                            code.append("        ")
+                            for (int i = 0 ; i < nameLength ; i++) {
+                                code.append(" ")
+                            }
+                            code.append("                                    ")
+                            code.append("${COORDINATES[4] / referenceWidth} * WIDTH, ${COORDINATES[5] / referenceHeight} * HEIGHT));\n")
                             break;
                         case PathIterator.SEG_CLOSE:
                             code.append("        ${name}.getElements().add(new ClosePath());\n")

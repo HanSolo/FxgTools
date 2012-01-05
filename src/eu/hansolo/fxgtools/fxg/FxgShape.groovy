@@ -42,28 +42,43 @@ abstract class FxgShape {
 
     // JAVA
     protected void appendJavaPaint(StringBuilder code, String elementName, FxgShapeType shapeType) {
+        elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+        elementName = elementName.replace("_E_", "_")
+        int nameLength = elementName.length()
+
+        code.append("        final Paint ${elementName}_FILL = ")
+
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
-                code.append('        G2.setPaint(')
                 appendJavaColor(code, fill.color)
-                code.append(");\n")
+                code.append(";\n")
+                code.append("        G2.setPaint(${elementName}_FILL);\n")
                 if (shapeType != FxgShapeType.TEXT) {
                     code.append("        G2.fill(${elementName});\n")
                 }
                 break
             case FxgFillType.LINEAR_GRADIENT:
-                code.append("        G2.setPaint(new LinearGradientPaint(new Point2D.Double(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT), new Point2D.Double(${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT), ")
-                appendJavaFractions(code, fill.fractions)
-                appendJavaColors(code, fill.colors)
-                code.append("));\n")
+                code.append("new LinearGradientPaint(new Point2D.Double(${fill.start.x / referenceWidth} * IMAGE_WIDTH, ${fill.start.y / referenceHeight} * IMAGE_HEIGHT),\n")
+                intendCode(code, 8, nameLength, 44)
+                code.append("new Point2D.Double(${fill.stop.x / referenceWidth} * IMAGE_WIDTH, ${fill.stop.y / referenceHeight} * IMAGE_HEIGHT),\n")
+                intendCode(code, 8, nameLength, 44)
+                appendJavaFractions(code, fill.fractions, (52 + nameLength))
+                intendCode(code, 8, nameLength, 44)
+                appendJavaColors(code, fill.colors, (52 + nameLength))
+                code.append(");\n")
+                code.append("        G2.setPaint(${elementName}_FILL);\n")
                 code.append("        G2.fill(${elementName});\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
-                code.append("        G2.setPaint(new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT), ")
-                code.append("(${fill.radius / referenceWidth}f * IMAGE_WIDTH), ")
-                appendJavaFractions(code, fill.fractions)
-                appendJavaColors(code, fill.colors)
-                code.append("));\n")
+                code.append("new RadialGradientPaint(new Point2D.Double(${fill.center.x / referenceWidth} * IMAGE_WIDTH, ${fill.center.y / referenceHeight} * IMAGE_HEIGHT),\n")
+                intendCode(code, 8, nameLength, 44)
+                code.append("${fill.radius / referenceWidth}f * IMAGE_WIDTH,\n")
+                intendCode(code, 8, nameLength, 44)
+                appendJavaFractions(code, fill.fractions, (52 + nameLength))
+                intendCode(code, 8, nameLength, 44)
+                appendJavaColors(code, fill.colors, (52 + nameLength))
+                code.append(");\n")
+                code.append("        G2.setPaint(${elementName}_FILL);\n")
                 code.append("        G2.fill(${elementName});\n")
                 break
         }
@@ -93,24 +108,44 @@ abstract class FxgShape {
         }
     }
 
-    private void appendJavaFractions(StringBuilder code, float[] fractions) {
-        code.append("new float[]{")
+    private void appendJavaFractions(StringBuilder code, float[] fractions, int offset) {
+        code.append("new float[]{\n")
+        for (int j = 0 ; j < (offset + 4) ; j++) {
+            code.append(" ")
+        }
         fill.fractions.eachWithIndex { fraction, i ->
             code.append(fraction).append("f")
             if (i.compareTo(fill.fractions.length - 1) != 0) {
-                code.append(", ")
+                code.append(",\n")
+                for (int j = 0 ; j < (offset + 4) ; j++) {
+                    code.append(" ")
+                }
             }
         }
-        code.append("}")
+        code.append("\n")
+        for (int j = 0 ; j < (offset) ; j++) {
+            code.append(" ")
+        }
+        code.append("},\n")
     }
 
-    private void appendJavaColors(StringBuilder code, Color[] colors) {
-        code.append(", new Color[]{")
+    private void appendJavaColors(StringBuilder code, Color[] colors, int offset) {
+        code.append("new Color[]{\n")
+        for (int j = 0 ; j < (offset + 4) ; j++) {
+            code.append(" ")
+        }
         fill.colors.eachWithIndex { color, i ->
             code.append("new Color(${color.red / 255}f, ${color.green / 255}f, ${color.blue / 255}f, ${color.alpha / 255}f)")
             if (i.compareTo(fill.colors.length - 1) != 0) {
-                code.append(", ")
+                code.append(",\n")
+                for (int j = 0 ; j < (offset + 4) ; j++) {
+                    code.append(" ")
+                }
             }
+        }
+        code.append("\n")
+        for (int j = 0 ; j < (offset) ; j++) {
+            code.append(" ")
         }
         code.append("}")
     }
@@ -162,29 +197,44 @@ abstract class FxgShape {
     }
 
     protected void appendJavaFxPaint(StringBuilder code, String elementName) {
+        elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+        elementName = elementName.replace("_E_", "_")
+        int nameLength = elementName.length()
+
+        code.append("        final Paint ${elementName}_FILL = ")
+
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
-                code.append("        ${elementName}.setFill(")
                 appendJavaFxColor(code, fill.color)
-                code.append(");\n")
+                code.append(";\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
-                code.append("        ${elementName}.setFill(new LinearGradient(${fill.start.x / referenceWidth} * WIDTH, ${fill.start.y / referenceHeight} * HEIGHT, ${fill.stop.x / referenceWidth} * WIDTH, ${fill.stop.y / referenceHeight} * HEIGHT, ")
-                code.append("false, CycleMethod.NO_CYCLE, ")
-                appendJavaFxStops(code, fill.fractions, fill.colors)
-                code.append("));\n")
+                code.append("new LinearGradient(${fill.start.x / referenceWidth} * WIDTH, ${fill.start.y / referenceHeight} * HEIGHT,\n")
+                intendCode(code, 8, nameLength, 39)
+                code.append("${fill.stop.x / referenceWidth} * WIDTH, ${fill.stop.y / referenceHeight} * HEIGHT,\n")
+                intendCode(code, 8, nameLength, 39)
+                code.append("false, CycleMethod.NO_CYCLE,\n")
+                intendCode(code, 8, nameLength, 39)
+                appendJavaFxStops(code, fill.fractions, fill.colors, (47 + nameLength))
+                code.append(");\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
-                code.append("        ${elementName}.setFill(new RadialGradient(0, 0, ${fill.center.x / referenceWidth} * WIDTH, ${fill.center.y / referenceHeight} * HEIGHT, ")
-                code.append("${fill.radius / referenceWidth} * WIDTH, ")
-                code.append("false, CycleMethod.NO_CYCLE, ")
-                appendJavaFxStops(code, fill.fractions, fill.colors)
-                code.append("));\n")
+                code.append("new RadialGradient(0, 0,\n")
+                intendCode(code, 8, nameLength, 39)
+                code.append("${fill.center.x / referenceWidth} * WIDTH, ${fill.center.y / referenceHeight} * HEIGHT,\n")
+                intendCode(code, 8, nameLength, 39)
+                code.append("${fill.radius / referenceWidth} * WIDTH,\n")
+                intendCode(code, 8, nameLength, 39)
+                code.append("false, CycleMethod.NO_CYCLE,\n")
+                intendCode(code, 8, nameLength, 39)
+                appendJavaFxStops(code, fill.fractions, fill.colors, (47 + nameLength))
+                code.append(");\n")
                 break
             case FxgFillType.NONE:
-                code.append("        ${elementName}.setFill(null);\n")
+                code.append("null;\n")
                 break
         }
+        code.append("        ${elementName}.setFill(${elementName}_FILL);\n")
     }
 
     protected void appendJavaFxFilter(StringBuilder code, String elementName) {
@@ -224,11 +274,14 @@ abstract class FxgShape {
         code.append("Color.color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255})")
     }
 
-    private void appendJavaFxStops(StringBuilder code, float[] fractions, Color[] colors) {
+    private void appendJavaFxStops(StringBuilder code, float[] fractions, Color[] colors, int offset) {
         fill.colors.eachWithIndex { color, i ->
             code.append("new Stop(${fractions[i]}, Color.color(${color.red / 255}, ${color.green / 255}, ${color.blue / 255}, ${color.alpha / 255}))")
             if (i.compareTo(fill.colors.length - 1) != 0) {
-                code.append(", ")
+                code.append(",\n")
+                for (int j = 0 ; j < offset ; j++) {
+                    code.append(" ")
+                }
             }
         }
     }
@@ -556,5 +609,13 @@ abstract class FxgShape {
 
     private void appendAndroidColor(StringBuilder code, Color color) {
         code.append("Color.argb(${color.alpha}, ${color.red}, ${color.green}, ${color.blue})")
+    }
+
+    // TOOLS
+    private void intendCode(StringBuilder code, int intend, int nameLength, int offset) {
+        int numberOfSpaces = intend + nameLength + offset
+        for (int i = 0 ; i < numberOfSpaces ; i++) {
+            code.append(" ")
+        }
     }
 }
