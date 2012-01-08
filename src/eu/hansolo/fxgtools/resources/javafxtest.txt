@@ -2,6 +2,7 @@ $packageInfo
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -15,8 +16,12 @@ public class FxgTest extends Application {
         control.impl_processCSS(true);
         control.setPrefSize($width, $height);
 
-        Scene scene = new Scene(control, $width, $height);
+        StackPane pane = new StackPane();
+        pane.getChildren().add(control);
+
+        Scene scene = new Scene(pane, $width, $height);
         scene.fillProperty().set(Color.DARKGREY);
+
         stage.setTitle("JavaFX Custom Control");
         stage.setScene(scene);
         stage.show();
