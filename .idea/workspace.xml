@@ -19,11 +19,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/FxgTools_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/FxgTools_jar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FxgTools.iml" afterPath="$PROJECT_DIR$/FxgTools.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -86,11 +85,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="javafxtest.txt" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt">
+      <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="135" selection-start="624" selection-end="624" vertical-scroll-proportion="0.3948655">
-              <folding />
+            <state line="661" column="36" selection-start="35314" selection-end="35314" vertical-scroll-proportion="0.3614907">
+              <folding>
+                <element signature="e#39225#39631#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -127,10 +128,10 @@
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgPath.groovy" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt" />
       </list>
     </option>
   </component>
@@ -223,6 +224,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -255,9 +257,48 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fxgtools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="FxgTools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fxgtools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Favorites" />
     </panes>
   </component>
@@ -276,9 +317,9 @@
     <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -483,7 +524,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="964" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290398" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -495,7 +536,7 @@
       <window_info id="Gradle" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="J2D Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.7107728" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18443628" sideWeight="0.6011834" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18014705" sideWeight="0.6011834" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28757396" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -503,7 +544,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UML Diagrams" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32890767" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34821966" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289941" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
@@ -637,16 +678,6 @@
         <state line="13" column="6" selection-start="279" selection-end="279" vertical-scroll-proportion="0.14782609" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="22" selection-start="355" selection-end="355" vertical-scroll-proportion="0.27017114" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="32" selection-start="528" selection-end="528" vertical-scroll-proportion="0.31173593" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="49" column="59" selection-start="2183" selection-end="2183" vertical-scroll-proportion="0.0" />
@@ -682,15 +713,27 @@
         <state line="352" column="27" selection-start="15605" selection-end="15605" vertical-scroll-proportion="0.19559902" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="742" column="53" selection-start="39123" selection-end="39123" vertical-scroll-proportion="0.19378883" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafxtest.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="135" selection-start="624" selection-end="624" vertical-scroll-proportion="0.3948655">
-          <folding />
+        <state line="14" column="57" selection-start="411" selection-end="455" vertical-scroll-proportion="0.29095355" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="146" column="21" selection-start="5121" selection-end="5121" vertical-scroll-proportion="1.7066015" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="143" selection-start="2326" selection-end="2326" vertical-scroll-proportion="0.5403423" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="661" column="36" selection-start="35314" selection-end="35314" vertical-scroll-proportion="0.3614907">
+          <folding>
+            <element signature="e#39225#39631#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

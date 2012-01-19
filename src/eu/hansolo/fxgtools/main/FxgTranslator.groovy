@@ -325,10 +325,10 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
             code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, final int WIDTH, final int HEIGHT) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
@@ -338,9 +338,9 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, final int WIDTH, final int HEIGHT) {\n")
         }
     }
 
@@ -834,7 +834,7 @@ class FxgTranslator {
                 replaceAll(CODE, "Color.color(1.0, 0.0, 1.0, 1.0)", "Color.MAGENTA")
                 break
         }
-        replaceAll(CODE, "0.5000000000000001", "0.5")
+        replaceAll(CODE, "00000000000001", "")
         // replace shape name prefixes like E_ and RRn_m_
         replaceAll(CODE, "_E_", "_")
         final Pattern PATTERN = Pattern.compile(/_?RR[0-9]+_([0-9]+_)?/)

@@ -67,7 +67,7 @@ $imageDeclaration
                 }
             }
             calcInnerBounds();
-            init(getInnerBounds().width, getInnerBounds().height);
+            init(INNER_BOUNDS.width, INNER_BOUNDS.height);
         }
     };
 
@@ -90,9 +90,9 @@ $imageCreation
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics G) {
         // Create the Graphics2D object
-        final Graphics2D G2 = (Graphics2D) g.create();
+        final Graphics2D G2 = (Graphics2D) G.create();
 
         // Set the rendering hints
         G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -101,7 +101,7 @@ $imageCreation
         G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
         // Take insets into account (e.g. used by borders)
-        G2.translate(getInnerBounds().x, getInnerBounds().y);
+        G2.translate(INNER_BOUNDS.x, INNER_BOUNDS.y);
 
 $drawImage
         // Dispose the temp graphics object
@@ -116,7 +116,7 @@ $drawImage
         double oldValue = value;
         value = VALUE;
         propertySupport.firePropertyChange(VALUE_PROPERTY, oldValue, value);
-        repaint(getInnerBounds());
+        repaint(INNER_BOUNDS);
     }
 
     @Override
@@ -144,7 +144,7 @@ $drawImage
      * component taking the insets into account (e.g. given through borders etc.)
      * @return a rectangle that represents the area available for rendering the component
      */
-    private Rectangle getInnerBounds() {
+    public Rectangle getInnerBounds() {
         return INNER_BOUNDS;
     }
 
@@ -165,7 +165,7 @@ $drawImage
 	        super.setPreferredSize(DIM);
 	    }
 	    calcInnerBounds();
-	    init(getInnerBounds().width, getInnerBounds().height);
+	    init(INNER_BOUNDS.width, INNER_BOUNDS.height);
 	}
 
 	@Override
@@ -177,7 +177,7 @@ $drawImage
 	        super.setSize(WIDTH, HEIGHT);
 	    }
 	    calcInnerBounds();
-	    init(getInnerBounds().width, getInnerBounds().height);
+	    init(INNER_BOUNDS.width, INNER_BOUNDS.height);
 	}
 
 	@Override
@@ -189,7 +189,7 @@ $drawImage
 	        super.setSize(DIM);
 	    }
 	    calcInnerBounds();
-	    init(getInnerBounds().width, getInnerBounds().height);
+	    init(INNER_BOUNDS.width, INNER_BOUNDS.height);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ $drawImage
 	        super.setBounds(BOUNDS);
 	    }
 	    calcInnerBounds();
-	    init(getInnerBounds().width, getInnerBounds().height);
+	    init(INNER_BOUNDS.width, INNER_BOUNDS.height);
 	}
 
 	@Override
@@ -213,7 +213,7 @@ $drawImage
 	        super.setBounds(X, Y, WIDTH, HEIGHT);
 	    }
 	    calcInnerBounds();
-	    init(getInnerBounds().width, getInnerBounds().height);
+	    init(INNER_BOUNDS.width, INNER_BOUNDS.height);
 	}
 
     /**
