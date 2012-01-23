@@ -33,6 +33,7 @@ import java.awt.geom.GeneralPath;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.AttributedString;
+import javax.swing.SwingConstants;
 $componentImport
 
 
@@ -42,12 +43,14 @@ public class $className extends $componentType {
     private PropertyChangeSupport propertySupport;
     private final Rectangle INNER_BOUNDS = new Rectangle(0, 0, $minimumWidth, $minimumHeight);
     private final Point2D CENTER;
+    private int horizontalAlignment;
+    private int verticalAlignment;
 $imageDeclaration
     private boolean square;
     private transient final ComponentListener COMPONENT_LISTENER = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent event) {
-            final int SIZE = getWidth() <= getHeight() ? getWidth() : getHeight();
+            final int SIZE   = getWidth() <= getHeight() ? getWidth() : getHeight();
             Container parent = getParent();
             if ((parent != null) && (parent.getLayout() == null)) {
                 if (SIZE < getMinimumSize().width || SIZE < getMinimumSize().height) {
@@ -73,10 +76,12 @@ $imageDeclaration
 
     public $className() {
         super();
-        propertySupport = new PropertyChangeSupport(this);
-        CENTER = new Point2D.Double();
+        propertySupport     = new PropertyChangeSupport(this);
+        CENTER              = new Point2D.Double();
 $imageInitialization
-        square = false;
+        horizontalAlignment = SwingConstants.CENTER;
+        verticalAlignment   = SwingConstants.CENTER;
+        square              = false;
         addComponentListener(COMPONENT_LISTENER);
 $topComponentConstructor
     }
@@ -117,6 +122,22 @@ $drawImage
         value = VALUE;
         propertySupport.firePropertyChange(VALUE_PROPERTY, oldValue, value);
         repaint(INNER_BOUNDS);
+    }
+
+    public int getHorizontalAlignment() {
+        return horizontalAlignment;
+    }
+
+    public void setHorizontalAlignment(final int HORIZONTAL_ALIGNMENT) {
+        horizontalAlignment = HORIZONTAL_ALIGNMENT;
+    }
+
+    public int getVerticalAlignment() {
+        return verticalAlignment;
+    }
+
+    public void setVerticalAlignment(final int VERTICAL_ALIGNMENT) {
+        verticalAlignment = VERTICAL_ALIGNMENT;
     }
 
     @Override
@@ -194,9 +215,40 @@ $drawImage
 
 	@Override
 	public void setBounds(final Rectangle BOUNDS) {
-	    final int SIZE = BOUNDS.width <= BOUNDS.height ? BOUNDS.width : BOUNDS.height;
 	    if (square) {
-	        super.setBounds(BOUNDS.x, BOUNDS.y, SIZE, SIZE);
+	        if (BOUNDS.width <= BOUNDS.height) {
+                // vertical (taller than wide)
+                int yNew;
+                switch(verticalAlignment) {
+                    case SwingConstants.TOP:
+                        yNew = BOUNDS.y;
+                        break;
+                    case SwingConstants.BOTTOM:
+                        yNew = BOUNDS.y + (BOUNDS.height - BOUNDS.width);
+                        break;
+                    case SwingConstants.CENTER:
+                    default:
+                        yNew = BOUNDS.y + ((BOUNDS.height - BOUNDS.width) / 2);
+                        break;
+                }
+                super.setBounds(BOUNDS.x, yNew, BOUNDS.width, BOUNDS.width);
+            } else {
+                // horizontal (wider than tall)
+                int xNew;
+                switch(horizontalAlignment) {
+                    case SwingConstants.LEFT:
+                        xNew = BOUNDS.x;
+                        break;
+                    case SwingConstants.RIGHT:
+                        xNew = BOUNDS.x + (BOUNDS.width - BOUNDS.height);
+                        break;
+                    case SwingConstants.CENTER:
+                    default:
+                        xNew = BOUNDS.x + ((BOUNDS.width - BOUNDS.height) / 2);
+                        break;
+                }
+                super.setBounds(xNew, BOUNDS.y, BOUNDS.height, BOUNDS.height);
+            }
 	    } else {
 	        super.setBounds(BOUNDS);
 	    }
@@ -206,9 +258,40 @@ $drawImage
 
 	@Override
 	public void setBounds(final int X, final int Y, final int WIDTH, final int HEIGHT) {
-	    final int SIZE = WIDTH <= HEIGHT ? WIDTH : HEIGHT;
 	    if (square) {
-	        super.setBounds(X, Y, SIZE, SIZE);
+	        if (WIDTH <= HEIGHT) {
+                // vertical (taller than wide)
+                int yNew;
+                switch(verticalAlignment) {
+                    case SwingConstants.TOP:
+                        yNew = Y;
+                        break;
+                    case SwingConstants.BOTTOM:
+                        yNew = Y + (HEIGHT - WIDTH);
+                        break;
+                    case SwingConstants.CENTER:
+                    default:
+                        yNew = Y + ((HEIGHT - WIDTH) / 2);
+                        break;
+                }
+                super.setBounds(X, yNew, WIDTH, WIDTH);
+            } else {
+                // horizontal (wider than tall)
+                int xNew;
+                switch(horizontalAlignment) {
+                    case SwingConstants.LEFT:
+                        xNew = X;
+                        break;
+                    case SwingConstants.RIGHT:
+                        xNew = X + (WIDTH - HEIGHT);
+                        break;
+                    case SwingConstants.CENTER:
+                    default:
+                        xNew = X + ((WIDTH - HEIGHT) / 2);
+                        break;
+                }
+                super.setBounds(xNew, Y, HEIGHT, HEIGHT);
+            }
 	    } else {
 	        super.setBounds(X, Y, WIDTH, HEIGHT);
 	    }

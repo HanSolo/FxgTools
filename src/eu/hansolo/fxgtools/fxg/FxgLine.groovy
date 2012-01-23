@@ -54,7 +54,7 @@ class FxgLine extends FxgShape {
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 code.append("        final Line ${name} = new Line(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT, ${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
                 if (transformed) {
-                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        final Affine ${name}_Transform = new Affine();\n")
                     code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")

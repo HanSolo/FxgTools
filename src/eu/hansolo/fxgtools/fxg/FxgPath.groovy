@@ -144,7 +144,7 @@ class FxgPath extends FxgShape {
                     PATH_ITERATOR.next();
                 }
                 if (transformed) {
-                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        final Affine ${name}_Transform = new Affine();\n")
                     code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")

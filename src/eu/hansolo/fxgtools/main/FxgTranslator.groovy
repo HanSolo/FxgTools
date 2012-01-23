@@ -24,7 +24,7 @@ class FxgTranslator {
     private List<String> layerSelection         = []
 
 
-    // Translate given elements to given language
+    // ******************** Translate given elements to given language ********
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
         return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "")
     }
@@ -59,7 +59,7 @@ class FxgTranslator {
                     writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                     writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
-                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), javaFxCssTemplate(CLASS_NAME))
+                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), javaFxCssTemplate(CLASS_NAME, layerMap))
                 }
                 codeToExport.append(javaFxSkinTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append('Skin.java')
@@ -130,7 +130,7 @@ class FxgTranslator {
         return varName
     }
 
-    // JAVA
+    // ******************** JAVA **********************************************
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -222,7 +222,7 @@ class FxgTranslator {
     }
 
 
-    // JAVAFX
+    // ******************** JAVA FX *******************************************
     private String javaFxSkinTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_skin.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -265,12 +265,13 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxCssTemplate(final String CLASS_NAME) {
+    private String javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$packageInfo", packageInfo)
         replaceAll(codeToExport, "\$styleClass", CLASS_NAME.toLowerCase())
         replaceAll(codeToExport, "\$className", CLASS_NAME)
+        replaceAll(codeToExport, "\$fillAndStrokeDefinitions", cssCode(layerMap))
         return codeToExport.toString()
     }
 
@@ -345,7 +346,7 @@ class FxgTranslator {
     }
 
 
-    // GWT
+    // ******************** GWT ***********************************************
     private String gwtTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/gwt.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -395,7 +396,7 @@ class FxgTranslator {
     }
 
 
-    // CANVAS
+    // ******************** CANVAS ********************************************
     private String canvasTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/canvas.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -451,7 +452,7 @@ class FxgTranslator {
     }
 
 
-    // GROOVYFX
+    // ******************** GROOVY FX *****************************************
     private String groovyFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfx.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -537,7 +538,7 @@ class FxgTranslator {
     }
 
 
-    // ANDROID
+    // ******************** ANDROID *******************************************
     private String androidTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -619,11 +620,11 @@ class FxgTranslator {
        }
 
 
-    // VAADIN
+    // ******************** VAADIN ********************************************
 
 
 
-    // CODE
+    // ******************** CODE **********************************************
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
         allLayers.length = 0
@@ -634,6 +635,7 @@ class FxgTranslator {
                 splitNumber = 0
                 int shapeIndex = 0
                 varName = createVarName(layerName)
+                // add language dependend method heads
                 switch(LANGUAGE) {
                     case Language.JAVA: code.append(javaLayerMethodStart(layerName))
                         break
@@ -649,6 +651,7 @@ class FxgTranslator {
                         break
                 }
 
+                // main translation routine
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
@@ -659,6 +662,7 @@ class FxgTranslator {
                         }
                     }
 
+                    // split methods if they become too long
                     splitCounter = code.length()
                     if (splitCounter.compareTo(nextSplit) > 0) {
                         nextSplit = splitCounter + 50000
@@ -683,6 +687,7 @@ class FxgTranslator {
                     }
                 }
 
+                // add language dependend method end
                 switch(LANGUAGE) {
                     case Language.JAVA:
                         if (splitNumber > 0) {
@@ -735,8 +740,29 @@ class FxgTranslator {
         return code.toString()
     }
 
+    private String cssCode(Map<String, List<FxgElement>> layerMap) {
+        StringBuilder cssCode = new StringBuilder()
+        layerMap.keySet().each {String layerName->
+            if (layerSelection.contains(layerName)) {
+                int shapeIndex = 0
+                layerMap[layerName].each {FxgElement element ->
+                    shapeIndex += 1
+                    // create css code
+                    String name = "${layerName.toUpperCase()}-${element.shape.shapeName.toUpperCase()}-${shapeIndex}"
+                    if (element.shape.filled) {
+                        cssCode.append(element.shape.createCssFill(name))
+                    }
+                    //if (element.shape.stroked) {
+                    //    cssCode.append(element.shape.createCssStroke(name))
+                    //}
+                }
+            }
+        }
+        return cssCode.toString()
+    }
 
-    // OUTPUT
+
+    // ******************** OUTPUT ********************************************
     private void writeToFile(final String FILE_NAME, String codeToExport) {
         new File("$FILE_NAME").withWriter { out ->
             out.println codeToExport
@@ -744,7 +770,7 @@ class FxgTranslator {
 }
 
 
-    // OPTIMIZE OUTPUT
+    // ******************** OPTIMIZE OUTPUT ***********************************
     private String makeNicer(final StringBuilder CODE, final Language LANGUAGE) {
         /* TEMPLATE ENGINE
         String template = '${width}_${height}'
@@ -844,7 +870,7 @@ class FxgTranslator {
     }
 
 
-    // REPLACEMENT METHODS
+    // ******************** REPLACEMENT METHODS *******************************
     private static void replaceAll(final StringBuilder TEXT, final String SEARCH, final String REPLACE) {
         int index = TEXT.indexOf(SEARCH)
         while (index != -1) {
@@ -863,7 +889,7 @@ class FxgTranslator {
     }
 
 
-    // TRANSLATION EVENT LISTENER
+    // ******************** TRANSLATION EVENT LISTENER ************************
     public void addTranslationListener(TranslationListener listener) {
         eventListenerList.add(TranslationListener.class, listener)
     }

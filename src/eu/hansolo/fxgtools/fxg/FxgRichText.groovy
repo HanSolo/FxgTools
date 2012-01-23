@@ -117,7 +117,7 @@ class FxgRichText extends FxgShape{
                 code.append(lineThrough ? "        ${name}.setStrikeThrough(true);\n" : "")
                 code.append(underline ? "        ${name}.setUnderline(true);\n" : "")
                 if (transformed) {
-                    code.append("        Affine ${name}_Transform = new Affine();\n")
+                    code.append("        final Affine ${name}_Transform = new Affine();\n")
                     code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
                     code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
                     code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")

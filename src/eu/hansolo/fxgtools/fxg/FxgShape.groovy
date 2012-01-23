@@ -40,6 +40,7 @@ abstract class FxgShape {
         return code
     }
 
+
     // JAVA
     protected void appendJavaPaint(StringBuilder code, String elementName, FxgShapeType shapeType) {
         elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
@@ -154,6 +155,7 @@ abstract class FxgShape {
         code.append("new Color(${color.red / 255}f, ${color.green / 255}f, ${color.blue / 255}f, ${color.alpha / 255}f)")
     }
 
+
     // JAVA_FX
     protected void appendJavaFxFillAndStroke(StringBuilder code, String elementName) {
         if (filled) {
@@ -200,6 +202,9 @@ abstract class FxgShape {
         elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
         elementName = elementName.replace("_E_", "_")
         int nameLength = elementName.length()
+
+        // add call to css id
+        code.append("        //${elementName}.setId(\"${elementName.toLowerCase().replaceAll('_', '-')}-fill\");\n")
 
         code.append("        final Paint ${elementName}_FILL = ")
 
@@ -285,6 +290,120 @@ abstract class FxgShape {
             }
         }
     }
+
+    public String createCssFill(String elementName) {
+        StringBuilder cssCode = new StringBuilder()
+        elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+        elementName = elementName.replace("_E_", "_")
+
+        cssCode.append("#")
+        cssCode.append("${elementName.toLowerCase().replaceAll('_', '-')}")
+        cssCode.append("-fill {\n")
+        cssCode.append("    -fx-fill: ")
+
+        switch(fill.type) {
+            case FxgFillType.SOLID_COLOR:
+                cssCode.append("rgba(")
+                cssCode.append("${fill.color.getRed()}, ")
+                cssCode.append("${fill.color.getGreen()}, ")
+                cssCode.append("${fill.color.getBlue()}, ")
+                cssCode.append("${fill.color.getAlpha() / 255});\n")
+                cssCode.append("}\n\n")
+                break
+            case FxgFillType.LINEAR_GRADIENT:
+                cssCode.append("linear-gradient(")
+                cssCode.append("from ${(int) (fill.start.x / referenceWidth * 100)}% ${(int) (fill.start.y / referenceHeight * 100)}% ")
+                cssCode.append("to ${(int) (fill.stop.x / referenceWidth * 100)}% ${(int) (fill.stop.y / referenceHeight * 100)}%, ")
+                for (int i = 0 ; i < fill.colors.length ; i++) {
+                    cssCode.append("rgba(")
+                    cssCode.append("${fill.colors[i].getRed()}, ")
+                    cssCode.append("${fill.colors[i].getGreen()}, ")
+                    cssCode.append("${fill.colors[i].getBlue()}, ")
+                    cssCode.append("${fill.colors[i].getAlpha() / 255}) ")
+                    cssCode.append("${(int) (fill.fractions[i] * 100)}%")
+                    if (i < fill.colors.length - 1) {
+                        cssCode.append(", ")
+                    }
+                }
+                cssCode.append(");\n")
+                cssCode.append("}\n\n")
+                break
+            case FxgFillType.RADIAL_GRADIENT:
+                cssCode.append("radial-gradient(")
+                cssCode.append("focus-angle 0deg, focus-distance 0%, ")
+                cssCode.append("center ${(int) (fill.center.x / referenceWidth * 100)}% ${(int) (fill.center.y / referenceHeight * 100)}%, ")
+                cssCode.append("${(int) (fill.radius / referenceWidth * 100)}%, ")
+                cssCode.append("reflect, ")
+                for (int i = 0 ; i < fill.colors.length ; i++) {
+                    cssCode.append("rgba(")
+                    cssCode.append("${fill.colors[i].getRed()}, ")
+                    cssCode.append("${fill.colors[i].getGreen()}, ")
+                    cssCode.append("${fill.colors[i].getBlue()}, ")
+                    cssCode.append("${fill.colors[i].getAlpha() / 255}) ")
+                    cssCode.append("${(int) (fill.fractions[i] * 100)}%")
+                    if (i < fill.colors.length - 1) {
+                        cssCode.append(", ")
+                    }
+                }
+                cssCode.append(");\n")
+                cssCode.append("}\n\n")
+                break
+            case FxgFillType.NONE:
+                cssCode.append("rgba(0, 0, 0, 0);\n")
+                cssCode.append("}\n\n")
+                break
+        }
+        return cssCode.toString()
+    }
+
+    public String createCssStroke(String elementName) {
+        StringBuilder cssCode = new StringBuilder()
+        elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+        elementName = elementName.replace("_E_", "_")
+
+        cssCode.append("#")
+        cssCode.append("${elementName}")
+        cssCode.append("-stroke {\n")
+        cssCode.append("    -fx-stroke: ")
+        cssCode.append("rgba(")
+        cssCode.append("${stroke.color.getRed()}, ")
+        cssCode.append("${stroke.color.getGreen()}, ")
+        cssCode.append("${stroke.color.getBlue()}, ")
+        cssCode.append("${stroke.color.getAlpha() / 255});\n\n")
+
+        cssCode.append("    -fx-stroke-line-cap: ")
+        switch (stroke.stroke.endCap) {
+            case BasicStroke.CAP_BUTT:
+                cssCode.append("butt;\n")
+                break
+            case BasicStroke.CAP_ROUND:
+                cssCode.append("round;\n")
+                break
+            case BasicStroke.CAP_SQUARE:
+                cssCode.append("square;\n")
+                break
+        }
+
+        cssCode.append("    -fx-stroke-line-join: ")
+        switch (stroke.stroke.lineJoin) {
+            case BasicStroke.JOIN_BEVEL:
+                cssCode.append("bevel;\n")
+                break
+            case BasicStroke.JOIN_ROUND:
+                cssCode.append("round;\n")
+                break
+            case BasicStroke.JOIN_MITER:
+                cssCode.append("miter;\n")
+                break
+        }
+
+        cssCode.append("    -fx-stroke-width: ")
+        cssCode.append("${(int) (stroke.stroke.lineWidth / referenceWidth * 100)}%;\n")
+
+        cssCode.append("}\n\n")
+        return cssCode.toString()
+    }
+
 
     // CANVAS & GWT
     protected void appendCanvasFill(StringBuilder code, String elementName, boolean GWT) {
@@ -383,6 +502,7 @@ abstract class FxgShape {
             code.append(");\n")
         }
     }
+
 
     // GROOVYFX
     protected void appendGroovyFxFillAndStroke(StringBuilder code, String elementName) {
@@ -501,6 +621,7 @@ abstract class FxgShape {
         code.append("]")
     }
 
+
     // ANDROID
     protected void appendAndroidFillAndStroke(StringBuilder code, String elementName, FxgShapeType shapeType) {
         code.append("\n");
@@ -610,6 +731,7 @@ abstract class FxgShape {
     private void appendAndroidColor(StringBuilder code, Color color) {
         code.append("Color.argb(${color.alpha}, ${color.red}, ${color.green}, ${color.blue})")
     }
+
 
     // TOOLS
     private void intendCode(StringBuilder code, int intend, int nameLength, int offset) {
