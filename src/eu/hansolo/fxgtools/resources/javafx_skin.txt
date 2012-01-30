@@ -4,6 +4,7 @@ import com.sun.javafx.scene.control.skin.SkinBase;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.Group;

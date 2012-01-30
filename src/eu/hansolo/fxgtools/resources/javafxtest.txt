@@ -11,9 +11,6 @@ public class FxgTest extends Application {
     @Override
     public void start(Stage stage) {
         $className control = new $className();
-        // depracted but needed as a workaround for custom components
-        // see also http://javafx-jira.kenai.com/browse/RT-16647
-        control.impl_processCSS(true);
         control.setPrefSize($width, $height);
 
         StackPane pane = new StackPane();

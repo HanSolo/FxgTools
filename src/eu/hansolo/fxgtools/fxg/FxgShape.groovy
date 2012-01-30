@@ -343,7 +343,7 @@ abstract class FxgShape {
                 cssCode.append("radial-gradient(")
                 cssCode.append("focus-angle 0deg, focus-distance 0%, ")
                 cssCode.append("center ${(int) (fill.center.x / referenceWidth * 100)}% ${(int) (fill.center.y / referenceHeight * 100)}%, ")
-                cssCode.append("${(int) (fill.radius / referenceWidth * 100)}%, ")
+                cssCode.append("radius ${(int) (fill.radius / referenceWidth * 100)}%, ")
                 cssCode.append("reflect, ")
                 for (int i = 0 ; i < fill.colors.length ; i++) {
                     cssCode.append("rgba(")
