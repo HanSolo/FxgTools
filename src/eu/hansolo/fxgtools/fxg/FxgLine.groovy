@@ -10,15 +10,15 @@ import java.awt.geom.Line2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgLine extends FxgShape {
-    FxgShapeType type = FxgShapeType.LINE
-    double x1
-    double y1
-    double x2
-    double y2
-    double rotation
-    double scaleX
-    double scaleY
-    double alpha
+    FxgShapeType type     = FxgShapeType.LINE
+    double       x1
+    double       y1
+    double       x2
+    double       y2
+    double       rotation
+    double       scaleX
+    double       scaleY
+    double       alpha
 
     Line2D getLine() {
             return new Line2D.Double(x1, y1, x2, y2)

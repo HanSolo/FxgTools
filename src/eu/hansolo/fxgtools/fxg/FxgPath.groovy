@@ -16,12 +16,12 @@ import java.awt.geom.RoundRectangle2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgPath extends FxgShape {
-    FxgShapeType type = FxgShapeType.PATH
-    GeneralPath path
-    double rotation
-    double scaleX
-    double scaleY
-    double alpha
+    FxgShapeType type     = FxgShapeType.PATH
+    GeneralPath  path
+    double       rotation
+    double       scaleX
+    double       scaleY
+    double       alpha
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()

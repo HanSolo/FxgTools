@@ -57,29 +57,29 @@ import java.awt.geom.AffineTransform
 class FxgParser {
 
     // Variable declarations
-    private final Namespace D = new Namespace("http://ns.adobe.com/fxg/2008/dt")
-    private final Namespace FXG = new Namespace("http://ns.adobe.com/fxg/2008")
-    private final Pattern E_PATTERN = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern RR_PATTERN = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern VAR_PATTERN = Pattern.compile("[\\n\\r\\t\\.:;]*")
-    private final Pattern SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
-    private final Matcher E_MATCHER = E_PATTERN.matcher("")
-    private final Matcher RR_MATCHER = RR_PATTERN.matcher("")
-    private String lastNodeType
-    private String elementName
-    String fxgVersion
-    double originalWidth
-    double originalHeight
-    private double width
-    private double height
-    private double scaleFactorX = 1.0
-    private double scaleFactorY = 1.0
-    double aspectRatio
-    private double offsetX
-    private double offsetY
-    private double groupOffsetX
-    private double groupOffsetY
-    private double lastShapeAlpha
+    private final Namespace D             = new Namespace("http://ns.adobe.com/fxg/2008/dt")
+    private final Namespace FXG           = new Namespace("http://ns.adobe.com/fxg/2008")
+    private final Pattern   E_PATTERN     = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern   RR_PATTERN    = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern   VAR_PATTERN   = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern   SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
+    private final Matcher   E_MATCHER     = E_PATTERN.matcher("")
+    private final Matcher   RR_MATCHER    = RR_PATTERN.matcher("")
+    private String          lastNodeType
+    private String          elementName
+    String                  fxgVersion
+    double                  originalWidth
+    double                  originalHeight
+    private double          width
+    private double          height
+    private double          scaleFactorX  = 1.0
+    private double          scaleFactorY  = 1.0
+    double                  aspectRatio
+    private double          offsetX
+    private double          offsetY
+    private double          groupOffsetX
+    private double          groupOffsetY
+    private double          lastShapeAlpha
     private AffineTransform oldTransform
     private AffineTransform groupTransform
     @TupleConstructor()
@@ -448,7 +448,7 @@ class FxgParser {
                 int alpha = ((solidColorStroke[0].@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
                 color =  parseColor(colorString, alpha)
                 final CAP
-                switch(caps){                    
+                switch(caps){
                     case 'none':
                         CAP = BasicStroke.CAP_BUTT
                         break
@@ -458,7 +458,7 @@ class FxgParser {
                     case 'round':
                         CAP = BasicStroke.CAP_ROUND
                         break
-                }                                
+                }
                 final int  JOIN
                 switch(joints) {
                     case 'miter':
@@ -797,18 +797,30 @@ class FxgParser {
                     fxgShape = parseFxgRectangle(node, LAYER_NAME, i)
                     offsetX = fxgShape.x
                     offsetY = fxgShape.y
+                    fxgShape.elementX = fxgShape.x
+                    fxgShape.elementY = fxgShape.y
+                    fxgShape.elementWidth = fxgShape.width
+                    fxgShape.elementHeight = fxgShape.height
                     lastNodeType = "Rect"
                     break
                 case FXG.Ellipse:
                     fxgShape = parseFxgEllipse(node, LAYER_NAME, i)
                     offsetX = fxgShape.x
                     offsetY = fxgShape.y
+                    fxgShape.elementX = fxgShape.x
+                    fxgShape.elementY = fxgShape.y
+                    fxgShape.elementWidth = fxgShape.width
+                    fxgShape.elementHeight = fxgShape.height
                     lastNodeType = "Ellipse"
                     break
                 case FXG.Line:
                     fxgShape = parseFxgLine(node, LAYER_NAME, i)
                     offsetX = fxgShape.x1
                     offsetY = fxgShape.y1
+                    fxgShape.elementX = fxgShape.x1
+                    fxgShape.elementY = fxgShape.y1
+                    fxgShape.elementWidth = Math.abs(fxgShape.x2 - fxgShape.x1)
+                    fxgShape.elementHeight = Math.abs(fxgShape.y2 - fxgShape.y1)
                     lastNodeType = "Line"
                     break
                 case FXG.Path:
@@ -821,17 +833,29 @@ class FxgParser {
                         E_MATCHER.reset(elementName)
                         if (E_MATCHER.matches()) {
                             fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
+                            fxgShape.elementX = fxgShape.x
+                            fxgShape.elementY = fxgShape.y
+                            fxgShape.elementWidth = fxgShape.width
+                            fxgShape.elementHeight = fxgShape.height
                             break
                         }
                         RR_MATCHER.reset(elementName)
                         if (RR_MATCHER.matches()) {
                             double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
                             fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, radiusX: cornerRadius, radiusY: cornerRadius, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
+                            fxgShape.elementX = fxgShape.x
+                            fxgShape.elementY = fxgShape.y
+                            fxgShape.elementWidth = fxgShape.width
+                            fxgShape.elementHeight = fxgShape.height
                             break
                         }
                     }
                     offsetX = groupOffsetX
                     offsetY = groupOffsetY
+                    fxgShape.elementX = fxgShape.path.bounds2D.x
+                    fxgShape.elementY = fxgShape.path.bounds2D.y
+                    fxgShape.elementWidth = fxgShape.path.bounds2D.width
+                    fxgShape.elementHeight = fxgShape.path.bounds2D.height
                     lastNodeType = "Path"
                     break
                 case FXG.RichText:
@@ -841,6 +865,10 @@ class FxgParser {
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 255), color: fxgShape.color)
                     lastNodeType = "RichText"
                     fxgShape.fill = fxgFill
+                    fxgShape.elementX = fxgShape.x
+                    fxgShape.elementY = fxgShape.y
+                    fxgShape.elementWidth = 0
+                    fxgShape.elementHeight = 0
                     break
             }
             if (fxgShape != null) {

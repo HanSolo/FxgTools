@@ -10,17 +10,17 @@ import java.awt.geom.RoundRectangle2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgRectangle extends FxgShape {
-    FxgShapeType type = FxgShapeType.RECT
-    double x
-    double y
-    double rotation
-    double scaleX
-    double scaleY
-    double width
-    double height
-    double radiusX
-    double radiusY
-    double alpha
+    FxgShapeType type     = FxgShapeType.RECT
+    double       x
+    double       y
+    double       rotation
+    double       scaleX
+    double       scaleY
+    double       width
+    double       height
+    double       radiusX
+    double       radiusY
+    double       alpha
 
     RoundRectangle2D getRectangle() {
         return new RoundRectangle2D.Double(x, y, width, height, radiusX * 2, radiusY * 2)
@@ -29,6 +29,7 @@ class FxgRectangle extends FxgShape {
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
         StringBuilder code = new StringBuilder()
         String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"

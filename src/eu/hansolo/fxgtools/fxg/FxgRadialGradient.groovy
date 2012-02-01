@@ -12,11 +12,11 @@ import java.awt.geom.Point2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgRadialGradient extends FxgFill {
-    FxgFillType type = FxgFillType.RADIAL_GRADIENT
-    Point2D center
-    float radius
-    float[] fractions
-    Color[] colors
+    FxgFillType type      = FxgFillType.RADIAL_GRADIENT
+    Point2D     center
+    float       radius
+    float[]     fractions
+    Color[]     colors
 
     RadialGradientPaint getRadialGradient() {
         return new RadialGradientPaint(center, radius, fractions, colors)

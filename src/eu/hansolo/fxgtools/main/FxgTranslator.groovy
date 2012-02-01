@@ -5,6 +5,9 @@ import eu.hansolo.fxgtools.fxg.Language
 import javax.swing.event.EventListenerList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import java.awt.Rectangle
+import java.awt.geom.Ellipse2D
+import eu.hansolo.fxgtools.fxg.FxgShapeType
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,13 +18,13 @@ import java.util.regex.Pattern
  */
 class FxgTranslator {
     private EventListenerList eventListenerList = new EventListenerList()
-    private StringBuilder allLayers             = new StringBuilder()
-    private StringBuilder allElements           = new StringBuilder()
-    private int splitCounter                    = 0
-    private int nextSplit                       = 50000
-    private int splitNumber                     = 0
-    private String packageInfo                  = "eu.hansolo.fx"
-    private List<String> layerSelection         = []
+    private StringBuilder     allLayers         = new StringBuilder()
+    private StringBuilder     allElements       = new StringBuilder()
+    private int               splitCounter      = 0
+    private int               nextSplit         = 50000
+    private int               splitNumber       = 0
+    private String            packageInfo       = "eu.hansolo.fx"
+    private List<String>      layerSelection    = []
 
 
     // ******************** Translate given elements to given language ********
@@ -129,6 +132,7 @@ class FxgTranslator {
         }
         return varName
     }
+
 
     // ******************** JAVA **********************************************
     private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE) {

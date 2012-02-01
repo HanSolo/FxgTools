@@ -8,7 +8,7 @@ package eu.hansolo.fxgtools.fxg
  * To change this template use File | Settings | File Templates.
  */
 abstract class FxgFill {
-    def type = FxgFillType.NONE
+    def    type      = FxgFillType.NONE
     String layerName
     String shapeName
 }

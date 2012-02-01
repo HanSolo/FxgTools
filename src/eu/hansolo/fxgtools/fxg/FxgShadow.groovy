@@ -11,14 +11,14 @@ import java.awt.geom.Point2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgShadow extends FxgFilter{
-    FxgFilterType type = FxgFilterType.SHADOW
-    boolean inner
-    int angle
-    int distance
-    double alpha
-    double blurX
-    double blurY
-    Color color
+    FxgFilterType type     = FxgFilterType.SHADOW
+    boolean       inner
+    int           angle
+    int           distance
+    double        alpha
+    double        blurX
+    double        blurY
+    Color         color
 
     Point2D getOffset() {
         return new Point2D.Double(distance * Math.cos(Math.toRadians(-angle)), distance * Math.sin(Math.toRadians(angle)))

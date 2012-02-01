@@ -12,15 +12,15 @@ import java.awt.geom.Point2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgEllipse extends FxgShape {
-    FxgShapeType type = FxgShapeType.ELLIPSE
-    double x
-    double y
-    double rotation
-    double scaleX
-    double scaleY
-    double width
-    double height
-    double alpha
+    FxgShapeType type     = FxgShapeType.ELLIPSE
+    double       x
+    double       y
+    double       rotation
+    double       scaleX
+    double       scaleY
+    double       width
+    double       height
+    double       alpha
 
     Ellipse2D getEllipse() {
             return new Ellipse2D.Double(x, y, width, height)

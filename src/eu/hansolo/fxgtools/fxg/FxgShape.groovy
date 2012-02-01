@@ -13,32 +13,24 @@ import java.awt.geom.AffineTransform
  * To change this template use File | Settings | File Templates.
  */
 abstract class FxgShape {
-    String layerName
-    String shapeName
-    FxgShapeType type
-    FxgFill fill
-    FxgStroke stroke
-    List<FxgFilter> filters = []
-    boolean filled
-    boolean stroked
-    boolean transformed
-    double referenceWidth
-    double referenceHeight
+    String          layerName
+    String          shapeName
+    FxgShapeType    type
+    FxgFill         fill
+    FxgStroke       stroke
+    List<FxgFilter> filters         = []
+    boolean         filled
+    boolean         stroked
+    boolean         transformed
+    double          referenceWidth
+    double          referenceHeight
+    double          elementX
+    double          elementY
+    double          elementWidth
+    double          elementHeight
     AffineTransform transform
 
     abstract String translateTo(final Language LANGUAGE, final int SHAPE_INDEX)
-
-    protected StringBuilder makeNicer(StringBuilder code) {
-        // replace: 0.0 * imageWidth -> 0.0
-
-        // replace: 0.0 * imageHeight -> 0.0
-
-        // replace: 1.0 * imageWidth -> imageWidth
-
-        // replace: 1.0 * imageHeight -> imageHeight
-
-        return code
-    }
 
 
     // JAVA
@@ -271,7 +263,7 @@ abstract class FxgShape {
                             code.append("        ${elementName}_DROP_SHADOW${i}.setHeight(${filter.blurY / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setOffsetX(${filter.getOffset().x / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setOffsetY(${filter.getOffset().y / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
-                            //code.append("        ${elementName}_DROP_SHADOW${i}.setRadius(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
+                            code.append("        ${elementName}_DROP_SHADOW${i}.setRadius(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setColor(Color.color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setBlurType(BlurType.GAUSSIAN);\n")
                             if (i > 0 || filters.size() == 1) {
@@ -307,6 +299,9 @@ abstract class FxgShape {
         elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
         elementName = elementName.replace("_E_", "_")
 
+        double refWidth = elementWidth != 0 ? elementWidth : referenceWidth
+        double refHeight = elementHeight != 0 ? elementHeight : referenceHeight
+
         cssCode.append("#")
         cssCode.append("${elementName.toLowerCase().replaceAll('_', '-')}")
         cssCode.append("-fill {\n")
@@ -323,8 +318,8 @@ abstract class FxgShape {
                 break
             case FxgFillType.LINEAR_GRADIENT:
                 cssCode.append("linear-gradient(")
-                cssCode.append("from ${(int) (fill.start.x / referenceWidth * 100)}% ${(int) (fill.start.y / referenceHeight * 100)}% ")
-                cssCode.append("to ${(int) (fill.stop.x / referenceWidth * 100)}% ${(int) (fill.stop.y / referenceHeight * 100)}%, ")
+                cssCode.append("from ${(int) ((fill.start.x - elementX) / refWidth) * 100}% ${(int) ((fill.start.y - elementY) / refHeight) * 100}% ")
+                cssCode.append("to ${(int) ((fill.stop.x - elementX) / refWidth) * 100}% ${(int) ((fill.stop.y - elementY) / refHeight) * 100}%, ")
                 for (int i = 0 ; i < fill.colors.length ; i++) {
                     cssCode.append("rgba(")
                     cssCode.append("${fill.colors[i].getRed()}, ")
@@ -342,8 +337,8 @@ abstract class FxgShape {
             case FxgFillType.RADIAL_GRADIENT:
                 cssCode.append("radial-gradient(")
                 cssCode.append("focus-angle 0deg, focus-distance 0%, ")
-                cssCode.append("center ${(int) (fill.center.x / referenceWidth * 100)}% ${(int) (fill.center.y / referenceHeight * 100)}%, ")
-                cssCode.append("radius ${(int) (fill.radius / referenceWidth * 100)}%, ")
+                cssCode.append("center ${(int) ((fill.center.x - elementX) / refWidth) * 100}% ${(int) ((fill.center.y - elementY) / refHeight) * 100}%, ")
+                cssCode.append("radius ${(int) (fill.radius / refWidth) * 100}%, ")
                 cssCode.append("reflect, ")
                 for (int i = 0 ; i < fill.colors.length ; i++) {
                     cssCode.append("rgba(")

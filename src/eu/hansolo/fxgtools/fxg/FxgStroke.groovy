@@ -12,7 +12,7 @@ import java.awt.Color
  */
 class FxgStroke {
     String name
-    Color color
+    Color  color
     Stroke stroke
 
     String getHexColor() {

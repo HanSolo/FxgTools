@@ -13,24 +13,24 @@ import java.awt.Color
  * To change this template use File | Settings | File Templates.
  */
 class FxgRichText extends FxgShape{
-    FxgShapeType type = FxgShapeType.TEXT
-    double x
-    double y
-    double rotation
-    double scaleX
-    double scaleY
-    double descent
-    double fontSize
+    FxgShapeType     type        = FxgShapeType.TEXT
+    double           x
+    double           y
+    double           rotation
+    double           scaleX
+    double           scaleY
+    double           descent
+    double           fontSize
     AttributedString string
-    Font font
-    boolean underline
-    boolean italic
-    boolean bold
-    boolean lineThrough
-    String text
-    String fontFamily
-    double alpha
-    Color color
+    Font             font
+    boolean          underline
+    boolean          italic
+    boolean          bold
+    boolean          lineThrough
+    String           text
+    String           fontFamily
+    double           alpha
+    Color            color
 
     AttributedString getAttributedString() {
         AttributedString string = new AttributedString(text)

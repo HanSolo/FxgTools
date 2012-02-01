@@ -8,6 +8,6 @@ package eu.hansolo.fxgtools.fxg
  * To change this template use File | Settings | File Templates.
  */
 class FxgElement {
-    String name
+    String   name
     FxgShape shape
 }

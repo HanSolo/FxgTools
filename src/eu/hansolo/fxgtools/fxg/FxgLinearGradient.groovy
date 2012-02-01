@@ -12,11 +12,11 @@ import java.awt.geom.Point2D
  * To change this template use File | Settings | File Templates.
  */
 class FxgLinearGradient extends FxgFill {
-    FxgFillType type = FxgFillType.LINEAR_GRADIENT
-    Point2D start
-    Point2D stop
-    float[] fractions
-    Color[] colors
+    FxgFillType type      = FxgFillType.LINEAR_GRADIENT
+    Point2D     start
+    Point2D     stop
+    float[]     fractions
+    Color[]     colors
 
     LinearGradientPaint getLinearGradient() {
         return new LinearGradientPaint(start, stop, fractions, colors)
