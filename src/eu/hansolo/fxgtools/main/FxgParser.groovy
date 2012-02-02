@@ -57,31 +57,32 @@ import java.awt.geom.AffineTransform
 class FxgParser {
 
     // Variable declarations
-    private final Namespace D             = new Namespace("http://ns.adobe.com/fxg/2008/dt")
-    private final Namespace FXG           = new Namespace("http://ns.adobe.com/fxg/2008")
-    private final Pattern   E_PATTERN     = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern   RR_PATTERN    = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern   VAR_PATTERN   = Pattern.compile("[\\n\\r\\t\\.:;]*")
-    private final Pattern   SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
-    private final Matcher   E_MATCHER     = E_PATTERN.matcher("")
-    private final Matcher   RR_MATCHER    = RR_PATTERN.matcher("")
-    private String          lastNodeType
-    private String          elementName
-    String                  fxgVersion
-    double                  originalWidth
-    double                  originalHeight
-    private double          width
-    private double          height
-    private double          scaleFactorX  = 1.0
-    private double          scaleFactorY  = 1.0
-    double                  aspectRatio
-    private double          offsetX
-    private double          offsetY
-    private double          groupOffsetX
-    private double          groupOffsetY
-    private double          lastShapeAlpha
-    private AffineTransform oldTransform
-    private AffineTransform groupTransform
+    private final Namespace         D             = new Namespace("http://ns.adobe.com/fxg/2008/dt")
+    private final Namespace         FXG           = new Namespace("http://ns.adobe.com/fxg/2008")
+    private final Pattern           E_PATTERN     = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern           RR_PATTERN    = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern           VAR_PATTERN   = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern           SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
+    private final Matcher           E_MATCHER     = E_PATTERN.matcher("")
+    private final Matcher           RR_MATCHER    = RR_PATTERN.matcher("")
+    private String                  lastNodeType
+    private String                  elementName
+    String                          fxgVersion
+    double                          originalWidth
+    double                          originalHeight
+    private double                  width
+    private double                  height
+    private double                  scaleFactorX  = 1.0
+    private double                  scaleFactorY  = 1.0
+    double                          aspectRatio
+    private double                  offsetX
+    private double                  offsetY
+    private double                  groupOffsetX
+    private double                  groupOffsetY
+    private double                  lastShapeAlpha
+    private HashMap<String, String> properties
+    private AffineTransform         oldTransform
+    private AffineTransform         groupTransform
     @TupleConstructor()
     private class FxgStroke {
         BasicStroke stroke
@@ -154,7 +155,11 @@ class FxgParser {
             final Graphics2D G2 = images[layerName].createGraphics()
             addRenderingHints(G2)
             oldTransform = G2.getTransform()
-            convertLayer(layer, layerName, G2)
+            if (layerName.toLowerCase().contains("properties")) {
+                convertProperties(layer)
+            } else {
+                convertLayer(layer, layerName, G2)
+            }
             G2.dispose()
         }
         return images
@@ -232,7 +237,13 @@ class FxgParser {
         return getDimension(new XmlParser().parse(new File(FILE_NAME)))
     }
 
+    HashMap<String, String> getProperties() {
+        return properties;
+    }
+
+
     // ********************   P R I V A T E   M E T H O D S   **********************************************************
+
     // ********************   P A R S E   T O   F X G   -   S H A P E S   **********************************************
     private FxgRectangle parseFxgRectangle(final NODE, final String LAYER_NAME, final int INDEX) {
         String elementName = NODE.attribute(D.userLabel)?:"Rectangle"
@@ -679,6 +690,8 @@ class FxgParser {
         }
     }
 
+
+    // ********************   C O N V E R T   T H E   L A Y E R S   ****************************************************
     private void convertLayer(final LAYER, final String LAYER_NAME, final Graphics2D G2) {
         String elementName
         LAYER.each {Node node->
@@ -919,22 +932,23 @@ class FxgParser {
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        offsetX = 0
-        offsetY = 0
-        groupOffsetX = 0
-        groupOffsetY = 0
+        properties     = new HashMap<String, String>()
+        offsetX        = 0
+        offsetY        = 0
+        groupOffsetX   = 0
+        groupOffsetY   = 0
 
-        fxgVersion = fxg.@version
-        originalWidth = (int)(fxg.@viewWidth ?: 100).toDouble()
+        fxgVersion     = fxg.@version
+        originalWidth  = (int)(fxg.@viewWidth ?: 100).toDouble()
         originalHeight = (int)(fxg.@viewHeight ?: 100).toDouble()
 
-        width = WIDTH
-        height = KEEP_ASPECT ? WIDTH * (originalHeight / originalWidth) : HEIGHT
+        width          = WIDTH
+        height         = KEEP_ASPECT ? WIDTH * (originalHeight / originalWidth) : HEIGHT
 
-        aspectRatio = originalHeight / originalWidth
+        aspectRatio    = originalHeight / originalWidth
 
-        scaleFactorX = width / originalWidth
-        scaleFactorY = height / originalHeight
+        scaleFactorX   = width / originalWidth
+        scaleFactorY   = height / originalHeight
     }
 
     private BufferedImage createImage(final int WIDTH, final int HEIGHT, final int TRANSPARENCY) {
@@ -949,5 +963,16 @@ class FxgParser {
     private void addRenderingHints(final Graphics2D G2) {
         G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+    }
+
+
+    // ********************   C O N V E R T   T H E   P R O P E R T I E S   ********************************************
+    private void convertProperties(final Node LAYER) {
+        LAYER.each {Node node->
+            String[] propertyDefinition = (node.attribute(D.userLabel)?:"").split("_")
+            if (propertyDefinition.length > 0) {
+                properties.put(propertyDefinition[1], propertyDefinition[0])
+            }
+        }
     }
 }

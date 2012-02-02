@@ -2,18 +2,30 @@ $packageInfo
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+
 import javafx.scene.control.Control;
 
 
 public class $className extends Control {
     private static final String DEFAULT_STYLE_CLASS = "$styleClass";
-    private DoubleProperty      value;
+$propertyDeclaration
     private boolean             square;
 
 
     // ******************** Constructors **************************************
     public $className() {
-        value  = new SimpleDoubleProperty(0.0);
+$propertyInitialization
         square = false;
         init();
     }
@@ -25,18 +37,7 @@ public class $className extends Control {
 
 
     // ******************** Getters and Setters *******************************
-    public final double getValue() {
-        return value.get();
-    }
-
-    public final void setValue(final double VALUE) {
-        value.set(VALUE);
-    }
-
-    public final DoubleProperty valueProperty() {
-        return value;
-    }
-
+$propertyGetterSetter
     public final boolean isSquare() {
         return square;
     }

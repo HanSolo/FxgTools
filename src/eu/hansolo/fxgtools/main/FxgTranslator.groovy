@@ -5,9 +5,6 @@ import eu.hansolo.fxgtools.fxg.Language
 import javax.swing.event.EventListenerList
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import java.awt.Rectangle
-import java.awt.geom.Ellipse2D
-import eu.hansolo.fxgtools.fxg.FxgShapeType
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,10 +26,14 @@ class FxgTranslator {
 
     // ******************** Translate given elements to given language ********
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
-        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "")
+        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "", new HashMap<String, String>())
     }
 
-    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE, final String NAME_PREFIX) {
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final HashMap<String, String> PROPERTIES) {
+        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "", PROPERTIES)
+    }
+
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE, final String NAME_PREFIX, final HashMap<String, String> PROPERTIES) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = (FILE_NAME.contains(".") ? (FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) + NAME_PREFIX) : (FILE_NAME + NAME_PREFIX)).capitalize()
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -53,14 +54,14 @@ class FxgTranslator {
                 if (EXPORT_TO_FILE) {
                     writeToFile(desktopPath.append('JavaShadow.java').toString(), javaShadowFile())
                 }
-                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, TYPE))
+                codeToExport.append(javaTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, TYPE, PROPERTIES))
                 exportFileName.append('.java')
                 break
             case Language.JAVAFX:
                 if (EXPORT_TO_FILE) {
                     String path = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator).toString()
                     writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                    writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME))
+                    writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
                     writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), javaFxCssTemplate(CLASS_NAME, layerMap))
                 }
@@ -135,7 +136,7 @@ class FxgTranslator {
 
 
     // ******************** JAVA **********************************************
-    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE) {
+    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE, final HashMap<String, String> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
 
@@ -147,7 +148,7 @@ class FxgTranslator {
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName)) {
                 String varName = createVarName(layerName)
-                imageDeclaration.append("    private BufferedImage ${varName}_Image;\n")
+                imageDeclaration.append("    private BufferedImage         ${varName}_Image;\n")
                 imageInitialization.append("        ${varName}_Image = createImage(INNER_BOUNDS.width, INNER_BOUNDS.height, Transparency.TRANSLUCENT);\n")
                 imageCreation.append("        if (${varName}_Image != null) {\n")
                 imageCreation.append("            ${varName}_Image.flush();\n")
@@ -172,6 +173,10 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$imageInitialization", imageInitialization.toString())
         replaceAll(codeToExport, "\$imageCreation", imageCreation.toString())
         replaceAll(codeToExport, "\$drawImage", drawImage.toString())
+        replaceAll(codeToExport, "\$propertyDeclaration", javaPropertyDeclaration(PROPERTIES))
+        replaceAll(codeToExport, "\$propertyInitialization", javaPropertyInitialization(PROPERTIES))
+        replaceAll(codeToExport, "\$propertyGetterSetter", javaPropertyGetterSetter(PROPERTIES))
+
         replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
 
         return codeToExport.toString()
@@ -225,6 +230,132 @@ class FxgTranslator {
         }
     }
 
+    private String javaPropertyDeclaration(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            PROPERTY_CODE.append("    public static final String    ").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY = ").append("\"").append(PROPERTY_NAME.toUpperCase()).append("\";\n")
+        }
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("    private double                ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("    private boolean               ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("    private int                   ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("    private long                  ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("    private String                ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("    private Object                ").append(PROPERTY_NAME).append(";\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
+    private String javaPropertyInitialization(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0.0;\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = false;\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0;\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0l;\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = \"\";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new Object();\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
+    private String javaPropertyGetterSetter(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("    ").append("public final double get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final double ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("    ").append("public final boolean get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("    ").append("public final int get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final int ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("    ").append("public final long get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final long ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("    ").append("public final String get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final String ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("    ").append("public final Object get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final Object ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        double old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.fireProperty(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
 
     // ******************** JAVA FX *******************************************
     private String javaFxSkinTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
@@ -260,9 +391,12 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxControlTemplate(final String CLASS_NAME) {
+    private String javaFxControlTemplate(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_control.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
+        replaceAll(codeToExport, "\$propertyDeclaration", javaFxPropertyDeclaration(PROPERTIES))
+        replaceAll(codeToExport, "\$propertyInitialization", javaFxPropertyInitialization(PROPERTIES))
+        replaceAll(codeToExport, "\$propertyGetterSetter", javaFxPropertyGetterSetter(PROPERTIES))
         replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         replaceAll(codeToExport, "\$styleClass", CLASS_NAME.toLowerCase())
@@ -347,6 +481,129 @@ class FxgTranslator {
             code.append("    }\n\n")
             code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, final int WIDTH, final int HEIGHT) {\n")
         }
+    }
+
+    private String javaFxPropertyDeclaration(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("    private DoubleProperty      ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("    private BooleanProperty     ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("    private IntegerProperty     ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("    private LongProperty        ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("    private StringProperty      ").append(PROPERTY_NAME).append(";\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("    private ObjectProperty      ").append(PROPERTY_NAME).append(";\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
+    private String javaFxPropertyInitialization(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleDoubleProperty(0.0);\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleBooleanProperty(false);\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleIntegerProperty(0);\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleLongProperty(0l);\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleStringProperty(\"\");\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleObjectProperty();\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
+    private String javaFxPropertyGetterSetter(final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+                PROPERTY_CODE.append("    ").append("public final double get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final double ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final DoubleProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+                PROPERTY_CODE.append("    ").append("public final boolean get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final BooleanProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+                PROPERTY_CODE.append("    ").append("public final int get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final int ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final IntegerProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+                PROPERTY_CODE.append("    ").append("public final long get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final long ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final LongProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+                PROPERTY_CODE.append("    ").append("public final String get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final String ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final StringProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+                PROPERTY_CODE.append("    ").append("public final Object get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final Object ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(".set(").append(PROPERTY_NAME.toUpperCase()).append(");\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final ObjectProperty ").append(PROPERTY_NAME).append("Property() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
     }
 
 

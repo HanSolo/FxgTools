@@ -38,16 +38,15 @@ $componentImport
 
 
 public class $className extends $componentType {
-    public static final String VALUE_PROPERTY = "Value";
-    private double value;
+$propertyDeclaration
     private PropertyChangeSupport propertySupport;
-    private final Rectangle INNER_BOUNDS = new Rectangle(0, 0, $minimumWidth, $minimumHeight);
-    private final Point2D CENTER;
-    private int horizontalAlignment;
-    private int verticalAlignment;
+    private final Rectangle       INNER_BOUNDS = new Rectangle(0, 0, $minimumWidth, $minimumHeight);
+    private final Point2D         CENTER;
+    private int                   horizontalAlignment;
+    private int                   verticalAlignment;
 $imageDeclaration
-    private boolean square;
-    private transient final ComponentListener COMPONENT_LISTENER = new ComponentAdapter() {
+    private boolean               square;
+    private transient final       ComponentListener COMPONENT_LISTENER = new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent event) {
             final int SIZE   = getWidth() <= getHeight() ? getWidth() : getHeight();
@@ -74,9 +73,12 @@ $imageDeclaration
         }
     };
 
+
+    // ******************** Constructor ***************************************
     public $className() {
         super();
         propertySupport     = new PropertyChangeSupport(this);
+$propertyInitialization
         CENTER              = new Point2D.Double();
 $imageInitialization
         horizontalAlignment = SwingConstants.CENTER;
@@ -86,6 +88,8 @@ $imageInitialization
 $topComponentConstructor
     }
 
+
+    // ******************** Initialization ************************************
     public final void init(final int WIDTH, final int HEIGHT) {
         if (WIDTH <= 1 || HEIGHT <= 1) {
             return;
@@ -94,6 +98,8 @@ $imageCreation
         CENTER.setLocation(WIDTH / 2.0, HEIGHT / 2.0);
     }
 
+
+    // ******************** Visualization *************************************
     @Override
     protected void paintComponent(final Graphics G) {
         // Create the Graphics2D object
@@ -113,17 +119,9 @@ $drawImage
         G2.dispose();
     }
 
-    public double getValue() {
-        return value;
-    }
 
-    public void setValue(final double VALUE) {
-        double oldValue = value;
-        value = VALUE;
-        propertySupport.firePropertyChange(VALUE_PROPERTY, oldValue, value);
-        repaint(INNER_BOUNDS);
-    }
-
+    // ******************** Methods *******************************************
+$propertyGetterSetter
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
@@ -315,7 +313,8 @@ $drawImage
         return IMAGE;
     }
 
-	// Image methods
+
+	// ******************** Image methods *************************************
 $creationMethods
 
 	@Override
