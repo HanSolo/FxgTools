@@ -510,26 +510,46 @@ class FxgTranslator {
 
     private String javaFxPropertyInitialization(final HashMap<String, String> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
+        int maxLength
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            maxLength = Math.max(PROPERTY_NAME.length(), maxLength)
+        }
         PROPERTIES.keySet().each{String PROPERTY_NAME->
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleDoubleProperty(0.0);\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleDoubleProperty(0.0);\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleBooleanProperty(false);\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleBooleanProperty(false);\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleIntegerProperty(0);\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleIntegerProperty(0);\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleLongProperty(0l);\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleLongProperty(0l);\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleStringProperty(\"\");\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleStringProperty(\"\");\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new SimpleObjectProperty();\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
+                appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
+                PROPERTY_CODE.append(" = new SimpleObjectProperty();\n")
             }
         }
+        PROPERTY_CODE.append("        square")
+        final int SPACER = maxLength == 0 ? 0 : 6;
+        appendBlanks(PROPERTY_CODE, (maxLength - SPACER))
+        PROPERTY_CODE.append(" = false;\n")
         return PROPERTY_CODE.toString()
     }
 
@@ -1149,6 +1169,11 @@ class FxgTranslator {
         }
     }
 
+    private static void appendBlanks(final StringBuilder TEXT, final int NO_TO_APPEND) {
+        for (int i = 0 ; i < NO_TO_APPEND ; i++) {
+            TEXT.append(" ")
+        }
+    }
 
     // ******************** TRANSLATION EVENT LISTENER ************************
     public void addTranslationListener(TranslationListener listener) {
