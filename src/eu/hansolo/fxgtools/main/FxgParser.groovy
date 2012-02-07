@@ -150,12 +150,13 @@ class FxgParser {
             layerName = images.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
             layerName = layerName.replaceAll(VAR_PATTERN, "")
             layerName = layerName.replaceAll(SPACE_PATTERN, "_")
+            layerName = layerName.replaceAll("__", "_")
             images[layerName] = createImage((int)(originalWidth * scaleFactorX), (int) (originalHeight * scaleFactorY), Transparency.TRANSLUCENT)
 
             final Graphics2D G2 = images[layerName].createGraphics()
             addRenderingHints(G2)
             oldTransform = G2.getTransform()
-            if (layerName.toLowerCase().contains("properties")) {
+            if (layerName.toLowerCase().startsWith("properties")) {
                 convertProperties(layer)
             } else {
                 convertLayer(layer, layerName, G2)

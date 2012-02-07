@@ -18,8 +18,6 @@ import javafx.scene.control.Control;
 public class $className extends Control {
     private static final String DEFAULT_STYLE_CLASS = "$styleClass";
 $propertyDeclaration
-    private boolean             square;
-
 
     // ******************** Constructors **************************************
     public $className() {
