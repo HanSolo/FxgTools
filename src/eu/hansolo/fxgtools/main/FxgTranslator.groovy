@@ -1214,7 +1214,7 @@ class FxgTranslator {
                 break
         }
         final Pattern ZERO_PATTERN = Pattern.compile(/(0{8}[0-9]*)/)
-        replaceAll(CODE, ZERO_PATTERN, "")
+        replaceAll(CODE, ZERO_PATTERN, "0")
         // replace shape name prefixes like E_ and RRn_m_
         replaceAll(CODE, "_E_", "_")
         final Pattern PATTERN = Pattern.compile(/_?RR[0-9]+_([0-9]+_)?/)
