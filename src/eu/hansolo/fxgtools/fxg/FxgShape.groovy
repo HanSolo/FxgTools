@@ -269,7 +269,7 @@ abstract class FxgShape {
                             if (i > 0 || filters.size() == 1) {
                                 code.append("        ${elementName}_DROP_SHADOW${i}.inputProperty().set(${lastFilterName});\n")
                             }
-                            lastFilterName = "${elementName}_DROP_SHADOW"
+                            lastFilterName = "${elementName}_DROP_SHADOW${i}"
                         }
                         break;
                 }

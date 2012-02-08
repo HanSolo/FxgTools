@@ -1213,7 +1213,8 @@ class FxgTranslator {
                 replaceAll(CODE, "Color.color(1.0, 0.0, 1.0, 1.0)", "Color.MAGENTA")
                 break
         }
-        replaceAll(CODE, "00000000000001", "")
+        final Pattern ZERO_PATTERN = Pattern.compile(/(0{8}[0-9]*)/)
+        replaceAll(CODE, ZERO_PATTERN, "")
         // replace shape name prefixes like E_ and RRn_m_
         replaceAll(CODE, "_E_", "_")
         final Pattern PATTERN = Pattern.compile(/_?RR[0-9]+_([0-9]+_)?/)
