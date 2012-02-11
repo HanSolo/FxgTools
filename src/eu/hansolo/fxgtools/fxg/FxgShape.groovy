@@ -339,7 +339,7 @@ abstract class FxgShape {
                 cssCode.append("focus-angle 0deg, focus-distance 0%, ")
                 cssCode.append("center ${(int) ((fill.center.x - elementX) / refWidth) * 100}% ${(int) ((fill.center.y - elementY) / refHeight) * 100}%, ")
                 cssCode.append("radius ${(int) (fill.radius / refWidth) * 100}%, ")
-                cssCode.append("reflect, ")
+                //cssCode.append("reflect, ")
                 for (int i = 0 ; i < fill.colors.length ; i++) {
                     cssCode.append("rgba(")
                     cssCode.append("${fill.colors[i].getRed()}, ")
