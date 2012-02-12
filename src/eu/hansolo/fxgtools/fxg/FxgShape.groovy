@@ -246,10 +246,11 @@ abstract class FxgShape {
                         if (filter.inner) {
                             code.append("\n")
                             code.append("        final InnerShadow ${elementName}_INNER_SHADOW${i} = new InnerShadow();\n")
-                            code.append("        ${elementName}_INNER_SHADOW${i}.setWidth(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
-                            code.append("        ${elementName}_INNER_SHADOW${i}.setHeight(${filter.blurY / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
+                            code.append("        ${elementName}_INNER_SHADOW${i}.setWidth(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getWidth());\n")
+                            code.append("        ${elementName}_INNER_SHADOW${i}.setHeight(${filter.blurY / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getHeight());\n")
                             code.append("        ${elementName}_INNER_SHADOW${i}.setOffsetX(${filter.getOffset().x / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
                             code.append("        ${elementName}_INNER_SHADOW${i}.setOffsetY(${filter.getOffset().y / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
+                            code.append("        ${elementName}_INNER_SHADOW${i}.setRadius(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getWidth());\n")
                             code.append("        ${elementName}_INNER_SHADOW${i}.setColor(Color.color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
                             code.append("        ${elementName}_INNER_SHADOW${i}.setBlurType(BlurType.GAUSSIAN);\n")
                             if (i > 0 || filters.size() == 1) {
@@ -259,11 +260,11 @@ abstract class FxgShape {
                         } else {
                             code.append("\n")
                             code.append("        final DropShadow ${elementName}_DROP_SHADOW${i} = new DropShadow();\n")
-                            code.append("        ${elementName}_DROP_SHADOW${i}.setWidth(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
-                            code.append("        ${elementName}_DROP_SHADOW${i}.setHeight(${filter.blurY / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
+                            code.append("        ${elementName}_DROP_SHADOW${i}.setWidth(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getWidth());\n")
+                            code.append("        ${elementName}_DROP_SHADOW${i}.setHeight(${filter.blurY / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getHeight());\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setOffsetX(${filter.getOffset().x / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setOffsetY(${filter.getOffset().y / referenceSize * FILTER_OFFSET_FACTOR} * SIZE);\n")
-                            code.append("        ${elementName}_DROP_SHADOW${i}.setRadius(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * SIZE);\n")
+                            code.append("        ${elementName}_DROP_SHADOW${i}.setRadius(${filter.blurX / referenceSize * FILTER_WIDTH_FACTOR} * ${elementName}.getLayoutBounds().getWidth());\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setColor(Color.color(${filter.color.red / 255}, ${filter.color.green / 255}, ${filter.color.blue / 255}, ${filter.color.alpha / 255}));\n")
                             code.append("        ${elementName}_DROP_SHADOW${i}.setBlurType(BlurType.GAUSSIAN);\n")
                             if (i > 0 || filters.size() == 1) {

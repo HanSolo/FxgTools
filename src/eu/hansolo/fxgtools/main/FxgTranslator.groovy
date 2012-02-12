@@ -63,7 +63,7 @@ class FxgTranslator {
                     writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                     writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
-                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), javaFxCssTemplate(CLASS_NAME, layerMap))
+                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap)))
                 }
                 codeToExport.append(javaFxSkinTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, PROPERTIES))
                 exportFileName.append('Skin.java')
@@ -414,14 +414,14 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap) {
+    private StringBuilder javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$packageInfo", packageInfo)
         replaceAll(codeToExport, "\$styleClass", CLASS_NAME.toLowerCase())
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         replaceAll(codeToExport, "\$fillAndStrokeDefinitions", cssCode(layerMap))
-        return codeToExport.toString()
+        return codeToExport
     }
 
     private String javaFxBehaviorTemplate(final String CLASS_NAME) {
@@ -1221,6 +1221,39 @@ class FxgTranslator {
         replaceAll(CODE, PATTERN, '_')
 
         return CODE.toString()
+    }
+
+    private String makeCssNicer(final StringBuilder CSS) {
+        replaceAll(CSS, "rgba(255, 255, 255, 0)", "transparent")
+        replaceAll(CSS, "rgba(255, 255, 255, 0.0)", "transparent")
+        replaceAll(CSS, "rgba(0, 0, 0, 0)", "transparent")
+        replaceAll(CSS, "rgba(0, 0, 0, 0.0)", "transparent")
+        replaceAll(CSS, "rgba(0, 0, 0, 1)", "black")
+        replaceAll(CSS, "rgba(0, 0, 0, 1.0)", "black")
+        replaceAll(CSS, "rgb(0, 0, 0)", "black")
+        replaceAll(CSS, "rgba(255, 255, 255, 1)", "white")
+        replaceAll(CSS, "rgba(255, 255, 255, 1.0)", "white")
+        replaceAll(CSS, "rgb(255, 255, 255)", "white")
+        replaceAll(CSS, "rgba(255, 0, 0, 1)", "red")
+        replaceAll(CSS, "rgba(255, 0, 0, 1.0)", "red")
+        replaceAll(CSS, "rgb(255, 0, 0)", "red")
+        replaceAll(CSS, "rgba(0, 255, 0, 1)", "lime")
+        replaceAll(CSS, "rgba(0, 255, 0, 1.0)", "lime")
+        replaceAll(CSS, "rgb(0, 255, 0)", "lime")
+        replaceAll(CSS, "rgba(0, 0, 255, 1)", "blue")
+        replaceAll(CSS, "rgba(0, 0, 255, 1.0)", "blue")
+        replaceAll(CSS, "rgb(0, 0, 255)", "blue")
+        replaceAll(CSS, "rgba(255, 255, 0, 1)", "yellow")
+        replaceAll(CSS, "rgba(255, 255, 0, 1.0)", "yellow")
+        replaceAll(CSS, "rgb(255, 255, 0)", "yellow")
+        replaceAll(CSS, "rgba(0, 255, 255, 1)", "cyan")
+        replaceAll(CSS, "rgba(0, 255, 255, 1.0)", "cyan")
+        replaceAll(CSS, "rgb(0, 255, 255)", "cyan")
+        replaceAll(CSS, "rgba(255, 0, 255, 1)", "magenta")
+        replaceAll(CSS, "rgba(255, 0, 255, 1.0)", "magenta")
+        replaceAll(CSS, "rgb(255, 0, 255)", "magenta")
+
+        return CSS.toString()
     }
 
 
