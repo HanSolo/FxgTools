@@ -22,6 +22,8 @@ class FxgTranslator {
     private int               splitNumber       = 0
     private String            packageInfo       = "eu.hansolo.fx"
     private List<String>      layerSelection    = []
+    private HashSet<String>   nameSet           = []
+    private HashSet<String>   groupNameSet      = []
 
 
     // ******************** Translate given elements to given language ********
@@ -60,7 +62,7 @@ class FxgTranslator {
             case Language.JAVAFX:
                 if (EXPORT_TO_FILE) {
                     String path = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator).toString()
-                    writeToFile(desktopPath.append('FxgTest.java').toString(), javaFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
+                    writeToFile(desktopPath.append('Demo.java').toString(), javaFxDemoTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                     writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
                     writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap)))
@@ -119,17 +121,17 @@ class FxgTranslator {
         layerSelection.addAll(selectedLayers)
     }
 
-    private String createVarName(final String VAR_NAME) {
+    private String createVarName(final String LAYER_NAME) {
         String varName
-        if (VAR_NAME.contains("_")) {
-            String[] varNameParts = VAR_NAME.toLowerCase().split("_")
+        if (LAYER_NAME.contains("_")) {
+            String[] varNameParts = LAYER_NAME.toLowerCase().split("_")
             StringBuilder output = new StringBuilder()
             varNameParts.each {output.append(it.capitalize())}
             varName = output.substring(0,1).toLowerCase() + output.substring(1)
-        } else if (VAR_NAME == VAR_NAME.capitalize()) {
-            varName = "${VAR_NAME.charAt(0).toLowerCase()}${VAR_NAME.substring(1)}"
+        } else if (LAYER_NAME == LAYER_NAME.capitalize()) {
+            varName = "${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)}"
         } else {
-            varName = VAR_NAME
+            varName = LAYER_NAME
         }
         return varName
     }
@@ -146,7 +148,7 @@ class FxgTranslator {
         StringBuilder drawImage = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            if (layerSelection.contains(layerName)) {
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 String varName = createVarName(layerName)
                 imageDeclaration.append("    private BufferedImage         ${varName}_Image;\n")
                 imageInitialization.append("        ${varName}_Image = createImage(INNER_BOUNDS.width, INNER_BOUNDS.height, Transparency.TRANSLUCENT);\n")
@@ -432,8 +434,8 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
-        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafxtest.txt')
+    private String javaFxDemoTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_demo.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
         replaceAll(codeToExport, "\$className", CLASS_NAME)
@@ -453,7 +455,7 @@ class FxgTranslator {
         layerCode.append("        ${lowerLayerName}.getChildren().clear();\n")
         layerCode.append("        final Shape IBOUNDS = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
         layerCode.append("        IBOUNDS.setOpacity(0.0);\n")
-        layerCode.append("        IBOUNDS.setStroke(null);\n")
+        //layerCode.append("        IBOUNDS.setStroke(null);\n")
         layerCode.append("        ${lowerLayerName}.getChildren().add(IBOUNDS);\n")
         return layerCode.toString()
     }
@@ -475,10 +477,10 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
-            code.append("        return ${varName};\n")
+            code.append("        continue_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
+            //code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, final int WIDTH, final int HEIGHT) {\n")
+            code.append("    private void continue_${layerName}_${splitNumber}(Group ${varName}, final double WIDTH, final double HEIGHT) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
@@ -488,9 +490,9 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
+            code.append("        continue_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Group ${varName}, final int WIDTH, final int HEIGHT) {\n")
+            code.append("    private void continue_${layerName}_${splitNumber}(Group ${varName}, final sdouble WIDTH, final double HEIGHT) {\n")
         }
     }
 
@@ -706,7 +708,7 @@ class FxgTranslator {
         StringBuilder drawImagesToContext = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            if (layerSelection.contains(layerName)){
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")){
                 drawImagesToContext.append("        draw_${layerName}_Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
             }
         }
@@ -759,7 +761,7 @@ class FxgTranslator {
         StringBuilder drawImagesToCanvas = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            if (layerSelection.contains(layerName)) {
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
                 createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
                 createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
@@ -814,7 +816,7 @@ class FxgTranslator {
         StringBuilder groupInitialization = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-            if (layerSelection.contains(layerName)) {
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 String varName = createVarName(layerName)
                 groupDeclaration.append("    private Group ${varName}\n")
                 groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight)\n")
@@ -904,7 +906,7 @@ class FxgTranslator {
         StringBuilder drawImage = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
-           if (layerSelection.contains(layerName)) {
+           if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                imageDeclaration.append("    private Bitmap ${layerName}Image;\n")
                //imageInitialization.append("        ${layerName}Image = Bitmap.createBitmap(${WIDTH}, ${HEIGHT}, Bitmap.Config.ARGB_8888);\n")
                resizeImagesSquare.append("            ${layerName}Image = create_${layerName}_Image(size, size);\n")
@@ -977,13 +979,14 @@ class FxgTranslator {
 
 
 
-    // ******************** CODE **********************************************
+    // ******************** CREATE CODE ***************************************
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
         allLayers.length = 0
         allElements.length = 0
         String varName
         layerMap.keySet().each {String layerName->
+            groupNameSet.clear()
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 splitNumber = 0
                 int shapeIndex = 0
@@ -1007,9 +1010,18 @@ class FxgTranslator {
                 // main translation routine
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
-                    code.append(element.shape.translateTo(LANGUAGE, shapeIndex))
+                    code.append(element.shape.translateTo(LANGUAGE, shapeIndex, nameSet))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        allElements.append("${layerName.toUpperCase()}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
+                        String name = element.shape.shapeName.toUpperCase()
+                        name = name.replace("E_", "")
+                        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
+                        if (groupNameSet.contains(name)) {
+                            allElements.append("${layerName.toUpperCase()}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
+                        } else {
+                            allElements.append("${name}").append(",\n")
+                            groupNameSet.add(name)
+                        }
+
                         for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
                             allElements.append(" ")
                         }

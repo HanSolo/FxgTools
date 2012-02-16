@@ -26,13 +26,24 @@ class FxgRectangle extends FxgShape {
         return new RoundRectangle2D.Double(x, y, width, height, radiusX * 2, radiusY * 2)
     }
 
-    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${shapeName}"
+        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
+        if (NAME_SET.contains(name)) {
+            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        } else {
+            NAME_SET.add(name)
+        }
 
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = name.toUpperCase()
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
                 int nameLength = name.length()
 
@@ -79,7 +90,13 @@ class FxgRectangle extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                importSet.add("import javafx.scene.shape.Rectangle;")
+                name = name.toUpperCase()
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
                 int nameLength = name.length()
 
@@ -110,6 +127,9 @@ class FxgRectangle extends FxgShape {
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
+                importSet.add("import javafx.scene.transform.Affine;")
+                importSet.add("import javafx.scene.transform.Rotate;")
+                importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
             case Language.GWT:

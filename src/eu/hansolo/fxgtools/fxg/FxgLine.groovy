@@ -24,12 +24,22 @@ class FxgLine extends FxgShape {
             return new Line2D.Double(x1, y1, x2, y2)
         }
 
-    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${shapeName}"
+        if (NAME_SET.contains(name)) {
+            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        } else {
+            NAME_SET.add(name)
+        }
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -51,7 +61,13 @@ class FxgLine extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                importSet.add("import javafx.scene.shape.Line;")
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 code.append("        final Line ${name} = new Line(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT, ${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
                 if (transformed) {
                     code.append("        final Affine ${name}_Transform = new Affine();\n")
@@ -66,6 +82,9 @@ class FxgLine extends FxgShape {
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
+                importSet.add("import javafx.scene.transform.Affine;")
+                importSet.add("import javafx.scene.transform.Rotate;")
+                importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
             case Language.GWT:

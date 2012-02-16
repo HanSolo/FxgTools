@@ -57,23 +57,24 @@ import java.awt.geom.AffineTransform
 class FxgParser {
 
     // Variable declarations
-    private final Namespace         D             = new Namespace("http://ns.adobe.com/fxg/2008/dt")
-    private final Namespace         FXG           = new Namespace("http://ns.adobe.com/fxg/2008")
-    private final Pattern           E_PATTERN     = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern           RR_PATTERN    = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern           VAR_PATTERN   = Pattern.compile("[\\n\\r\\t\\.:;]*")
-    private final Pattern           SPACE_PATTERN = Pattern.compile("[\\s\\-]+")
-    private final Matcher           E_MATCHER     = E_PATTERN.matcher("")
-    private final Matcher           RR_MATCHER    = RR_PATTERN.matcher("")
+    private final Namespace         D              = new Namespace("http://ns.adobe.com/fxg/2008/dt")
+    private final Namespace         FXG            = new Namespace("http://ns.adobe.com/fxg/2008")
+    private final Pattern           E_PATTERN      = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern           RR_PATTERN     = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern           VAR_PATTERN    = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern           SPACE_PATTERN  = Pattern.compile("[\\s\\-]+")
+    private final Matcher           E_MATCHER      = E_PATTERN.matcher("")
+    private final Matcher           RR_MATCHER     = RR_PATTERN.matcher("")
     private String                  lastNodeType
     private String                  elementName
+    private HashSet<String>         elementNameSet = []
     String                          fxgVersion
     double                          originalWidth
     double                          originalHeight
     private double                  width
     private double                  height
-    private double                  scaleFactorX  = 1.0
-    private double                  scaleFactorY  = 1.0
+    private double                  scaleFactorX   = 1.0
+    private double                  scaleFactorY   = 1.0
     double                          aspectRatio
     private double                  offsetX
     private double                  offsetY
@@ -147,7 +148,10 @@ class FxgParser {
 
         String layerName
         layers.eachWithIndex {def layer, int i ->
-            layerName = images.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
+            layerName = layer.attribute(D.userLabel)
+            if (images.keySet().contains(layer)) {
+                layerName += "_$i"
+            }
             layerName = layerName.replaceAll(VAR_PATTERN, "")
             layerName = layerName.replaceAll(SPACE_PATTERN, "_")
             layerName = layerName.replaceAll("__", "_")
@@ -213,7 +217,10 @@ class FxgParser {
         String layerName
         int shapeIndex = 0
         layers.eachWithIndex {def layer, int i ->
-            layerName = elements.keySet().contains(layer.attribute(D.userLabel)) ? layer.attribute(D.userLabel) : layer.attribute(D.userLabel) + "_$i"
+            layerName = layer.attribute(D.userLabel)// + "_$i"
+            if (elements.keySet().contains(layerName)) {
+                layerName += "_$i"
+            }
             layerName = layerName.replaceAll(VAR_PATTERN, "")
             layerName = layerName.replaceAll(SPACE_PATTERN, "_")
             List shapes = []
@@ -247,8 +254,7 @@ class FxgParser {
 
     // ********************   P A R S E   T O   F X G   -   S H A P E S   **********************************************
     private FxgRectangle parseFxgRectangle(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = NODE.attribute(D.userLabel)?:"Rectangle"
-        elementName += "_${INDEX}"
+        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Rectangle", INDEX)
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
@@ -264,8 +270,7 @@ class FxgParser {
     }
 
     private FxgEllipse parseFxgEllipse(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = NODE.attribute(D.userLabel)?:"Ellipse"
-        elementName += "_${INDEX}"
+        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Ellipse", INDEX)
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
@@ -279,8 +284,7 @@ class FxgParser {
     }
 
     private FxgLine parseFxgLine(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = NODE.attribute(D.userLabel)?:"Line"
-        elementName += "_${INDEX}"
+        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Line", INDEX)
         double xFrom = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
@@ -319,8 +323,7 @@ class FxgParser {
     }
 
     private FxgRichText parseFxgRichText(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = NODE.attribute(D.userLabel)?:"Font"
-        elementName += "_${INDEX}"
+        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Font", INDEX)
         FxgRichText fxgText = new FxgRichText()
         fxgText.layerName = LAYER_NAME
         fxgText.shapeName = elementName
@@ -840,7 +843,7 @@ class FxgParser {
                 case FXG.Path:
                     elementName = lastNodeType == "Group" ?  elementName : (node.attribute(D.userLabel)?:"Path")
                     if (elementName != null) {
-                        elementName += "_${i}"
+                        elementName = validateElementName(elementName, i)
                     }
                     fxgShape = parseFxgPath(node, LAYER_NAME, elementName)
                     if (elementName != null) {
@@ -873,8 +876,7 @@ class FxgParser {
                     lastNodeType = "Path"
                     break
                 case FXG.RichText:
-                    elementName = node.attribute(D.userLabel)?:"Text"
-                    elementName += "_${i}"
+                    elementName = validateElementName(node.attribute(D.userLabel)?:"Text", i)
                     fxgShape = parseFxgRichText(node, LAYER_NAME, i)
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 255), color: fxgShape.color)
                     lastNodeType = "RichText"
@@ -964,6 +966,15 @@ class FxgParser {
     private void addRenderingHints(final Graphics2D G2) {
         G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+    }
+
+    private String validateElementName(String elementName, final int INDEX) {
+        if (elementNameSet.contains(elementName)) {
+            elementName += "_${INDEX}"
+        } else {
+            elementNameSet.add(elementName)
+        }
+        return elementName
     }
 
 

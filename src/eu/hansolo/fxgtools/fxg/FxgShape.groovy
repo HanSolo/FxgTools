@@ -13,6 +13,7 @@ import java.awt.geom.AffineTransform
  * To change this template use File | Settings | File Templates.
  */
 abstract class FxgShape {
+    HashSet<String> importSet       = []
     String          layerName
     String          shapeName
     FxgShapeType    type
@@ -30,7 +31,7 @@ abstract class FxgShape {
     double          elementHeight
     AffineTransform transform
 
-    abstract String translateTo(final Language LANGUAGE, final int SHAPE_INDEX)
+    abstract String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET)
 
 
     // JAVA
@@ -154,11 +155,17 @@ abstract class FxgShape {
             appendJavaFxPaint(code, elementName)
         }
         if (stroked) {
+            /*
             if (stroke.stroke.lineWidth < 2) {
                 code.append("        ${elementName}.setStrokeType(StrokeType.OUTSIDE);\n")
             } else {
                 code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
             }
+            */
+            importSet.add("import javafx.scene.shape.StrokeType;")
+            importSet.add("import javafx.scene.shape.StrokeLineCap;")
+            importSet.add("import javafx.scene.shape.StrokeLineJoin;")
+            code.append("        ${elementName}.setStrokeType(StrokeType.CENTERED);\n")
             switch (stroke.stroke.endCap) {
                 case BasicStroke.CAP_BUTT:
                     code.append("        ${elementName}.setStrokeLineCap(StrokeLineCap.BUTT);\n")
@@ -195,6 +202,8 @@ abstract class FxgShape {
         elementName = elementName.replace("_E_", "_")
         int nameLength = elementName.length()
 
+        importSet.add("import javafx.scene.shape.Shape;")
+
         // add call to css id
         code.append("        //${elementName}.setId(\"${elementName.toLowerCase().replaceAll('_', '-')}-fill\");\n")
 
@@ -202,10 +211,17 @@ abstract class FxgShape {
 
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
+                importSet.add("import javafx.scene.paint.Paint;")
+                importSet.add("import javafx.scene.paint.Color;")
                 appendJavaFxColor(code, fill.color)
                 code.append(";\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
+                importSet.add("import javafx.scene.paint.Paint;")
+                importSet.add("import javafx.scene.paint.Color;")
+                importSet.add("import javafx.scene.paint.LinearGradient;")
+                importSet.add("import javafx.scene.paint.CycleMethod;")
+                importSet.add("import javafx.scene.paint.Stop;")
                 code.append("new LinearGradient(${fill.start.x / referenceWidth} * WIDTH, ${fill.start.y / referenceHeight} * HEIGHT,\n")
                 intendCode(code, 8, nameLength, 39)
                 code.append("${fill.stop.x / referenceWidth} * WIDTH, ${fill.stop.y / referenceHeight} * HEIGHT,\n")
@@ -216,6 +232,12 @@ abstract class FxgShape {
                 code.append(");\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
+                importSet.add("import javafx.scene.paint.Paint;")
+                importSet.add("import javafx.scene.paint.Color;")
+                importSet.add("import javafx.scene.paint.LinearGradient;")
+                importSet.add("import javafx.scene.paint.CycleMethod;")
+                importSet.add("import javafx.scene.paint.Stop;")
+                importSet.add("import javafx.scene.paint.RadialGradient;")
                 code.append("new RadialGradient(0, 0,\n")
                 intendCode(code, 8, nameLength, 39)
                 code.append("${fill.center.x / referenceWidth} * WIDTH, ${fill.center.y / referenceHeight} * HEIGHT,\n")
@@ -228,6 +250,7 @@ abstract class FxgShape {
                 code.append(");\n")
                 break
             case FxgFillType.NONE:
+                importSet.add("import javafx.scene.paint.Paint;")
                 code.append("null;\n")
                 break
         }

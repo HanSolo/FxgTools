@@ -49,12 +49,23 @@ class FxgRichText extends FxgShape{
         return string
     }
 
-    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${shapeName}"
+        if (NAME_SET.contains(name)) {
+            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        } else {
+            NAME_SET.add(shapeName)
+        }
+
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
                     code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
@@ -105,7 +116,16 @@ class FxgRichText extends FxgShape{
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                importSet.add("import javafx.scene.text.Font;")
+                importSet.add("import javafx.scene.text.FontPosture;")
+                importSet.add("import javafx.scene.text.FontWeight;")
+                importSet.add("import javafx.scene.text.Text;")
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 String fontWeight = (font.bold ? "FontWeight.BOLD" : "FontWeight.NORMAL")
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
                 code.append("        final Text ${name} = new Text();\n")
@@ -133,6 +153,9 @@ class FxgRichText extends FxgShape{
                 appendJavaFxPaint(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
+                importSet.add("import javafx.scene.transform.Affine;")
+                importSet.add("import javafx.scene.transform.Rotate;")
+                importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
             case Language.GWT:

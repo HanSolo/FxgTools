@@ -38,12 +38,24 @@ class FxgEllipse extends FxgShape {
         return height/2
     }
 
-    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${shapeName}"
+        name = name.replace("E_", "")
+        if (NAME_SET.contains(name)) {
+            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        } else {
+            NAME_SET.add(name)
+        }
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = "${shapeName.toUpperCase()}"
+                name = name.replace("E_", "")
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replace("_E_", "_")
                 int nameLength = name.length()
                 if (transformed) {
@@ -73,13 +85,21 @@ class FxgEllipse extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = "${shapeName.toUpperCase()}"
+                name = name.replace("E_", "")
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replace("_E_", "_")
                 int nameLength = name.length()
 
                 if (width.compareTo(height) == 0) {
+                    importSet.add("import javafx.scene.shape.Circle;")
                     code.append("        final Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
                 } else {
+                    importSet.add("import javafx.scene.shape.Ellipse;")
                     code.append("        final Ellipse ${name} = new Ellipse(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT,\n")
                     code.append("                      ")
                     for (int i = 0 ; i < nameLength ; i++) {
@@ -101,6 +121,9 @@ class FxgEllipse extends FxgShape {
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
+                importSet.add("import javafx.scene.transform.Affine;")
+                importSet.add("import javafx.scene.transform.Rotate;")
+                importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
             case Language.GWT:

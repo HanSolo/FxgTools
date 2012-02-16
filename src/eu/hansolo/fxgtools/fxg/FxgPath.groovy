@@ -23,12 +23,22 @@ class FxgPath extends FxgShape {
     double       scaleY
     double       alpha
 
-    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX) {
+    String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        String name = "${shapeName}"
+        if (NAME_SET.contains(name)) {
+            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        } else {
+            NAME_SET.add(name)
+        }
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
                 name = name.replace("_E_", "_")
                 int nameLength = name.length()
@@ -95,7 +105,21 @@ class FxgPath extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                importSet.add("import javafx.scene.shape.ClosePath;")
+                importSet.add("import javafx.scene.shape.CubicCurveTo;")
+                importSet.add("import javafx.scene.shape.FillRule;")
+                importSet.add("import javafx.scene.shape.LineTo;")
+                importSet.add("import javafx.scene.shape.MoveTo;")
+                importSet.add("import javafx.scene.shape.Path;")
+                importSet.add("import javafx.scene.transform.Affine;")
+                importSet.add("import javafx.scene.transform.Rotate;")
+                importSet.add("import javafx.scene.transform.Scale;")
+                name = "${shapeName.toUpperCase()}"
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
                 name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
                 name = name.replace("_E_", "_")
                 int nameLength = name.length()
