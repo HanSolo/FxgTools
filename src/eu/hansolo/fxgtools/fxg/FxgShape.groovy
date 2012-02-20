@@ -205,7 +205,7 @@ abstract class FxgShape {
         importSet.add("import javafx.scene.shape.Shape;")
 
         // add call to css id
-        code.append("        //${elementName}.setId(\"${elementName.toLowerCase().replaceAll('_', '-')}-fill\");\n")
+        code.append("        //${elementName}.setId(\"${layerName.toLowerCase()}-${elementName.toLowerCase().replaceAll('_', '-')}-fill\");\n")
 
         code.append("        final Paint ${elementName}_FILL = ")
 

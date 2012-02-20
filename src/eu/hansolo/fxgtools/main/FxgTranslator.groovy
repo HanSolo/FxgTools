@@ -24,6 +24,7 @@ class FxgTranslator {
     private List<String>      layerSelection    = []
     private HashSet<String>   nameSet           = []
     private HashSet<String>   groupNameSet      = []
+    private HashSet<String>   cssNameSet        = []
 
 
     // ******************** Translate given elements to given language ********
@@ -300,7 +301,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("    }\n\n")
             }
             if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
-                PROPERTY_CODE.append("    ").append("public final boolean get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("    ").append("public final boolean is").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
                 PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
@@ -603,7 +604,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("boolean")) {
-                PROPERTY_CODE.append("    ").append("public final boolean get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("    ").append("public final boolean is").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
                 PROPERTY_CODE.append("    }\n\n")
                 PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
@@ -987,6 +988,7 @@ class FxgTranslator {
         String varName
         layerMap.keySet().each {String layerName->
             groupNameSet.clear()
+            nameSet.clear();
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 splitNumber = 0
                 int shapeIndex = 0
@@ -1108,17 +1110,27 @@ class FxgTranslator {
     private String cssCode(Map<String, List<FxgElement>> layerMap) {
         StringBuilder cssCode = new StringBuilder()
         layerMap.keySet().each {String layerName->
+            cssNameSet.clear();
             if (layerSelection.contains(layerName)) {
                 int shapeIndex = 0
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
-                    // create css code
-                    String name = "${layerName.toUpperCase()}-${element.shape.shapeName.toUpperCase()}-${shapeIndex}"
+
+                    String cssName = "${element.shape.shapeName}"
+                    cssName = cssName.replaceAll("E_", '')
+                    cssName = cssName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
+                    cssName = "${layerName.toLowerCase()}-${cssName.toLowerCase()}"
+
+                    if (cssNameSet.contains(cssName)) {
+                        cssName = "${layerName.toLowerCase()}-${element.shape.shapeName.toLowerCase()}-${shapeIndex}"
+                    } else {
+                        cssNameSet.add(cssName)
+                    }
                     if (element.shape.filled) {
-                        cssCode.append(element.shape.createCssFill(name))
+                        cssCode.append(element.shape.createCssFill(cssName))
                     }
                     //if (element.shape.stroked) {
-                    //    cssCode.append(element.shape.createCssStroke(name))
+                    //    cssCode.append(element.shape.createCssStroke(cssName))
                     //}
                 }
             }
