@@ -43,6 +43,7 @@ import javafx.scene.transform.Scale;
 public class $classNameSkin extends SkinBase<$className, $classNameBehavior> {
     private $className control;
     private boolean      square;
+    private boolean      keepAspect;
     private boolean      isDirty;
     private boolean      initialized;
 $groupDeclaration
@@ -52,6 +53,7 @@ $groupDeclaration
         super(CONTROL, new $classNameBehavior(CONTROL));
         control     = CONTROL;
         square      = control.isSquare();
+        keepAspect  = control.keepAspect();
         initialized = false;
         isDirty     = false;
 $groupInitialization

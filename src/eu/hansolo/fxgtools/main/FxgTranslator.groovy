@@ -64,7 +64,7 @@ class FxgTranslator {
                 if (EXPORT_TO_FILE) {
                     String path = new StringBuilder(USER_HOME).append(File.separator).append('Desktop').append(File.separator).toString()
                     writeToFile(desktopPath.append('Demo.java').toString(), javaFxDemoTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
-                    writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, PROPERTIES))
+                    writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, Double.parseDouble(WIDTH), Double.parseDouble(HEIGHT), PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
                     writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap)))
                 }
@@ -405,12 +405,13 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxControlTemplate(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+    private String javaFxControlTemplate(final String CLASS_NAME, final double WIDTH, final double HEIGHT, final HashMap<String, String> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_control.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$propertyDeclaration", javaFxPropertyDeclaration(PROPERTIES))
         replaceAll(codeToExport, "\$propertyInitialization", javaFxPropertyInitialization(PROPERTIES))
         replaceAll(codeToExport, "\$propertyGetterSetter", javaFxPropertyGetterSetter(PROPERTIES))
+        replaceAll(codeToExport, "\$prefSizeCalculation", javaFxPrefSizeCalculation(WIDTH, HEIGHT))
         replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         replaceAll(codeToExport, "\$styleClass", CLASS_NAME.toLowerCase())
@@ -541,6 +542,9 @@ class FxgTranslator {
         PROPERTY_CODE.append("    private boolean        ")
         appendBlanks(PROPERTY_CODE, (maxLength + 2))
         PROPERTY_CODE.append("square;\n")
+        PROPERTY_CODE.append("    private boolean        ")
+        appendBlanks(PROPERTY_CODE, (maxLength + 2))
+        PROPERTY_CODE.append("keepAspect;\n")
         return PROPERTY_CODE.toString()
     }
 
@@ -583,9 +587,15 @@ class FxgTranslator {
             }
         }
         PROPERTY_CODE.append("        square")
-        final int SPACER = maxLength == 0 ? 0 : 6;
-        appendBlanks(PROPERTY_CODE, (maxLength - SPACER))
+        int spacer = maxLength == 0 ? 0 : 6;
+        appendBlanks(PROPERTY_CODE, (maxLength - spacer))
         PROPERTY_CODE.append(" = false;\n")
+
+        PROPERTY_CODE.append("        keepAspect")
+        spacer = maxLength == 0 ? 0 : 10;
+        appendBlanks(PROPERTY_CODE, (maxLength - spacer))
+        PROPERTY_CODE.append(" = false;\n")
+
         return PROPERTY_CODE.toString()
     }
 
@@ -667,6 +677,13 @@ class FxgTranslator {
             }
         }
         return PROPERTY_CODE.toString()
+    }
+
+    private String javaFxPrefSizeCalculation(final double WIDTH, final double HEIGHT) {
+        StringBuilder PREF_SIZE_CODE = new StringBuilder()
+        PREF_SIZE_CODE.append("        double prefHeight = WIDTH < (HEIGHT * ${WIDTH / HEIGHT}) ? (WIDTH * ${HEIGHT / WIDTH}) : HEIGHT;\n")
+        PREF_SIZE_CODE.append("        double prefWidth = prefHeight * ${WIDTH / HEIGHT};\n")
+        return PREF_SIZE_CODE.toString()
     }
 
     private String javaFxRegisterListeners(final HashMap<String, String> PROPERTIES) {

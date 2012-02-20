@@ -31,10 +31,23 @@ $propertyInitialization
     }
 
 
-    // ******************** Getters and Setters *******************************
+    // ******************** Methods *******************************************
 $propertyGetterSetter
     public final boolean isSquare() {
         return square;
+    }
+
+    public final boolean isKeepAspect() {
+        return keepAspect;
+    }
+
+    @Override public void setPrefSize(final double WIDTH, final double HEIGHT) {
+$prefSizeCalculation
+        if (keepAspect) {
+            super.setPrefSize(prefWidth, prefHeight);
+        } else {
+            super.setPrefSize(WIDTH, HEIGHT);
+        }
     }
 
 

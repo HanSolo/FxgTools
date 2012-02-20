@@ -19,9 +19,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1e3b9ffb-e90d-4141-a823-2f9420c91937" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" afterPath="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
     </list>
     <ignored path="FxgTools.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -87,51 +87,21 @@
       <file leaf-file-name="FxgTranslator.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="288" column="86" selection-start="16872" selection-end="16872" vertical-scroll-proportion="0.40869564">
+            <state line="66" column="161" selection-start="3898" selection-end="3898" vertical-scroll-proportion="0.4621118">
               <folding>
-                <element signature="n#!!block;n#translate#0;n#!!block;n#FxgTranslator#0" expanded="true" />
-                <element signature="e#61323#67263#0" expanded="false" />
+                <element signature="n#!!block;n#javaFxControlTemplate#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+                <element signature="n#!!block;n#javaFxPrefSizeCalculation#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+                <element signature="e#62298#68238#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FxgRectangle.groovy" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy">
+      <file leaf-file-name="javafx_control.txt" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="95" column="43" selection-start="4347" selection-end="4668" vertical-scroll-proportion="0.0">
+            <state line="44" column="20" selection-start="1421" selection-end="1421" vertical-scroll-proportion="0.0">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FxgShape.groovy" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="208" column="35" selection-start="9620" selection-end="9620" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="n#!!block;n#appendJavaFxFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendJavaFxColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendJavaFxStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#createCssFill#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#createCssStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendCanvasFill#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendCanvasStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendCanvasFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendCanvasColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendCanvasStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendGroovyFxFillAndStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendGroovyFxPaint#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendGroovyFxFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendGroovyFxColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendGroovyFxStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendAndroidFillAndStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendAndroidFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendAndroidFractions#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendAndroidColors#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#appendAndroidColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-                <element signature="n#!!block;n#intendCode#0;n#!!block;n#FxgShape#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -161,8 +131,6 @@
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgStroke.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/TranslationEvent.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/java.txt" />
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt" />
-        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_demo.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgLine.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRichText.groovy" />
@@ -171,6 +139,8 @@
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgParser.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgEllipse.groovy" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt" />
+        <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt" />
         <option value="$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy" />
       </list>
     </option>
@@ -244,16 +214,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FxgTools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FxgTools" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scope">
@@ -303,9 +263,9 @@
     <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="Regex">
     <option name="pos1" value="218" />
@@ -522,7 +482,7 @@
       <window_info id="Gradle" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="J2D Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329859" sideWeight="0.7107728" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16666667" sideWeight="0.6710059" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16605392" sideWeight="0.6710059" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28757396" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -531,7 +491,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UML Diagrams" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42607123" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Code Graph" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43259802" sideWeight="0.99882907" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293124" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289941" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18148375" sideWeight="0.32552692" order="1" side_tool="true" content_ui="tabs" />
@@ -644,11 +604,6 @@
         <state line="33" column="0" selection-start="1149" selection-end="1149" vertical-scroll-proportion="0.33333334" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="20" selection-start="760" selection-end="760" vertical-scroll-proportion="0.3948655" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShadow.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="27" selection-start="345" selection-end="345" vertical-scroll-proportion="0.14547677" />
@@ -694,60 +649,42 @@
         <state line="65" column="34" selection-start="2450" selection-end="2450" vertical-scroll-proportion="-0.37286064" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="1145" selection-end="1281" vertical-scroll-proportion="0.020782396" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="208" column="35" selection-start="9620" selection-end="9620" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="n#!!block;n#appendJavaFxFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendJavaFxColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendJavaFxStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#createCssFill#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#createCssStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendCanvasFill#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendCanvasStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendCanvasFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendCanvasColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendCanvasStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendGroovyFxFillAndStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendGroovyFxPaint#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendGroovyFxFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendGroovyFxColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendGroovyFxStops#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendAndroidFillAndStroke#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendAndroidFilter#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendAndroidFractions#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendAndroidColors#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#appendAndroidColor#0;n#!!block;n#FxgShape#0" expanded="true" />
-            <element signature="n#!!block;n#intendCode#0;n#!!block;n#FxgShape#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgEllipse.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="36" selection-start="3330" selection-end="3686" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="90" column="36" selection-start="3330" selection-end="3686" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgRectangle.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="95" column="43" selection-start="4347" selection-end="4668" vertical-scroll-proportion="0.0">
+        <state line="95" column="43" selection-start="4347" selection-end="4668" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/fxg/FxgShape.groovy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="208" column="35" selection-start="9620" selection-end="9620" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_skin.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="43" selection-start="1976" selection-end="1976" vertical-scroll-proportion="0.06234719">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/resources/javafx_control.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="20" selection-start="1421" selection-end="1421" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/eu/hansolo/fxgtools/main/FxgTranslator.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="288" column="86" selection-start="16872" selection-end="16872" vertical-scroll-proportion="0.40869564">
+        <state line="66" column="161" selection-start="3898" selection-end="3898" vertical-scroll-proportion="0.4621118">
           <folding>
-            <element signature="n#!!block;n#translate#0;n#!!block;n#FxgTranslator#0" expanded="true" />
-            <element signature="e#61323#67263#0" expanded="false" />
+            <element signature="n#!!block;n#javaFxControlTemplate#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+            <element signature="n#!!block;n#javaFxPrefSizeCalculation#0;n#!!block;n#FxgTranslator#0" expanded="true" />
+            <element signature="e#62298#68238#0" expanded="false" />
           </folding>
         </state>
       </provider>
