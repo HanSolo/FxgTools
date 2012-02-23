@@ -53,7 +53,7 @@ $groupDeclaration
         super(CONTROL, new $classNameBehavior(CONTROL));
         control     = CONTROL;
         square      = control.isSquare();
-        keepAspect  = control.keepAspect();
+        keepAspect  = control.isKeepAspect();
         initialized = false;
         isDirty     = false;
 $groupInitialization
