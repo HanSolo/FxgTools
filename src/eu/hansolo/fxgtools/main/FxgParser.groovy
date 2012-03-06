@@ -111,8 +111,7 @@ class FxgParser {
             return null
         }
     }
-    private class FxgPathReader
-    {
+    private class FxgPathReader {
         protected List path
         protected double scaleFactorX
         protected double scaleFactorY
@@ -134,7 +133,7 @@ class FxgParser {
     }
 
 
-    // ********************   P U B L I C   M E T H O D S   ************************************************************
+    // ********************   M E T H O D S   **************************************************************************
     Map<String, BufferedImage> parse(final Node FXG, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
         Map<String, BufferedImage> images = [:]
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
@@ -250,8 +249,6 @@ class FxgParser {
     }
 
 
-    // ********************   P R I V A T E   M E T H O D S   **********************************************************
-
     // ********************   P A R S E   T O   F X G   -   S H A P E S   **********************************************
     private FxgRectangle parseFxgRectangle(final NODE, final String LAYER_NAME, final int INDEX) {
         String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Rectangle", INDEX)
@@ -351,7 +348,7 @@ class FxgParser {
         String fontStyle = (NODE.@fontStyle ?: 'normal')
         String textDecoration = (NODE.@textDecoration ?: 'none')
         String lineThrough = (NODE.@lineThrough ?: 'false')
-        int alpha = (NODE.@alpha ?: 1).toDouble() * 255
+        int alpha = parseAlpha(NODE, 1.0)
         fxgText.x = x
         fxgText.y = (y + (float) fontSize)
         fxgText.rotation = rotation
@@ -460,7 +457,7 @@ class FxgParser {
                 float weight = (solidColorStroke[0].@weight ?: 1f).toFloat()
                 String caps = (solidColorStroke[0].@caps ?: 'round')
                 String joints = (solidColorStroke[0].@joints ?: 'round')
-                int alpha = ((solidColorStroke[0].@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
+                int alpha = parseAlpha(solidColorStroke[0], lastShapeAlpha)
                 color =  parseColor(colorString, alpha)
                 final CAP
                 switch(caps){
@@ -516,7 +513,7 @@ class FxgParser {
                 int angle = (shadow.@angle ?: 0).toInteger()
                 String colorString = (shadow.@color ?: '#000000')
                 int distance = (shadow.@distance ?: 0).toDouble() * scaleFactorX
-                int alpha = ((shadow.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
+                int alpha = parseAlpha(shadow, lastShapeAlpha)
                 int blurX = (shadow.@blurX ?: 0).toDouble() * scaleFactorX
                 //int blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
                 boolean inner = (shadow.@inner ?: false)
@@ -558,7 +555,7 @@ class FxgParser {
 
     private Color parseColor(final NODE) {
         String color = (NODE.@color ?: '#000000')
-        int alpha = ((NODE.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
+        int alpha = parseAlpha(NODE, lastShapeAlpha)
         return parseColor(color, alpha)
     }
 
@@ -568,6 +565,19 @@ class FxgParser {
         int green = Integer.valueOf(COLOR[3..4], 16).intValue()
         int blue = Integer.valueOf(COLOR[5..6], 16).intValue()
         new Color(red, green, blue, ALPHA)
+    }
+
+    private int parseAlpha(final NODE, final double LAST_SHAPE_ALPHA) {
+        String alphaString = (NODE.@alpha ?: '1.0')
+        int alpha
+        if (alphaString.equals('NaN') || alphaString.equals('-Infinity')) {
+            alpha = 0.0
+        } else if (alphaString.equals('Infinity')) {
+            alpha = lastShapeAlpha * 255
+        } else {
+            alpha = (Double.parseDouble(alphaString) * LAST_SHAPE_ALPHA) * 255
+        }
+        return alpha
     }
 
     private processPath(final PATH_LIST, final FxgPathReader READER, final GeneralPath PATH, double x, double y) {
@@ -656,7 +666,7 @@ class FxgParser {
 
         gradientEntries.each { def gradientEntry->
             fraction = (gradientEntry.@ratio ?: 0).toFloat()
-            alpha = ((gradientEntry.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
+            alpha = parseAlpha(gradientEntry, lastShapeAlpha)
             if (fraction.compareTo(oldFraction) == 0) { // make sure that the current fraction is different from the last
                 fraction += 0.0001f
             }

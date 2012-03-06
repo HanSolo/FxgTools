@@ -543,7 +543,7 @@ class FxgTranslator {
 
     private String javaFxPropertyInitialization(final HashMap<String, String> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
-        int maxLength = 6
+        int maxLength = 10
         PROPERTIES.keySet().each{String PROPERTY_NAME->
             maxLength = Math.max(PROPERTY_NAME.length(), maxLength)
         }
