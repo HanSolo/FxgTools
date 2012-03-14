@@ -4,6 +4,7 @@ import java.awt.Font
 import java.text.AttributedString
 import java.awt.font.TextAttribute
 import java.awt.Color
+import java.awt.GraphicsEnvironment
 
 /**
  * Created by IntelliJ IDEA.
@@ -75,7 +76,7 @@ class FxgRichText extends FxgShape{
                 StringBuilder style = new StringBuilder();
                 style.append(font.bold ? "Font.BOLD" : "Font.PLAIN")
                 style.append(font.italic ? " | Font.ITALIC" : "")
-                code.append("        final Font ${name}_Font = new Font(\"${font.family}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
+                code.append("        final Font ${name}_Font = new Font(\"${font.getFontName()}\", ${style.toString()}, (int)(${font.size2D / referenceWidth} * IMAGE_WIDTH));\n")
                 code.append("        final AttributedString ${name} = new AttributedString(\"${text.trim()}\");\n")
                 code.append("        ${name}.addAttribute(TextAttribute.FONT, ${name}_Font);\n")
                 if (bold){
@@ -130,7 +131,7 @@ class FxgRichText extends FxgShape{
                 String fontPosture = (font.italic ? "FontPosture.ITALIC" : "FontPosture.REGULAR")
                 code.append("        final Text ${name} = new Text();\n")
                 code.append("        ${name}.setText(\"${text.trim()}\");\n")
-                code.append("        ${name}.setFont(Font.font(\"${font.family}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * WIDTH));\n")
+                code.append("        ${name}.setFont(Font.font(\"${font.getFontName()}\", ${fontWeight}, ${fontPosture}, ${font.size2D / referenceWidth} * WIDTH));\n")
                 code.append("        ${name}.setX(${x / referenceWidth} * WIDTH);\n")
                 code.append("        ${name}.setY(${y / referenceHeight} * HEIGHT);\n")
                 code.append("        ${name}.setTextOrigin(VPos.BOTTOM);\n")
@@ -255,5 +256,17 @@ class FxgRichText extends FxgShape{
             default:
                 return "NOT SUPPORTED"
         }
+    }
+
+    Font tryToGetFont(final String FONT_NAME) {
+        final GraphicsEnvironment GFX = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final Font[] FONTS = GFX.getAllFonts();
+        for (Font font : FONTS) {
+            System.out.println(f.getFontName());
+            if (font.getFontName().equals(FONT_NAME)) {
+                return font;
+            }
+        }
+        return null;
     }
 }

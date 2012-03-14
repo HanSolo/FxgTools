@@ -900,10 +900,6 @@ class FxgTranslator {
        }
 
 
-    // ******************** VAADIN ********************************************
-
-
-
     // ******************** CREATE CODE ***************************************
     private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
@@ -1031,12 +1027,7 @@ class FxgTranslator {
                     } else {
                         cssNameSet.add(cssName)
                     }
-                    if (element.shape.filled) {
-                        cssCode.append(element.shape.createCssFill(cssName))
-                    }
-                    //if (element.shape.stroked) {
-                    //    cssCode.append(element.shape.createCssStroke(cssName))
-                    //}
+                    cssCode.append(element.shape.createCssFillAndStroke(cssName, element.shape.filled, element.shape.stroked))
                 }
             }
         }

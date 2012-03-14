@@ -205,7 +205,7 @@ abstract class FxgShape {
         importSet.add("import javafx.scene.shape.Shape;")
 
         // add call to css id
-        code.append("        //${elementName}.setId(\"${layerName.toLowerCase()}-${elementName.toLowerCase().replaceAll('_', '-')}-fill\");\n")
+        code.append("        //${elementName}.setId(\"${layerName.toLowerCase()}-${elementName.toLowerCase().replaceAll('_', '-')}\");\n")
 
         code.append("        final Paint ${elementName}_FILL = ")
 
@@ -318,7 +318,7 @@ abstract class FxgShape {
         }
     }
 
-    public String createCssFill(String elementName) {
+    public String createCssFillAndStroke(String elementName, boolean fill, boolean stroke) {
         StringBuilder cssCode = new StringBuilder()
         elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
         elementName = elementName.replace("_E_", "_")
@@ -328,7 +328,21 @@ abstract class FxgShape {
 
         cssCode.append("#")
         cssCode.append("${elementName.toLowerCase().replaceAll('_', '-')}")
-        cssCode.append("-fill {\n")
+        cssCode.append(" {\n")
+
+        if (fill) {
+            cssCode.append(createCssFill(refWidth, refHeight))
+        }
+        if (stroke) {
+            cssCode.append(createCssStroke(refWidth, refHeight))
+        }
+
+        cssCode.append("}\n\n")
+        return cssCode.toString()
+    }
+
+    private String createCssFill(double refWidth, double refHeight) {
+        StringBuilder cssCode = new StringBuilder()
         cssCode.append("    -fx-fill: ")
 
         switch(fill.type) {
@@ -338,7 +352,6 @@ abstract class FxgShape {
                 cssCode.append("${fill.color.getGreen()}, ")
                 cssCode.append("${fill.color.getBlue()}, ")
                 cssCode.append("${fill.color.getAlpha() / 255});\n")
-                cssCode.append("}\n\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
                 cssCode.append("linear-gradient(")
@@ -356,7 +369,6 @@ abstract class FxgShape {
                     }
                 }
                 cssCode.append(");\n")
-                cssCode.append("}\n\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
                 cssCode.append("radial-gradient(")
@@ -376,30 +388,22 @@ abstract class FxgShape {
                     }
                 }
                 cssCode.append(");\n")
-                cssCode.append("}\n\n")
                 break
             case FxgFillType.NONE:
                 cssCode.append("rgba(0, 0, 0, 0);\n")
-                cssCode.append("}\n\n")
                 break
         }
         return cssCode.toString()
     }
 
-    public String createCssStroke(String elementName) {
+    private String createCssStroke(double refWidth, double refHeight) {
         StringBuilder cssCode = new StringBuilder()
-        elementName = elementName.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
-        elementName = elementName.replace("_E_", "_")
-
-        cssCode.append("#")
-        cssCode.append("${elementName}")
-        cssCode.append("-stroke {\n")
         cssCode.append("    -fx-stroke: ")
         cssCode.append("rgba(")
         cssCode.append("${stroke.color.getRed()}, ")
         cssCode.append("${stroke.color.getGreen()}, ")
         cssCode.append("${stroke.color.getBlue()}, ")
-        cssCode.append("${stroke.color.getAlpha() / 255});\n\n")
+        cssCode.append("${stroke.color.getAlpha() / 255});\n")
 
         cssCode.append("    -fx-stroke-line-cap: ")
         switch (stroke.stroke.endCap) {
@@ -426,11 +430,11 @@ abstract class FxgShape {
                 cssCode.append("miter;\n")
                 break
         }
-
+        /*
         cssCode.append("    -fx-stroke-width: ")
-        cssCode.append("${(int) (stroke.stroke.lineWidth / referenceWidth * 100)}%;\n")
-
-        cssCode.append("}\n\n")
+        cssCode.append("${(int) (stroke.width / referenceWidth * 100)}%;\n")
+        */
+        cssCode.append("    -fx-stroke-width: ${stroke.width};\n")
         return cssCode.toString()
     }
 

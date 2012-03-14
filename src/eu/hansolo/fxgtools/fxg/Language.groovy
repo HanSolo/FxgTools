@@ -12,6 +12,5 @@ enum Language {
     JAVAFX,
     GWT,
     CANVAS,
-    VAADIN,
     ANDROID
 }

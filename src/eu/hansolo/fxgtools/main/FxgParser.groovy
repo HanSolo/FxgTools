@@ -88,6 +88,7 @@ class FxgParser {
     private class FxgStroke {
         BasicStroke stroke
         Color color
+        float width
     }
     @TupleConstructor()
     private class FxgPaint {
@@ -363,6 +364,7 @@ class FxgParser {
         fxgText.lineThrough = lineThrough == 'true'
         int style = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
         fxgText.font = new Font(fontFamily, style, (float) fontSize)
+        fxgText.font = new Font(fontFamily, style, (float) fontSize)
         fxgText.text = text
         return fxgText
     }
@@ -449,12 +451,13 @@ class FxgParser {
         FxgStroke fxgStroke = new FxgStroke()
         BasicStroke basicStroke = new BasicStroke(1f)
         Color color = Color.BLACK
+        float weight = 0f
         if (NODE.stroke) {
             def stroke = NODE.stroke
             if (stroke.SolidColorStroke) {
                 def solidColorStroke = stroke[0].SolidColorStroke
                 String colorString = (solidColorStroke[0].@color ?: '#000000')
-                float weight = (solidColorStroke[0].@weight ?: 1f).toFloat()
+                weight = (solidColorStroke[0].@weight ?: 1f).toFloat()
                 String caps = (solidColorStroke[0].@caps ?: 'round')
                 String joints = (solidColorStroke[0].@joints ?: 'round')
                 int alpha = parseAlpha(solidColorStroke[0], lastShapeAlpha)
@@ -487,6 +490,7 @@ class FxgParser {
             }
         }
         fxgStroke.stroke = basicStroke
+        fxgStroke.width = weight
         fxgStroke.color = color
         return fxgStroke
     }
@@ -930,7 +934,7 @@ class FxgParser {
                 }
                 if (node.stroke) {
                     FxgStroke fxgStroke = parseStroke(node)
-                    fxgShape.stroke = new eu.hansolo.fxgtools.fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke)
+                    fxgShape.stroke = new eu.hansolo.fxgtools.fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke, width: fxgStroke.width)
                     fxgShape.stroked = true
                 }
                 fxgShape.referenceWidth = originalWidth
@@ -985,6 +989,18 @@ class FxgParser {
             elementNameSet.add(elementName)
         }
         return elementName
+    }
+
+    private Font tryToGetFont(final String FONT_NAME) {
+        final GraphicsEnvironment GFX = GraphicsEnvironment.getLocalGraphicsEnvironment()
+        final Font[] FONTS = GFX.getAllFonts()
+        for (Font font : FONTS) {
+            System.out.println(f.getFontName())
+            if (font.getFontName().equals(FONT_NAME)) {
+                return font
+            }
+        }
+        return null;
     }
 
 
