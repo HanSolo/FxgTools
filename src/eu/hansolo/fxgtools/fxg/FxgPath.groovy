@@ -26,11 +26,11 @@ class FxgPath extends FxgShape {
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
         String name = "${shapeName}"
-        if (NAME_SET.contains(name)) {
-            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
-        } else {
-            NAME_SET.add(name)
-        }
+        //if (NAME_SET.contains(name)) {
+        //    name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        //} else {
+        //    NAME_SET.add(name)
+        //}
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${shapeName.toUpperCase()}"

@@ -29,12 +29,12 @@ class FxgRectangle extends FxgShape {
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
         String name = "${shapeName}"
-        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
-        if (NAME_SET.contains(name)) {
-            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
-        } else {
-            NAME_SET.add(name)
-        }
+        //name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
+        //if (NAME_SET.contains(name)) {
+        //    name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        //} else {
+        //    NAME_SET.add(name)
+        //}
 
         switch (LANGUAGE) {
             case Language.JAVA:

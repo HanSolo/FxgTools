@@ -41,12 +41,12 @@ class FxgEllipse extends FxgShape {
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
         String name = "${shapeName}"
-        name = name.replace("E_", "")
-        if (NAME_SET.contains(name)) {
-            name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
-        } else {
-            NAME_SET.add(name)
-        }
+        //name = name.replace("E_", "")
+        //if (NAME_SET.contains(name)) {
+        //    name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
+        //} else {
+        //    NAME_SET.add(name)
+        //}
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${shapeName.toUpperCase()}"
@@ -87,6 +87,7 @@ class FxgEllipse extends FxgShape {
             case Language.JAVAFX:
                 name = "${shapeName.toUpperCase()}"
                 name = name.replace("E_", "")
+
                 if (NAME_SET.contains(name)) {
                     name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 } else {
