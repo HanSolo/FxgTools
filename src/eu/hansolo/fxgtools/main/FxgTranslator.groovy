@@ -181,11 +181,10 @@ class FxgTranslator {
     private String javaLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("    public BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
-        layerCode.append("        final GraphicsConfiguration GFX_CONF = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();\n")
         layerCode.append("        if (WIDTH <= 0 || HEIGHT <= 0) {\n")
-        layerCode.append("            return GFX_CONF.createCompatibleImage(1, 1, java.awt.Transparency.TRANSLUCENT);\n")
+        layerCode.append("            return createImage(1, 1, Transparency.TRANSLUCENT);\n")
         layerCode.append("        }\n")
-        layerCode.append("        final BufferedImage IMAGE = GFX_CONF.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);\n")
+        layerCode.append("        final BufferedImage IMAGE = createImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);\n")
         layerCode.append("        final Graphics2D G2 = IMAGE.createGraphics();\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);\n")
