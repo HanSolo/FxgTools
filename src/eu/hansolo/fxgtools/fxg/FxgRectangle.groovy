@@ -101,6 +101,9 @@ class FxgRectangle extends FxgShape {
                     NAME_SET.add(name)
                 }
                 name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                if (name.startsWith('_')) {
+                    name = name.replace('_', '')
+                }
                 int nameLength = name.length()
 
                 code.append("        final Rectangle ${name} = new Rectangle(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT,\n")
