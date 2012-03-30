@@ -335,6 +335,8 @@ abstract class FxgShape {
         }
         if (stroke) {
             cssCode.append(createCssStroke(refWidth, refHeight))
+        } else {
+            cssCode.append("    -fx-stroke: transparent;\n");
         }
 
         cssCode.append("}\n\n")
