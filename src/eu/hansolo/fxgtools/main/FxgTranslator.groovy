@@ -82,6 +82,13 @@ class FxgTranslator {
                 codeToExport.append(canvasTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
                 exportFileName.append(".js")
                 break
+            case Language.GROOVYFX:
+                if (EXPORT_TO_FILE) {
+                    writeToFile(desktopPath.append('FxgTest.groovy').toString(), groovyFxTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
+                }
+                codeToExport.append(groovyFxTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE))
+                exportFileName.append('.groovy')
+                break
             case Language.ANDROID:
                 if (EXPORT_TO_FILE) {
                     writeToFile(desktopPath.append('AndroidTest.java').toString(), androidTestTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
@@ -817,6 +824,92 @@ class FxgTranslator {
     }
 
 
+    // ******************** GROOVY FX *****************************************
+    private String groovyFxTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfx.txt')
+        StringBuilder codeToExport = new StringBuilder(template.text)
+
+        StringBuilder groupDeclaration = new StringBuilder()
+        StringBuilder groupInitialization = new StringBuilder()
+
+        layerMap.keySet().each {String layerName ->
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
+                String varName = createVarName(layerName)
+                groupDeclaration.append("    private Group ${varName}\n")
+                groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight)\n")
+            }
+        }
+
+        replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
+        replaceAll(codeToExport, "\$className", CLASS_NAME)
+        replaceAll(codeToExport, "\$groupDeclaration", groupDeclaration.toString())
+        replaceAll(codeToExport, "\$groupInitialization", groupInitialization.toString())
+        replaceAll(codeToExport, "\$drawingCode", code(layerMap, LANGUAGE))
+        if (allLayers.length() > 31) {
+            allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
+        }
+        replaceAll(codeToExport, "\$layerList", allLayers.toString())
+
+        return codeToExport.toString()
+    }
+
+    private String groovyFxLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("\n")
+        layerCode.append("    public final Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
+        layerCode.append("        def ${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)} = new Group()\n")
+        return layerCode.toString()
+    }
+
+    private String groovyFxLayerMethodStop(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    }\n")
+        return layerCode.toString()
+    }
+
+    private String groovyFxTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/groovyfx_demo.txt')
+        StringBuilder codeToExport = new StringBuilder(template.text)
+
+        replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
+        replaceAll(codeToExport, "\$className", CLASS_NAME)
+        replaceAll(codeToExport, "\$width", WIDTH)
+        replaceAll(codeToExport, "\$height", HEIGHT)
+
+        return codeToExport.toString()
+    }
+
+    private void groovyFxSplitLayer(String layerName, int splitNumber, StringBuilder code, StringBuilder allElements) {
+        String varName = createVarName(layerName)
+        if (splitNumber == 1) {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${layerName}.children.addAll(")
+            code.append(allElements.toString())
+            code.append(");\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
+            code.append("        return ${varName};\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
+        } else {
+            if (allElements.length() > layerName.length() + 32) {
+                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+            }
+            code.append("        ${varName}.children.addAll(")
+            code.append(allElements.toString())
+            code.append(")\n\n")
+            allElements.length = 0
+
+            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
+            code.append("    }\n\n")
+            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
+        }
+    }
+
+
     // ******************** ANDROID *******************************************
     private String androidTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android.txt')
@@ -874,7 +967,7 @@ class FxgTranslator {
    }
 
     private String androidTestTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT) {
-        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/androidtest.txt')
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/android_demo.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
 
         replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
@@ -930,7 +1023,7 @@ class FxgTranslator {
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex, nameSet))
-                    if (LANGUAGE == Language.JAVAFX){
+                    if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
                         String name = element.shape.shapeName.toUpperCase()
                         name = name.replace("E_", "")
                         name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
@@ -958,6 +1051,9 @@ class FxgTranslator {
                         }
                         if (LANGUAGE == Language.JAVAFX) {
                             javaFxSplitLayer(layerName, splitNumber, code, allElements)
+                        }
+                        if (LANGUAGE == Language.GROOVYFX) {
+                            groovyFxSplitLayer(layerName, splitNumber, code, allElements)
                         }
                         if (LANGUAGE == Language.GWT) {
                             gwtSplitLayer(layerName, splitNumber, code)
@@ -993,6 +1089,20 @@ class FxgTranslator {
                         break
                     case Language.CANVAS:
                         code.append(canvasLayerMethodStop())
+                        break
+                    case Language.GROOVYFX:
+                        if (allElements.length() > layerName.length() + 32) {
+                            allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+                        }
+                        code.append("        ${varName}.children.addAll(")
+                        code.append(allElements.toString())
+                        code.append(")\n")
+                        allElements.length = 0
+                        if (splitNumber == 0) {
+                            code.append("        return ${varName}\n")
+                        }
+                        code.append(javaFxLayerMethodStop(layerName))
+                        allLayers.append(createVarName(layerName)).append(",\n                             ")
                         break
                     case Language.ANDROID:
                         if (splitNumber > 0) {

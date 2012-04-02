@@ -1,0 +1,13 @@
+$packageInfo
+
+import groovyx.javafx.GroovyFX
+import groovyx.javafx.SceneGraphBuilder
+
+public class $className extends Parent {
+$groupDeclaration
+    public $className(int imageWidth, int imageHeight) {
+$groupInitialization
+        getChildren().addAll($layerList)
+    }
+$drawingCode
+}
