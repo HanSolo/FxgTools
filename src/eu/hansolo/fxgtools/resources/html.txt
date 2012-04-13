@@ -4,20 +4,16 @@
     <meta charset='utf-8' />
     <title>FXG -> Canvas</title>
     <script type='text/javascript' src='$jsFileName'></script>
-
     <script type='application/javascript'>
-
+        var control;
         function init()
         {
-            // Initialzing
-            var test = new $className('canvas', $width, $height);
-            test.paintComponent();
+            // Initialize the control
+            control = new $className({parentId:'container', width: $width, height: $height});
         }
     </script>
   </head>
   <body onload='init()'>
-    <canvas id='canvas' width='400' height='400'>
-      No canvas in your browser...sorry...
-    </canvas>
+    <div id='container'></div>
   </body>
 </html>

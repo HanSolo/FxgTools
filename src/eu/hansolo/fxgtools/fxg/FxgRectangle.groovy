@@ -141,6 +141,15 @@ class FxgRectangle extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
+                name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '_')
+                if (name.startsWith('_')) {
+                    name = name.replace('_', '')
+                }
                 code.append("\n")
                 code.append("        //${name}\n")
                 code.append("        ctx.save();\n")

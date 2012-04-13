@@ -776,15 +776,17 @@ class FxgTranslator {
         StringBuilder createBuffers = new StringBuilder()
         StringBuilder drawImagesToBuffer = new StringBuilder()
         StringBuilder drawImagesToCanvas = new StringBuilder()
+        StringBuilder clearBuffers = new StringBuilder()
 
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
                 createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
                 createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
-                createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n\n")
-                drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n\n")
-                drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n\n")
+                createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n")
+                drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n")
+                drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n")
+                clearBuffers.append("        ${layerName}_Ctx.clearRect(0, 0, this.width, this.height);\n")
             }
         }
 
@@ -793,6 +795,9 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$drawImagesToBuffer", drawImagesToBuffer.toString())
         replaceAll(codeToExport, "\$drawImagesToCanvas", drawImagesToCanvas.toString())
         replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$width", WIDTH)
+        replaceAll(codeToExport, "\$height", HEIGHT)
+        replaceAll(codeToExport, "\$clearBuffers", clearBuffers.toString())
 
         return codeToExport.toString()
     }

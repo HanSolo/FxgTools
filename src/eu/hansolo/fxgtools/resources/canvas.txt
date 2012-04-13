@@ -1,29 +1,41 @@
-var $className = function(canvas, width, height) {
-    // Public variables
-    this.canvas = canvas;
+var $className = function(parameters) {
+    parameters    = parameters || {};
+    this.parentId = (undefined === parameters.parentId ? 'body' : parameters.parentId);
+    this.width    = (undefined === parameters.width ? $width : parameters.width);
+    this.height   = (undefined === parameters.height ? $height : parameters.height);
+
+    // Create <canvas> element
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('id', 'control');
+    canvas.setAttribute('width', this.width);
+    canvas.setAttribute('height', this.height);
+    if (this.parentId === 'body') {
+        document.body.appendChild(canvas);
+    } else {
+        document.getElementById(this.parentId).appendChild(canvas);
+    }
+
     // Get the canvas context and clear it
-    var mainCtx = document.getElementById(canvas).getContext('2d');
+    var mainCtx = document.getElementById('control').getContext('2d');
     mainCtx.save();
-    mainCtx.clearRect(0, 0, mainCtx.canvas.width, mainCtx.canvas.height);
+    mainCtx.clearRect(0, 0, this.width, this.height);
 
     // Get the size
-    mainCtx.canvas.width = width;
-    mainCtx.canvas.height = height;
+    mainCtx.canvas.width = this.width;
+    mainCtx.canvas.height = this.height;
 
-    var imageWidth = mainCtx.canvas.width;
-    var imageHeight = mainCtx.canvas.height;
+    var imageWidth = this.width;
+    var imageHeight = this.height;
 
     var initialized = false;
 
     // **************   C O N V E R T E D   C O D E   S T A R T   ********************
-
 $createBuffers
 $creationMethods
     // **************   C O N V E R T E D   C O D E   S T O P   **********************
 
     var init = function() {
         initialized = true;
-
 $drawImagesToBuffer
     }
 
@@ -33,9 +45,20 @@ $drawImagesToBuffer
         }
 
         mainCtx.save();
-        mainCtx.clearRect(0, 0, mainCtx.canvas.width, mainCtx.canvas.height);
-
+        mainCtx.clearRect(0, 0, this.width, this.height);
 $drawImagesToCanvas
         mainCtx.restore();
     }
+
+    this.repaint = function() {
+        // Clear buffers
+$clearBuffers
+        init();
+        mainCtx.save();
+        mainCtx.clearRect(0, 0, this.width, this.height);
+$drawImagesToCanvas
+        mainCtx.restore();
+    }
+
+    this.paintComponent();
 }

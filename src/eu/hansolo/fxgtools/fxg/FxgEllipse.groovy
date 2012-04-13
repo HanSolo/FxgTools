@@ -50,7 +50,7 @@ class FxgEllipse extends FxgShape {
         switch (LANGUAGE) {
             case Language.JAVA:
                 name = "${shapeName.toUpperCase()}"
-                name = name.replace("E_", "")
+                name = name.startsWith("E_") ? name.replace("E_", "") : name;
                 if (NAME_SET.contains(name)) {
                     name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
                 } else {
@@ -93,7 +93,7 @@ class FxgEllipse extends FxgShape {
                 } else {
                     NAME_SET.add(name)
                 }
-                name = name.replace("_E_", "_")
+                name = name.startsWith("E_") ? name.replace("_E_", "_") : name;
                 int nameLength = name.length()
 
                 if (width.compareTo(height) == 0) {
@@ -130,6 +130,15 @@ class FxgEllipse extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
+                name = name.startsWith("E_") ? name.replace("E_", "") : name;
+
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
+                name = name.replace("_E_", "_")
+
                 code.append("\n")
                 code.append("        //${name}\n")
                 code.append("        ctx.save();\n")
