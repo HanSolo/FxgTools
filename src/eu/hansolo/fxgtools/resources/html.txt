@@ -9,7 +9,7 @@
         function init()
         {
             // Initialize the control
-            control = new $className({parentId:'container', width: $width, height: $height});
+            control = new $className({id: 'control', parentId:'container', width: $width, height: $height});
         }
     </script>
   </head>

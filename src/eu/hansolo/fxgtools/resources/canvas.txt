@@ -1,12 +1,13 @@
 var $className = function(parameters) {
     parameters    = parameters || {};
+    this.id       = (undefined === parameters.id ? 'control' : parameters.id);
     this.parentId = (undefined === parameters.parentId ? 'body' : parameters.parentId);
     this.width    = (undefined === parameters.width ? $width : parameters.width);
     this.height   = (undefined === parameters.height ? $height : parameters.height);
 
     // Create <canvas> element
     var canvas = document.createElement('canvas');
-    canvas.setAttribute('id', 'control');
+    canvas.setAttribute('id', this.id);
     canvas.setAttribute('width', this.width);
     canvas.setAttribute('height', this.height);
     if (this.parentId === 'body') {
@@ -16,7 +17,7 @@ var $className = function(parameters) {
     }
 
     // Get the canvas context and clear it
-    var mainCtx = document.getElementById('control').getContext('2d');
+    var mainCtx = document.getElementById(this.id).getContext('2d');
     mainCtx.save();
     mainCtx.clearRect(0, 0, this.width, this.height);
 
