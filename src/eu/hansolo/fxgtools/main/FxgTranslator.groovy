@@ -699,14 +699,14 @@ class FxgTranslator {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().eachWithIndex{String PROPERTY_NAME, int index->
             if (index == 0) {
-                PROPERTY_CODE.append("        if (PROPERTY == ").append("\"${PROPERTY_NAME.toUpperCase()}\") {\n")
+                PROPERTY_CODE.append("        if ").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
                 PROPERTY_CODE.append("            // React to property change here\n")
                 PROPERTY_CODE.append("        }")
                 if (PROPERTIES.size() == 1) {
                     PROPERTY_CODE.append(";")
                 }
             } else {
-                PROPERTY_CODE.append(" else if (PROPERTY == ").append("\"${PROPERTY_NAME.toUpperCase()}\") {\n")
+                PROPERTY_CODE.append(" else if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
                 PROPERTY_CODE.append("            // React to property change here\n")
                 PROPERTY_CODE.append("        }")
                 if (index == PROPERTIES.size()) {
@@ -1126,7 +1126,7 @@ class FxgTranslator {
         StringBuilder cssCode = new StringBuilder()
         layerMap.keySet().each {String layerName->
             cssNameSet.clear();
-            if (layerSelection.contains(layerName)) {
+            if (layerSelection.contains(layerName) && !layerName.equalsIgnoreCase("properties")) {
                 int shapeIndex = 0
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
