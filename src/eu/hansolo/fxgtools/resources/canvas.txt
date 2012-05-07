@@ -6,10 +6,10 @@ var $className = function(parameters) {
     this.height   = (undefined === parameters.height ? $height : parameters.height);
 
     // Create <canvas> element
-    var canvas = document.createElement('canvas');
-    canvas.setAttribute('id', this.id);
-    canvas.setAttribute('width', this.width);
-    canvas.setAttribute('height', this.height);
+    var canvas    = document.createElement('canvas');
+    canvas.id     = this.id;
+    canvas.width  = this.width;
+    canvas.height = this.height;
     if (this.parentId === 'body') {
         document.body.appendChild(canvas);
     } else {
@@ -22,18 +22,15 @@ var $className = function(parameters) {
     mainCtx.clearRect(0, 0, this.width, this.height);
 
     // Get the size
-    mainCtx.canvas.width = this.width;
+    mainCtx.canvas.width  = this.width;
     mainCtx.canvas.height = this.height;
 
-    var imageWidth = this.width;
+    var imageWidth  = this.width;
     var imageHeight = this.height;
 
     var initialized = false;
-
-    // **************   C O N V E R T E D   C O D E   S T A R T   ********************
 $createBuffers
 $creationMethods
-    // **************   C O N V E R T E D   C O D E   S T O P   **********************
 
     var init = function() {
         initialized = true;

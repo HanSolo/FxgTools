@@ -40,29 +40,20 @@ class FxgEllipse extends FxgShape {
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${shapeName}"
-        //name = name.replace("E_", "")
-        //if (NAME_SET.contains(name)) {
-        //    name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
-        //} else {
-        //    NAME_SET.add(name)
-        //}
+        String name = checkName()
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${shapeName.toUpperCase()}"
-                name = name.startsWith("E_") ? name.replace("E_", "") : name;
                 if (NAME_SET.contains(name)) {
-                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
                 } else {
                     NAME_SET.add(name)
                 }
-                name = name.replace("_E_", "_")
                 int nameLength = name.length()
                 if (transformed) {
                     code.append("        AffineTransform transformBefore${name} = G2.getTransform();\n")
-                    code.append("        AffineTransform ${name}_Transform = new AffineTransform();\n")
-                    code.append("        ${name}_Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
-                    code.append("        G2.setTransform(${name}_Transform);\n")
+                    code.append("        AffineTransform ${name}Transform = new AffineTransform();\n")
+                    code.append("        ${name}Transform.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * IMAGE_WIDTH, ${transform.translateY / referenceHeight} * IMAGE_HEIGHT);\n")
+                    code.append("        G2.setTransform(${name}Transform);\n")
                 }
                 code.append("        final Ellipse2D $name = new Ellipse2D.Double(${x / referenceWidth} * IMAGE_WIDTH, ${y / referenceHeight} * IMAGE_HEIGHT,\n")
                 code.append("        ")
@@ -85,17 +76,12 @@ class FxgEllipse extends FxgShape {
                 return code.toString()
 
             case Language.JAVAFX:
-                name = "${shapeName.toUpperCase()}"
-                name = name.replace("E_", "")
-
                 if (NAME_SET.contains(name)) {
-                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
                 } else {
                     NAME_SET.add(name)
                 }
-                name = name.startsWith("E_") ? name.replace("_E_", "_") : name;
                 int nameLength = name.length()
-
                 if (width.compareTo(height) == 0) {
                     importSet.add("import javafx.scene.shape.Circle;")
                     code.append("        final Circle ${name} = new Circle(${center.x / referenceWidth} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${getRadiusX() / referenceWidth} * WIDTH);\n")
@@ -110,14 +96,14 @@ class FxgEllipse extends FxgShape {
                     code.append("${radiusX / referenceWidth} * WIDTH, ${radiusY / referenceHeight} * HEIGHT);\n")
                 }
                 if (transformed) {
-                    code.append("        final Affine ${name}_Transform = new Affine();\n")
-                    code.append("        ${name}_Transform.setMxx(${transform.scaleX});\n")
-                    code.append("        ${name}_Transform.setMyx(${transform.shearY});\n")
-                    code.append("        ${name}_Transform.setMxy(${transform.shearX});\n")
-                    code.append("        ${name}_Transform.setMyy(${transform.scaleY});\n")
-                    code.append("        ${name}_Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
-                    code.append("        ${name}_Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
-                    code.append("        ${name}.getTransforms().add(${name}_Transform);\n")
+                    code.append("        final Affine ${name}Transform = new Affine();\n")
+                    code.append("        ${name}Transform.setMxx(${transform.scaleX});\n")
+                    code.append("        ${name}Transform.setMyx(${transform.shearY});\n")
+                    code.append("        ${name}Transform.setMxy(${transform.shearX});\n")
+                    code.append("        ${name}Transform.setMyy(${transform.scaleY});\n")
+                    code.append("        ${name}Transform.setTx(${transform.translateX / referenceWidth} * WIDTH);\n")
+                    code.append("        ${name}Transform.setTy(${transform.translateY / referenceHeight} * HEIGHT);\n")
+                    code.append("        ${name}.getTransforms().add(${name}Transform);\n")
                 }
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
@@ -130,14 +116,11 @@ class FxgEllipse extends FxgShape {
             case Language.GWT:
 
             case Language.CANVAS:
-                name = name.startsWith("E_") ? name.replace("E_", "") : name;
-
                 if (NAME_SET.contains(name)) {
-                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
                 } else {
                     NAME_SET.add(name)
                 }
-                name = name.replace("_E_", "_")
 
                 code.append("\n")
                 code.append("        //${name}\n")
@@ -165,14 +148,14 @@ class FxgEllipse extends FxgShape {
                     code.append("        def ${name} = new Ellipse(${center.x / referenceWidth} * imageWidth, ${center.y / referenceHeight} * imageHeight, ${radiusX / referenceWidth} * imageWidth, ${radiusY / referenceHeight} * imageHeight)\n")
                 }
                 if (transformed) {
-                    code.append("        def ${name}_Transform = new Affine()\n")
-                    code.append("        ${name}_Transform.mxx = ${transform.scaleX}\n")
-                    code.append("        ${name}_Transform.myx = ${transform.shearY}\n")
-                    code.append("        ${name}_Transform.mxy = ${transform.shearX}\n")
-                    code.append("        ${name}_Transform.myy = ${transform.scaleY}\n")
-                    code.append("        ${name}_Transform.tx = ${transform.translateX / referenceWidth} * imageWidth\n")
-                    code.append("        ${name}_Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
-                    code.append("        ${name}.transforms.add(${name}_Transform)\n")
+                    code.append("        def ${name}Transform = new Affine()\n")
+                    code.append("        ${name}Transform.mxx = ${transform.scaleX}\n")
+                    code.append("        ${name}Transform.myx = ${transform.shearY}\n")
+                    code.append("        ${name}Transform.mxy = ${transform.shearX}\n")
+                    code.append("        ${name}Transform.myy = ${transform.scaleY}\n")
+                    code.append("        ${name}Transform.tx = ${transform.translateX / referenceWidth} * imageWidth\n")
+                    code.append("        ${name}Transform.ty = ${transform.translateY / referenceHeight} * imageHeight\n")
+                    code.append("        ${name}.transforms.add(${name}Transform)\n")
                 }
                 appendGroovyFxFillAndStroke(code, name)
                 appendGroovyFxFilter(code, name)
@@ -203,5 +186,14 @@ class FxgEllipse extends FxgShape {
             default:
                 return "NOT SUPPORTED"
         }
+    }
+
+    private String checkName() {
+        String name = "${shapeName.toUpperCase()}"
+        name = name.startsWith("E_") ? name.replaceFirst("E_", "") : name
+        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", "")
+        name = name.replace("_E_", "")
+        name = name.startsWith("_") ? name.replaceFirst("_", "") : name
+        return name
     }
 }

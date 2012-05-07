@@ -6,9 +6,7 @@
     <script type='text/javascript' src='$jsFileName'></script>
     <script type='application/javascript'>
         var control;
-        function init()
-        {
-            // Initialize the control
+        function init() {
             control = new $className({id: 'control', parentId:'container', width: $width, height: $height});
         }
     </script>

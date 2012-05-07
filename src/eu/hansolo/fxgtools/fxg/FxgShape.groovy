@@ -205,7 +205,7 @@ abstract class FxgShape {
         importSet.add("import javafx.scene.shape.Shape;")
 
         // add call to css id
-        code.append("        //${elementName}.setId(\"${layerName.toLowerCase()}-${elementName.toLowerCase().replaceAll('_', '-')}\");\n")
+        code.append("        //${elementName}.getStyleClass().add(\"${layerName.toLowerCase()}-${elementName.toLowerCase().replaceAll('_', '-')}\");\n")
 
         code.append("        final Paint ${elementName}_FILL = ")
 
@@ -326,7 +326,7 @@ abstract class FxgShape {
         double refWidth = elementWidth != 0 ? elementWidth : referenceWidth
         double refHeight = elementHeight != 0 ? elementHeight : referenceHeight
 
-        cssCode.append("#")
+        cssCode.append(".")
         cssCode.append("${elementName.toLowerCase().replaceAll('_', '-')}")
         cssCode.append(" {\n")
 

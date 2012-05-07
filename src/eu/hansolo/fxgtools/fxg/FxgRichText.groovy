@@ -52,18 +52,11 @@ class FxgRichText extends FxgShape{
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
-        String name = "${shapeName}"
-        //if (NAME_SET.contains(name)) {
-        //    name = "${layerName}_${shapeName}_${SHAPE_INDEX}"
-        //} else {
-        //    NAME_SET.add(shapeName)
-        //}
-
+        String name = checkName()
         switch (LANGUAGE) {
             case Language.JAVA:
-                name = "${shapeName.toUpperCase()}"
                 if (NAME_SET.contains(name)) {
-                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
                 } else {
                     NAME_SET.add(name)
                 }
@@ -121,9 +114,8 @@ class FxgRichText extends FxgShape{
                 importSet.add("import javafx.scene.text.FontPosture;")
                 importSet.add("import javafx.scene.text.FontWeight;")
                 importSet.add("import javafx.scene.text.Text;")
-                name = "${shapeName.toUpperCase()}"
                 if (NAME_SET.contains(name)) {
-                    name = "${layerName.toUpperCase()}_${shapeName.toUpperCase()}_${SHAPE_INDEX}"
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
                 } else {
                     NAME_SET.add(name)
                 }
@@ -268,5 +260,14 @@ class FxgRichText extends FxgShape{
             }
         }
         return null;
+    }
+
+    private String checkName() {
+        String name = "${shapeName.toUpperCase()}"
+        name = name.startsWith("E_") ? name.replaceFirst("E_", "") : name
+        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", "")
+        name = name.replace("_E_", "")
+        name = name.startsWith("_") ? name.replaceFirst("_", "") : name
+        return name
     }
 }

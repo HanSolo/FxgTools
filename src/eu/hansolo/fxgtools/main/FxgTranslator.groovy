@@ -129,6 +129,8 @@ class FxgTranslator {
             StringBuilder output = new StringBuilder()
             varNameParts.each {output.append(it.capitalize())}
             varName = output.substring(0,1).toLowerCase() + output.substring(1)
+        } else if (LAYER_NAME == LAYER_NAME.toUpperCase()) {
+            varName = LAYER_NAME.toLowerCase()
         } else if (LAYER_NAME == LAYER_NAME.capitalize()) {
             varName = "${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)}"
         } else {
@@ -151,13 +153,13 @@ class FxgTranslator {
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 String varName = createVarName(layerName)
-                imageDeclaration.append("    private BufferedImage         ${varName}_Image;\n")
-                imageInitialization.append("        ${varName}_Image = createImage(INNER_BOUNDS.width, INNER_BOUNDS.height, Transparency.TRANSLUCENT);\n")
-                imageCreation.append("        if (${varName}_Image != null) {\n")
-                imageCreation.append("            ${varName}_Image.flush();\n")
+                imageDeclaration.append("    private BufferedImage         ${varName}Image;\n")
+                imageInitialization.append("        ${varName}Image = createImage(INNER_BOUNDS.width, INNER_BOUNDS.height, Transparency.TRANSLUCENT);\n")
+                imageCreation.append("        if (${varName}Image != null) {\n")
+                imageCreation.append("            ${varName}Image.flush();\n")
                 imageCreation.append("        }\n")
-                imageCreation.append("        ${varName}_Image = create_${layerName}_Image(WIDTH, HEIGHT);\n")
-                drawImage.append("        G2.drawImage(${varName}_Image, 0, 0, null);\n")
+                imageCreation.append("        ${varName}Image = create${layerName}Image(WIDTH, HEIGHT);\n")
+                drawImage.append("        G2.drawImage(${varName}Image, 0, 0, null);\n")
             }
         }
 
@@ -187,7 +189,7 @@ class FxgTranslator {
 
     private String javaLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    public BufferedImage create_${LAYER_NAME}_Image(final int WIDTH, final int HEIGHT) {\n")
+        layerCode.append("    public BufferedImage create${LAYER_NAME}Image(final int WIDTH, final int HEIGHT) {\n")
         layerCode.append("        if (WIDTH <= 0 || HEIGHT <= 0) {\n")
         layerCode.append("            return createImage(1, 1, Transparency.TRANSLUCENT);\n")
         layerCode.append("        }\n")
@@ -220,15 +222,15 @@ class FxgTranslator {
 
     private void javaSplitLayer(String layerName, int splitNumber, StringBuilder code) {
         if (splitNumber == 1 ) {
-            code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("        G2.dispose();\n\n")
             code.append("        return IMAGE;\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
         } else {
-            code.append("        addSplit_${layerName}_${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(G2, IMAGE_WIDTH, IMAGE_HEIGHT);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(final Graphics2D G2, final int IMAGE_WIDTH, final int IMAGE_HEIGHT) {\n")
         }
     }
 
@@ -452,12 +454,11 @@ class FxgTranslator {
         layerCode.append("    public final void draw${LAYER_NAME}() {\n")
         layerCode.append("        final double SIZE = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
         layerCode.append("        final double WIDTH = square ? SIZE : control.getPrefWidth();\n")
-        layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n")
-        layerCode.append("        ${lowerLayerName}.getChildren().clear();\n")
+        layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n\n")
+        layerCode.append("        ${lowerLayerName}.getChildren().clear();\n\n")
         layerCode.append("        final Shape IBOUNDS = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
         layerCode.append("        IBOUNDS.setOpacity(0.0);\n")
-        //layerCode.append("        IBOUNDS.setStroke(null);\n")
-        layerCode.append("        ${lowerLayerName}.getChildren().add(IBOUNDS);\n")
+        layerCode.append("        ${lowerLayerName}.getChildren().add(IBOUNDS);\n\n")
         return layerCode.toString()
     }
 
@@ -478,10 +479,10 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        continue_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
+            code.append("        continue${layerName}${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
             //code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void continue_${layerName}_${splitNumber}(Group ${varName}, final double WIDTH, final double HEIGHT) {\n")
+            code.append("    private void continue${layerName}${splitNumber}(Group ${varName}, final double WIDTH, final double HEIGHT) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
@@ -491,9 +492,9 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        continue_${layerName}_${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
+            code.append("        continue${layerName}${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
             code.append("    }\n\n")
-            code.append("    private void continue_${layerName}_${splitNumber}(Group ${varName}, final sdouble WIDTH, final double HEIGHT) {\n")
+            code.append("    private void continue${layerName}${splitNumber}(Group ${varName}, final sdouble WIDTH, final double HEIGHT) {\n")
         }
     }
 
@@ -699,15 +700,15 @@ class FxgTranslator {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().eachWithIndex{String PROPERTY_NAME, int index->
             if (index == 0) {
-                PROPERTY_CODE.append("        if ").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
-                PROPERTY_CODE.append("            // React to property change here\n")
+                PROPERTY_CODE.append("        if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
+                PROPERTY_CODE.append("            // React to ${PROPERTY_NAME} property change here\n")
                 PROPERTY_CODE.append("        }")
                 if (PROPERTIES.size() == 1) {
                     PROPERTY_CODE.append(";")
                 }
             } else {
                 PROPERTY_CODE.append(" else if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
-                PROPERTY_CODE.append("            // React to property change here\n")
+                PROPERTY_CODE.append("            // React to ${PROPERTY_NAME} property change here\n")
                 PROPERTY_CODE.append("        }")
                 if (index == PROPERTIES.size()) {
                     PROPERTY_CODE.append(";")
@@ -726,7 +727,7 @@ class FxgTranslator {
 
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")){
-                drawImagesToContext.append("        draw_${layerName}_Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
+                drawImagesToContext.append("        draw${layerName}Image(context, CANVAS_WIDTH, CANVAS_HEIGHT);\n\n")
             }
         }
 
@@ -742,7 +743,7 @@ class FxgTranslator {
 
     private String gwtLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    public void draw_${LAYER_NAME}_Image(Context2d ctx, int imageWidth, int imageHeight) {\n")
+        layerCode.append("    public void draw${LAYER_NAME}Image(Context2d ctx, int imageWidth, int imageHeight) {\n")
         layerCode.append("        ctx.save();\n\n")
         return layerCode.toString()
     }
@@ -756,14 +757,14 @@ class FxgTranslator {
 
     private void gwtSplitLayer(String layerName, int splitNumber, StringBuilder code) {
         if (splitNumber == 1) {
-            code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("        ctx.restore();\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
         } else {
-            code.append("        addSplit_${layerName}_${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(ctx, imageWidth, imageHeight);\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(Context2d ctx, int imageWidth, int imageHeight) {\n")
         }
     }
 
@@ -777,16 +778,15 @@ class FxgTranslator {
         StringBuilder drawImagesToBuffer = new StringBuilder()
         StringBuilder drawImagesToCanvas = new StringBuilder()
         StringBuilder clearBuffers = new StringBuilder()
-
         layerMap.keySet().each {String layerName ->
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
-                createBuffers.append("    var ${layerName}_Buffer = document.createElement('canvas');\n")
-                createBuffers.append("    ${layerName}_Buffer.width = imageWidth;\n")
-                createBuffers.append("    ${layerName}_Buffer.height = imageHeight;\n")
-                createBuffers.append("    var ${layerName}_Ctx = ${layerName}_Buffer.getContext('2d');\n")
-                drawImagesToBuffer.append("        draw_${layerName}_Image(${layerName}_Ctx);\n")
-                drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}_Buffer, 0, 0);\n")
-                clearBuffers.append("        ${layerName}_Ctx.clearRect(0, 0, this.width, this.height);\n")
+                createBuffers.append("    var ${layerName}Buffer = document.createElement('canvas');\n")
+                createBuffers.append("    ${layerName}Buffer.width = imageWidth;\n")
+                createBuffers.append("    ${layerName}Buffer.height = imageHeight;\n")
+                createBuffers.append("    var ${layerName}Ctx = ${layerName}Buffer.getContext('2d');\n")
+                drawImagesToBuffer.append("        draw${layerName}Image(${layerName}Ctx);\n")
+                drawImagesToCanvas.append("        mainCtx.drawImage(${layerName}Buffer, 0, 0);\n")
+                clearBuffers.append("        ${layerName}Ctx.clearRect(0, 0, this.width, this.height);\n")
             }
         }
 
@@ -804,7 +804,7 @@ class FxgTranslator {
 
     private String canvasLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    var draw_${LAYER_NAME}_Image = function(ctx) {\n")
+        layerCode.append("    var draw${LAYER_NAME}Image = function(ctx) {\n")
         layerCode.append("        ctx.save();\n\n")
         return layerCode.toString()
     }
@@ -841,7 +841,7 @@ class FxgTranslator {
             if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                 String varName = createVarName(layerName)
                 groupDeclaration.append("    private Group ${varName}\n")
-                groupInitialization.append("        ${varName} = create_${layerName}_Layer(imageWidth, imageHeight)\n")
+                groupInitialization.append("        ${varName} = create${layerName}Layer(imageWidth, imageHeight)\n")
             }
         }
 
@@ -861,7 +861,7 @@ class FxgTranslator {
     private String groovyFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
         layerCode.append("\n")
-        layerCode.append("    public final Group create_${LAYER_NAME}_Layer(imageWidth, imageHeight) {\n")
+        layerCode.append("    public final Group create${LAYER_NAME}Layer(imageWidth, imageHeight) {\n")
         layerCode.append("        def ${LAYER_NAME.charAt(0).toLowerCase()}${LAYER_NAME.substring(1)} = new Group()\n")
         return layerCode.toString()
     }
@@ -895,10 +895,10 @@ class FxgTranslator {
             code.append(");\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
             code.append("        return ${varName};\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
@@ -908,9 +908,9 @@ class FxgTranslator {
             code.append(")\n\n")
             allElements.length = 0
 
-            code.append("        addSplit_${layerName}_${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
+            code.append("        addSplit${layerName}${splitNumber}(${varName}, imageWidth, imageHeight)\n\n")
             code.append("    }\n\n")
-            code.append("    private void addSplit_${layerName}_${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
+            code.append("    private void addSplit${layerName}${splitNumber}(def ${varName}, imageWidth, imageHeight) {\n")
         }
     }
 
@@ -931,9 +931,9 @@ class FxgTranslator {
            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
                imageDeclaration.append("    private Bitmap ${layerName}Image;\n")
                //imageInitialization.append("        ${layerName}Image = Bitmap.createBitmap(${WIDTH}, ${HEIGHT}, Bitmap.Config.ARGB_8888);\n")
-               resizeImagesSquare.append("            ${layerName}Image = create_${layerName}_Image(size, size);\n")
-               resizeImages.append("            ${layerName}Image = create_${layerName}_Image(width, height);\n")
-               imageCreation.append("        ${layerName}Image = create_${layerName}_Image(imageWidth, imageHeight);\n")
+               resizeImagesSquare.append("            ${layerName}Image = create${layerName}Image(size, size);\n")
+               resizeImages.append("            ${layerName}Image = create${layerName}Image(width, height);\n")
+               imageCreation.append("        ${layerName}Image = create${layerName}Image(imageWidth, imageHeight);\n")
                drawImage.append("        canvas.drawBitmap(${layerName}Image, 0, 0, paint);\n")
            }
         }
@@ -955,7 +955,7 @@ class FxgTranslator {
 
     private String androidLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        layerCode.append("    public Bitmap create_${LAYER_NAME}_Image(int imageWidth, int imageHeight) {\n")
+        layerCode.append("    public Bitmap create${LAYER_NAME}Image(int imageWidth, int imageHeight) {\n")
         layerCode.append("        Bitmap image = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);\n")
         layerCode.append("        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);\n")
         layerCode.append("        Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);\n")
@@ -985,14 +985,14 @@ class FxgTranslator {
 
     private void androidSplitLayer(String layerName, int splitNumber, StringBuilder code) {
            if (splitNumber == 1) {
-               code.append("        addSplit_${layerName}_${splitNumber}(canvas, paint, stroke,  imageWidth, imageHeight);\n\n")
+               code.append("        addSplit${layerName}${splitNumber}(canvas, paint, stroke,  imageWidth, imageHeight);\n\n")
                code.append("        return image;\n")
                code.append("    }\n\n")
-               code.append("    private void addSplit_${layerName}_${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
+               code.append("    private void addSplit${layerName}${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
            } else {
-               code.append("        addSplit_${layerName}_${splitNumber}(canvas, paint, stroke, imageWidth, imageHeight);\n\n")
+               code.append("        addSplit${layerName}${splitNumber}(canvas, paint, stroke, imageWidth, imageHeight);\n\n")
                code.append("    }\n\n")
-               code.append("    private void addSplit_${layerName}_${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
+               code.append("    private void addSplit${layerName}${splitNumber}(Canvas canvas, Paint paint, Paint stroke, int imageWidth, int imageHeight) {\n")
            }
        }
 
@@ -1030,10 +1030,13 @@ class FxgTranslator {
                     code.append(element.shape.translateTo(LANGUAGE, shapeIndex, nameSet))
                     if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
                         String name = element.shape.shapeName.toUpperCase()
-                        name = name.replace("E_", "")
-                        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", '')
+                        name = name.startsWith("E_") ? name.replaceFirst("E_", "") : name
+                        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", "")
+                        name = name.replace("_E_", "");
+                        name = name.startsWith("_") ? name.replaceFirst("_", "") : name
+
                         if (groupNameSet.contains(name)) {
-                            allElements.append("${layerName.toUpperCase()}_${element.shape.shapeName.toUpperCase()}_${shapeIndex}").append(",\n")
+                            allElements.append("${layerName.toUpperCase()}${element.shape.shapeName.toUpperCase()}${shapeIndex}").append(",\n")
                         } else {
                             allElements.append("${name}").append(",\n")
                             groupNameSet.add(name)
@@ -1250,9 +1253,9 @@ class FxgTranslator {
         final Pattern ZERO_PATTERN = Pattern.compile(/(0{8}[0-9]*)/)
         replaceAll(CODE, ZERO_PATTERN, "0")
         // replace shape name prefixes like E_ and RRn_m_
-        replaceAll(CODE, "_E_", "_")
+        replaceAll(CODE, "_E_", "")
         final Pattern PATTERN = Pattern.compile(/_?RR[0-9]+_([0-9]+_)?/)
-        replaceAll(CODE, PATTERN, '_')
+        replaceAll(CODE, PATTERN, "")
 
         return CODE.toString()
     }

@@ -217,16 +217,15 @@ class FxgParser {
         String layerName
         int shapeIndex = 0
         layers.eachWithIndex {def layer, int i ->
-            layerName = layer.attribute(D.userLabel)// + "_$i"
+            layerName = layer.attribute(D.userLabel)// + "$i"
             if (elements.keySet().contains(layerName)) {
-                layerName += "_$i"
+                layerName += "$i"
             }
             layerName = layerName.replaceAll(VAR_PATTERN, "")
             layerName = layerName.replaceAll(SPACE_PATTERN, "_")
             List shapes = []
             shapeIndex = convertLayer(layerName, layer, elements, shapes, shapeIndex)
         }
-
         return elements
     }
 
@@ -252,7 +251,7 @@ class FxgParser {
 
     // ********************   P A R S E   T O   F X G   -   S H A P E S   **********************************************
     private FxgRectangle parseFxgRectangle(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Rectangle", INDEX)
+        String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Rectangle", INDEX)
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
@@ -268,7 +267,7 @@ class FxgParser {
     }
 
     private FxgEllipse parseFxgEllipse(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Ellipse", INDEX)
+        String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Ellipse", INDEX)
         double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
@@ -282,7 +281,7 @@ class FxgParser {
     }
 
     private FxgLine parseFxgLine(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Line", INDEX)
+        String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Line", INDEX)
         double xFrom = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
         double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
@@ -321,7 +320,7 @@ class FxgParser {
     }
 
     private FxgRichText parseFxgRichText(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = validateElementName(NODE.attribute(D.userLabel)?:"Font", INDEX)
+        String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Font", INDEX)
         FxgRichText fxgText = new FxgRichText()
         fxgText.layerName = LAYER_NAME
         fxgText.shapeName = elementName
@@ -857,7 +856,7 @@ class FxgParser {
                 case FXG.Path:
                     elementName = lastNodeType == "Group" ?  elementName : (node.attribute(D.userLabel)?:"Path")
                     if (elementName != null) {
-                        elementName = validateElementName(elementName, i)
+                        elementName = validateElementName(LAYER_NAME, elementName, i)
                     }
                     fxgShape = parseFxgPath(node, LAYER_NAME, elementName)
                     if (elementName != null) {
@@ -890,7 +889,7 @@ class FxgParser {
                     lastNodeType = "Path"
                     break
                 case FXG.RichText:
-                    elementName = validateElementName(node.attribute(D.userLabel)?:"Text", i)
+                    elementName = validateElementName(LAYER_NAME, node.attribute(D.userLabel)?:"Text", i)
                     fxgShape = parseFxgRichText(node, LAYER_NAME, i)
                     FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 255), color: fxgShape.color)
                     lastNodeType = "RichText"
@@ -982,11 +981,11 @@ class FxgParser {
         G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
     }
 
-    private String validateElementName(String elementName, final int INDEX) {
-        if (elementNameSet.contains(elementName)) {
-            elementName += "_${INDEX}"
+    private String validateElementName(String layerName, String elementName, final int INDEX) {
+        if (elementNameSet.contains(layerName + elementName.capitalize())) {
+            elementName += "${INDEX}"
         } else {
-            elementNameSet.add(elementName)
+            elementNameSet.add(layerName + elementName.capitalize())
         }
         return elementName
     }
