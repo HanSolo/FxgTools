@@ -1,9 +1,9 @@
 var $className = function(parameters) {
     parameters    = parameters || {};
-    this.id       = (undefined === parameters.id ? 'control' : parameters.id);
-    this.parentId = (undefined === parameters.parentId ? 'body' : parameters.parentId);
-    this.width    = (undefined === parameters.width ? $width : parameters.width);
-    this.height   = (undefined === parameters.height ? $height : parameters.height);
+    this.id       = parameters.id || 'control';
+    this.parentId = parameters.parentId || 'body';
+    this.width    = parameters.width || $width;
+    this.height   = parameters.height || $height;
 
     // Create <canvas> element
     var canvas    = document.createElement('canvas');
