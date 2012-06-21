@@ -425,6 +425,7 @@ class FxgTranslator {
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$propertySetter", javaFxPropertySetter(CLASS_NAME, PROPERTIES))
         replaceAll(codeToExport, "\$buildMethod", javaFxBuildMethod(CLASS_NAME, PROPERTIES))
+        replaceAll(codeToExport, "\$packageInfo", "package " + packageInfo + ";")
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         return codeToExport.toString()
     }
@@ -729,7 +730,7 @@ class FxgTranslator {
 
     private String javaFxBuildMethod(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
         StringBuilder BUILD_CODE = new StringBuilder()
-        BUILD_CODE.append("    for (String key : properties.keySet()) {\n")
+        BUILD_CODE.append("        for (String key : properties.keySet()) {\n")
         boolean first = true
         PROPERTIES.keySet().each{String PROPERTY_NAME->
             final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
@@ -757,6 +758,10 @@ class FxgTranslator {
             }
             first = false
         }
+        BUILD_CODE.append("            } else if(\"prefWidth\".equals(key)) {\n")
+        BUILD_CODE.append("                CONTROL.setPrefWidth(((DoubleProperty) properties.get(key)).get());\n")
+        BUILD_CODE.append("            } else if(\"prefHeight\".equals(key)) {\n")
+        BUILD_CODE.append("                CONTROL.setPrefHeight(((DoubleProperty) properties.get(key)).get());\n")
         BUILD_CODE.append("            }\n")
         BUILD_CODE.append("        }\n")
         return BUILD_CODE.toString()
