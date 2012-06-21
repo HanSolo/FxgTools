@@ -67,6 +67,7 @@ class FxgTranslator {
                     writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, Double.parseDouble(WIDTH), Double.parseDouble(HEIGHT), PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
                     writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap)))
+                    writeToFile(path + ("${CLASS_NAME}Builder.java").toString(), javaFxBuilderTemplate(CLASS_NAME, PROPERTIES))
                 }
                 codeToExport.append(javaFxSkinTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, PROPERTIES))
                 exportFileName.append('Skin.java')
@@ -419,6 +420,15 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
+    private String javaFxBuilderTemplate(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+        def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_builder.txt')
+        StringBuilder codeToExport = new StringBuilder(template.text)
+        replaceAll(codeToExport, "\$propertySetter", javaFxPropertySetter(CLASS_NAME, PROPERTIES))
+        replaceAll(codeToExport, "\$buildMethod", javaFxBuildMethod(CLASS_NAME, PROPERTIES))
+        replaceAll(codeToExport, "\$className", CLASS_NAME)
+        return codeToExport.toString()
+    }
+
     private StringBuilder javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
@@ -677,6 +687,79 @@ class FxgTranslator {
             }
         }
         return PROPERTY_CODE.toString()
+    }
+
+    private String javaFxPropertySetter(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+        StringBuilder PROPERTY_CODE = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            if (TYPE.equals("double")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final double ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleDoubleProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("boolean")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleBooleanProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("int")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final int ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleIntegerProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("long")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final long ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleLongProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("string")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final String ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleStringProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("object")) {
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final Object ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleObjectProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else {
+                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
+                PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final ${ORIGINAL_TYPE} ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleObjectProperty<${ORIGINAL_TYPE}>(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("    }\n\n")
+            }
+        }
+        return PROPERTY_CODE.toString()
+    }
+
+    private String javaFxBuildMethod(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+        StringBuilder BUILD_CODE = new StringBuilder()
+        BUILD_CODE.append("    for (String key : properties.keySet()) {\n")
+        boolean first = true
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            if (first) {
+                BUILD_CODE.append("            if (")
+            } else {
+                BUILD_CODE.append("            } else if(")
+            }
+            BUILD_CODE.append("\"").append(PROPERTY_NAME).append("\".equals(key)) {\n")
+            if (TYPE.equals("double")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((DoubleProperty) properties.get(key)).get());\n")
+            } else if (TYPE.equals("boolean")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((BooleanProperty) properties.get(key)).get());\n")
+            } else if (TYPE.equals("int")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((IntegerProperty) properties.get(key)).get());\n")
+            } else if (TYPE.equals("long")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((LongProperty) properties.get(key)).get());\n")
+            } else if (TYPE.equals("string")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((StringProperty) properties.get(key)).get());\n")
+            } else if (TYPE.equals("object")) {
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty) properties.get(key)).get());\n")
+            } else {
+                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
+                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty<${ORIGINAL_TYPE}>) properties.get(key)).get());\n")
+            }
+            first = false
+        }
+        BUILD_CODE.append("            }\n")
+        BUILD_CODE.append("        }\n")
+        return BUILD_CODE.toString()
     }
 
     private String javaFxPrefSizeCalculation(final double WIDTH, final double HEIGHT) {
