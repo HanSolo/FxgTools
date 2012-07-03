@@ -66,15 +66,13 @@ $groupInitialization
         }
 
         control.prefWidthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+            @Override public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
                 isDirty = true;
             }
         });
 
         control.prefHeightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+            @Override public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
                 isDirty = true;
             }
         });
@@ -95,14 +93,12 @@ $groupUpdate
         getChildren().addAll($layerList);
     }
 
-    @Override
-    protected void handleControlPropertyChanged(final String PROPERTY) {
+    @Override protected void handleControlPropertyChanged(final String PROPERTY) {
         super.handleControlPropertyChanged(PROPERTY);
 $handlePropertyChanges
     }
 
-    @Override
-    public void layoutChildren() {
+    @Override public void layoutChildren() {
         if (isDirty) {
             paint();
             isDirty = false;
@@ -110,18 +106,15 @@ $handlePropertyChanges
         super.layoutChildren();
     }
 
-    @Override
-    public final $className getSkinnable() {
+    @Override public final $className getSkinnable() {
         return control;
     }
 
-    @Override
-    public final void dispose() {
+    @Override public final void dispose() {
         control = null;
     }
 
-    @Override
-    protected double computePrefWidth(final double PREF_WIDTH) {
+    @Override protected double computePrefWidth(final double PREF_WIDTH) {
         double prefWidth = $width;
         if (PREF_WIDTH != -1) {
             prefWidth = Math.max(0, PREF_WIDTH - getInsets().getLeft() - getInsets().getRight());
@@ -129,8 +122,7 @@ $handlePropertyChanges
         return super.computePrefWidth(prefWidth);
     }
 
-    @Override
-    protected double computePrefHeight(final double PREF_HEIGHT) {
+    @Override protected double computePrefHeight(final double PREF_HEIGHT) {
         double prefHeight = $height;
         if (PREF_HEIGHT != -1) {
             prefHeight = Math.max(0, PREF_HEIGHT - getInsets().getTop() - getInsets().getBottom());
