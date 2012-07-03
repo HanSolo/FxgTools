@@ -697,31 +697,38 @@ class FxgTranslator {
             if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final double ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleDoubleProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("boolean")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final boolean ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleBooleanProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("int")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final int ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleIntegerProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("long")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final long ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleLongProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("string")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final String ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleStringProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else if (TYPE.equals("object")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final Object ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleObjectProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else {
                 final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final ${ORIGINAL_TYPE} ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleObjectProperty<${ORIGINAL_TYPE}>(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
+                PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             }
         }

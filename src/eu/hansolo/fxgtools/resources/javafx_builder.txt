@@ -24,7 +24,7 @@ public class $classNameBuilder<B extends $classNameBuilder<B>> extends ControlBu
 
 
     // ******************** Constructors **************************************
-    protected $classNameBuilder() {};
+    protected $classNameBuilder() {}
 
 
     // ******************** Methods *******************************************
@@ -44,7 +44,7 @@ $propertySetter
     }
 
     @Override public final $className build() {
-        final Calculator CONTROL = new Calculator();
+        final $className CONTROL = new $className();
 $buildMethod
         return CONTROL;
     }
