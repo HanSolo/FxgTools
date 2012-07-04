@@ -1,53 +1,50 @@
 package eu.hansolo.fxgtools.main
 
-import groovy.xml.Namespace
+import eu.hansolo.fxgtools.fxg.FxgColor
+import eu.hansolo.fxgtools.fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.FxgEllipse
+import eu.hansolo.fxgtools.fxg.FxgFill
+import eu.hansolo.fxgtools.fxg.FxgFilter
+import eu.hansolo.fxgtools.fxg.FxgLine
+import eu.hansolo.fxgtools.fxg.FxgLinearGradient
+import eu.hansolo.fxgtools.fxg.FxgNoFill
+import eu.hansolo.fxgtools.fxg.FxgPath
+import eu.hansolo.fxgtools.fxg.FxgRadialGradient
+import eu.hansolo.fxgtools.fxg.FxgRectangle
+import eu.hansolo.fxgtools.fxg.FxgRichText
+import eu.hansolo.fxgtools.fxg.FxgShadow
+import eu.hansolo.fxgtools.fxg.FxgShape
+import eu.hansolo.fxgtools.fxg.FxgVariable
+import eu.hansolo.fxgtools.fxg.JavaShadow
 import groovy.transform.TupleConstructor
+import groovy.xml.Namespace
 
+import java.awt.BasicStroke
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Font
+import java.awt.Graphics2D
 import java.awt.GraphicsConfiguration
 import java.awt.GraphicsEnvironment
-import java.awt.RenderingHints
-import java.awt.Transparency
-import java.awt.Font
-import java.awt.font.TextLayout
-import java.awt.Graphics2D
-import java.awt.Color
-import java.awt.Paint
-import java.awt.Shape
-import java.awt.BasicStroke
 import java.awt.LinearGradientPaint
+import java.awt.Paint
 import java.awt.RadialGradientPaint
-
-import java.awt.geom.RoundRectangle2D
+import java.awt.RenderingHints
+import java.awt.Shape
+import java.awt.Transparency
+import java.awt.font.TextAttribute
+import java.awt.font.TextLayout
+import java.awt.geom.AffineTransform
 import java.awt.geom.Ellipse2D
+import java.awt.geom.GeneralPath
 import java.awt.geom.Line2D
 import java.awt.geom.Path2D
 import java.awt.geom.Point2D
-import java.awt.geom.GeneralPath
+import java.awt.geom.RoundRectangle2D
 import java.awt.image.BufferedImage
-
-import java.util.regex.Pattern
-import java.util.regex.Matcher
-
-import eu.hansolo.fxgtools.fxg.FxgElement
-import eu.hansolo.fxgtools.fxg.FxgRectangle
-import eu.hansolo.fxgtools.fxg.FxgEllipse
-import eu.hansolo.fxgtools.fxg.FxgShape
-import eu.hansolo.fxgtools.fxg.FxgLine
-import eu.hansolo.fxgtools.fxg.FxgPath
-import eu.hansolo.fxgtools.fxg.FxgFill
-import eu.hansolo.fxgtools.fxg.FxgColor
-import eu.hansolo.fxgtools.fxg.FxgRichText
-import eu.hansolo.fxgtools.fxg.FxgLinearGradient
-import eu.hansolo.fxgtools.fxg.FxgRadialGradient
-import java.awt.font.TextAttribute
 import java.text.AttributedString
-import eu.hansolo.fxgtools.fxg.FxgFilter
-
-import eu.hansolo.fxgtools.fxg.FxgNoFill
-import eu.hansolo.fxgtools.fxg.FxgShadow
-import eu.hansolo.fxgtools.fxg.JavaShadow
-import java.awt.Dimension
-import java.awt.geom.AffineTransform
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * User: han.solo at muenster.de
@@ -57,33 +54,33 @@ import java.awt.geom.AffineTransform
 class FxgParser {
 
     // Variable declarations
-    private final Namespace         D              = new Namespace("http://ns.adobe.com/fxg/2008/dt")
-    private final Namespace         FXG            = new Namespace("http://ns.adobe.com/fxg/2008")
-    private final Pattern           E_PATTERN      = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern           RR_PATTERN     = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern           VAR_PATTERN    = Pattern.compile("[\\n\\r\\t\\.:;]*")
-    private final Pattern           SPACE_PATTERN  = Pattern.compile("[\\s\\-]+")
-    private final Matcher           E_MATCHER      = E_PATTERN.matcher("")
-    private final Matcher           RR_MATCHER     = RR_PATTERN.matcher("")
-    private String                  lastNodeType
-    private String                  elementName
-    private HashSet<String>         elementNameSet = []
-    String                          fxgVersion
-    double                          originalWidth
-    double                          originalHeight
-    private double                  width
-    private double                  height
-    private double                  scaleFactorX   = 1.0
-    private double                  scaleFactorY   = 1.0
-    double                          aspectRatio
-    private double                  offsetX
-    private double                  offsetY
-    private double                  groupOffsetX
-    private double                  groupOffsetY
-    private double                  lastShapeAlpha
-    private HashMap<String, String> properties
-    private AffineTransform         oldTransform
-    private AffineTransform         groupTransform
+    private final Namespace              D              = new Namespace("http://ns.adobe.com/fxg/2008/dt")
+    private final Namespace              FXG            = new Namespace("http://ns.adobe.com/fxg/2008")
+    private final Pattern                E_PATTERN      = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern                RR_PATTERN     = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern                VAR_PATTERN    = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern                SPACE_PATTERN  = Pattern.compile("[\\s\\-]+")
+    private final Matcher                E_MATCHER      = E_PATTERN.matcher("")
+    private final Matcher                RR_MATCHER     = RR_PATTERN.matcher("")
+    private String                       lastNodeType
+    private String                       elementName
+    private HashSet<String>              elementNameSet = []
+    String                               fxgVersion
+    double                               originalWidth
+    double                               originalHeight
+    private double                       width
+    private double                       height
+    private double                       scaleFactorX   = 1.0
+    private double                       scaleFactorY   = 1.0
+    double                               aspectRatio
+    private double                       offsetX
+    private double                       offsetY
+    private double                       groupOffsetX
+    private double                       groupOffsetY
+    private double                       lastShapeAlpha
+    private HashMap<String, FxgVariable> properties
+    private AffineTransform              oldTransform
+    private AffineTransform              groupTransform
     @TupleConstructor()
     private class FxgStroke {
         BasicStroke stroke
@@ -244,7 +241,7 @@ class FxgParser {
         return getDimension(new XmlParser().parse(new File(FILE_NAME)))
     }
 
-    HashMap<String, String> getProperties() {
+    HashMap<String, FxgVariable> getProperties() {
         return properties;
     }
 
@@ -948,7 +945,7 @@ class FxgParser {
     }
 
     private void prepareParameters(def fxg, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        properties     = new HashMap<String, String>()
+        properties     = new HashMap<String, FxgVariable>()
         offsetX        = 0
         offsetY        = 0
         groupOffsetX   = 0
@@ -1008,7 +1005,27 @@ class FxgParser {
         LAYER.each {Node node->
             String[] propertyDefinition = (node.attribute(D.userLabel)?:"").split("_")
             if (propertyDefinition.length > 0) {
-                properties.put(propertyDefinition[1], propertyDefinition[0])
+                if (propertyDefinition.length >= 2) {
+                    properties.put(propertyDefinition[1], new FxgVariable(name: propertyDefinition[1], type: propertyDefinition[0], defaultValue: propertyDefinition[2]))
+                } else {
+                    String defaultValue
+                    if (propertyDefinition[0].toLowerCase().equals("double")) {
+                        defaultValue = "0.0";
+                    } else if (propertyDefinition[0].toLowerCase().equals("int")) {
+                        defaultValue = "0";
+                    } else if (propertyDefinition[0].toLowerCase().equals("long")) {
+                        defaultValue = "0l";
+                    } else if (propertyDefinition[0].toLowerCase().equals("boolean")) {
+                        defaultValue = "false";
+                    } else if (propertyDefinition[0].toLowerCase().equals("string")) {
+                        defaultValue = "\"\"";
+                    } else if (propertyDefinition[0].toLowerCase().equals("object")) {
+                        defaultValue = "new Object()";
+                    } else {
+                        defaultValue = "";
+                    }
+                    properties.put(propertyDefinition[1], new FxgVariable(name: propertyDefinition[1], type: propertyDefinition[0], defaultValue: defaultValue))
+                }
             }
         }
     }

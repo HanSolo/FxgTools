@@ -1,10 +1,12 @@
 package eu.hansolo.fxgtools.main
 
 import eu.hansolo.fxgtools.fxg.FxgElement
+import eu.hansolo.fxgtools.fxg.FxgVariable
 import eu.hansolo.fxgtools.fxg.Language
-import javax.swing.event.EventListenerList
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import javax.swing.event.EventListenerList
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,14 +31,14 @@ class FxgTranslator {
 
     // ******************** Translate given elements to given language ********
     String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE) {
-        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "", new HashMap<String, String>())
+        return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "", new HashMap<String, FxgVariable>())
     }
 
-    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final HashMap<String, String> PROPERTIES) {
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final HashMap<String, FxgVariable> PROPERTIES) {
         return translate(FILE_NAME, layerMap, LANGUAGE, WIDTH, HEIGHT, EXPORT_TO_FILE, COMPONENT_TYPE.JCOMPONENT, "", PROPERTIES)
     }
 
-    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE, final String NAME_PREFIX, final HashMap<String, String> PROPERTIES) {
+    String translate(final String FILE_NAME, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final String WIDTH, final String HEIGHT, final boolean EXPORT_TO_FILE, final COMPONENT_TYPE TYPE, final String NAME_PREFIX, final HashMap<String, FxgVariable> PROPERTIES) {
         fireTranslationEvent(new TranslationEvent(this, TranslationState.RUNNING))
         final String CLASS_NAME = (FILE_NAME.contains(".") ? (FILE_NAME.substring(0, FILE_NAME.lastIndexOf('.')) + NAME_PREFIX) : (FILE_NAME + NAME_PREFIX)).capitalize()
         final String USER_HOME = System.properties.getProperty('user.home')
@@ -66,7 +68,7 @@ class FxgTranslator {
                     writeToFile(desktopPath.append('Demo.java').toString(), javaFxDemoTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", "")))
                     writeToFile(path + ("${CLASS_NAME}.java").toString(), javaFxControlTemplate(CLASS_NAME, Double.parseDouble(WIDTH), Double.parseDouble(HEIGHT), PROPERTIES))
                     writeToFile(path + ("${CLASS_NAME}Behavior.java").toString(), javaFxBehaviorTemplate(CLASS_NAME))
-                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap)))
+                    writeToFile(path + ("${CLASS_NAME.toLowerCase()}.css").toString(), makeCssNicer(javaFxCssTemplate(CLASS_NAME, layerMap, PROPERTIES)))
                     writeToFile(path + ("${CLASS_NAME}Builder.java").toString(), javaFxBuilderTemplate(CLASS_NAME, PROPERTIES))
                 }
                 codeToExport.append(javaFxSkinTemplate(CLASS_NAME, WIDTH.replace(".0", ""), HEIGHT.replace(".0", ""), layerMap, LANGUAGE, PROPERTIES))
@@ -142,7 +144,7 @@ class FxgTranslator {
 
 
     // ******************** JAVA **********************************************
-    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE, final HashMap<String, String> PROPERTIES) {
+    private String javaTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final COMPONENT_TYPE TYPE, final HashMap<String, FxgVariable> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/java.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
 
@@ -195,13 +197,13 @@ class FxgTranslator {
         layerCode.append("            return createImage(1, 1, Transparency.TRANSLUCENT);\n")
         layerCode.append("        }\n")
         layerCode.append("        final BufferedImage IMAGE = createImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);\n")
-        layerCode.append("        final Graphics2D G2 = IMAGE.createGraphics();\n")
+        layerCode.append("        final Graphics2D    G2    = IMAGE.createGraphics();\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);\n")
         layerCode.append("        G2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);\n")
         layerCode.append("\n")
-        layerCode.append("        final int IMAGE_WIDTH = IMAGE.getWidth();\n")
+        layerCode.append("        final int IMAGE_WIDTH  = IMAGE.getWidth();\n")
         layerCode.append("        final int IMAGE_HEIGHT = IMAGE.getHeight();\n")
         return layerCode.toString()
     }
@@ -235,63 +237,60 @@ class FxgTranslator {
         }
     }
 
-    private String javaPropertyDeclaration(final HashMap<String, String> PROPERTIES) {
+    private String javaPropertyDeclaration(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().each{String PROPERTY_NAME->
             PROPERTY_CODE.append("    public static final String    ").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY = ").append("\"").append(PROPERTY_NAME.toUpperCase()).append("\";\n")
         }
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
+            if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    private double                ").append(PROPERTY_NAME).append(";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+            } else if (TYPE.equals("boolean")) {
                 PROPERTY_CODE.append("    private boolean               ").append(PROPERTY_NAME).append(";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+            } else if (TYPE.equals("int")) {
                 PROPERTY_CODE.append("    private int                   ").append(PROPERTY_NAME).append(";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+            } else if (TYPE.equals("long")) {
                 PROPERTY_CODE.append("    private long                  ").append(PROPERTY_NAME).append(";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+            } else if (TYPE.equals("string")) {
                 PROPERTY_CODE.append("    private String                ").append(PROPERTY_NAME).append(";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+            } else if (TYPE.equals("object")) {
                 PROPERTY_CODE.append("    private Object                ").append(PROPERTY_NAME).append(";\n")
+            } else if (TYPE.equals("color")) {
+                PROPERTY_CODE.append("    private Color                 ").append(PROPERTY_NAME).append(";\n")
             }
         }
         return PROPERTY_CODE.toString()
     }
 
-    private String javaPropertyInitialization(final HashMap<String, String> PROPERTIES) {
+    private String javaPropertyInitialization(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0.0;\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = false;\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0;\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = 0l;\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = \"\";\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
-                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new Object();\n")
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
+            if (TYPE.equals("double")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("boolean")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("int")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("long")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("string")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("object")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ${PROPERTIES.get(PROPERTY_NAME).defaultValue};\n")
+            } else if (TYPE.equals("color")) {
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = new Color(0x${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             }
         }
         return PROPERTY_CODE.toString()
     }
 
-    private String javaPropertyGetterSetter(final HashMap<String, String> PROPERTIES) {
+    private String javaPropertyGetterSetter(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("double")) {
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
+            if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    ").append("public final double get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -301,8 +300,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
                 PROPERTY_CODE.append("    }\n\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("boolean")) {
+            } else if (TYPE.equals("boolean")) {
                 PROPERTY_CODE.append("    ").append("public final boolean is").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -312,8 +310,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
                 PROPERTY_CODE.append("    }\n\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("int")) {
+            } else if (TYPE.equals("int")) {
                 PROPERTY_CODE.append("    ").append("public final int get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -323,8 +320,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
                 PROPERTY_CODE.append("    }\n\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("long")) {
+            } else if (TYPE.equals("long")) {
                 PROPERTY_CODE.append("    ").append("public final long get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -334,8 +330,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
                 PROPERTY_CODE.append("    }\n\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("string")) {
+            } else if (TYPE.equals("string")) {
                 PROPERTY_CODE.append("    ").append("public final String get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -345,13 +340,22 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
                 PROPERTY_CODE.append("    }\n\n")
-            }
-            if (PROPERTIES.get(PROPERTY_NAME).toLowerCase().equals("object")) {
+            } else if (TYPE.equals("object")) {
                 PROPERTY_CODE.append("    ").append("public final Object get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
                 PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final Object ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        Object old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
+                PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
+                PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
+                PROPERTY_CODE.append("    }\n\n")
+            } else if (TYPE.equals("color")) {
+                PROPERTY_CODE.append("    ").append("public final Color get").append(PROPERTY_NAME.capitalize()).append("() {\n")
+                PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    }\n\n")
+                PROPERTY_CODE.append("    ").append("public final void set").append(PROPERTY_NAME.capitalize()).append("(final Color ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
+                PROPERTY_CODE.append("        Color old").append(PROPERTY_NAME.capitalize()).append(" = ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME).append(" = ").append(PROPERTY_NAME.toUpperCase()).append(";\n")
                 PROPERTY_CODE.append("        ").append("propertySupport.firePropertyChange(").append(PROPERTY_NAME.toUpperCase()).append("_PROPERTY, old").append(PROPERTY_NAME.capitalize()).append(", ").append(PROPERTY_NAME).append(");\n")
                 PROPERTY_CODE.append("        //repaint(INNER_BOUNDS);\n")
@@ -363,7 +367,7 @@ class FxgTranslator {
 
 
     // ******************** JAVA FX *******************************************
-    private String javaFxSkinTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final HashMap<String, String> PROPERTIES) {
+    private String javaFxSkinTemplate(final String CLASS_NAME, final String WIDTH, final String HEIGHT, Map<String, List<FxgElement>> layerMap, final Language LANGUAGE, final HashMap<String, FxgVariable> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_skin.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
 
@@ -407,7 +411,7 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxControlTemplate(final String CLASS_NAME, final double WIDTH, final double HEIGHT, final HashMap<String, String> PROPERTIES) {
+    private String javaFxControlTemplate(final String CLASS_NAME, final double WIDTH, final double HEIGHT, final HashMap<String, FxgVariable> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_control.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$propertyDeclaration", javaFxPropertyDeclaration(PROPERTIES))
@@ -420,7 +424,7 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private String javaFxBuilderTemplate(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+    private String javaFxBuilderTemplate(final String CLASS_NAME, final HashMap<String, FxgVariable> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_builder.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$propertySetter", javaFxPropertySetter(CLASS_NAME, PROPERTIES))
@@ -430,13 +434,14 @@ class FxgTranslator {
         return codeToExport.toString()
     }
 
-    private StringBuilder javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap) {
+    private StringBuilder javaFxCssTemplate(final String CLASS_NAME, Map<String, List<FxgElement>> layerMap, final HashMap<String, FxgVariable> PROPERTIES) {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_css.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
         replaceAll(codeToExport, "\$packageInfo", packageInfo)
         replaceAll(codeToExport, "\$styleClass", CLASS_NAME.toLowerCase())
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         replaceAll(codeToExport, "\$fillAndStrokeDefinitions", cssCode(layerMap))
+        replaceAll(codeToExport, "\$colorDefinitions", cssColors(PROPERTIES))
         return codeToExport
     }
 
@@ -509,11 +514,11 @@ class FxgTranslator {
         }
     }
 
-    private String javaFxPropertyDeclaration(final HashMap<String, String> PROPERTIES) {
+    private String javaFxPropertyDeclaration(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         int maxLength = -1
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (!TYPE.equals("double") && !TYPE.equals("boolean") && !TYPE.equals("int") && !TYPE.equals("long") &&
                 !TYPE.equals("string") && !TYPE.equals("object")) {
                 maxLength = Math.max(TYPE.length(), maxLength)
@@ -521,7 +526,7 @@ class FxgTranslator {
         }
 
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    private DoubleProperty ")
                 appendBlanks(PROPERTY_CODE, (maxLength + 2))
@@ -547,7 +552,7 @@ class FxgTranslator {
                 appendBlanks(PROPERTY_CODE, (maxLength + 2))
                 PROPERTY_CODE.append(PROPERTY_NAME).append(";\n")
             } else {
-                PROPERTY_CODE.append("    private ObjectProperty<${PROPERTIES.get(PROPERTY_NAME)}> ").append(PROPERTY_NAME).append(";\n")
+                PROPERTY_CODE.append("    private ObjectProperty<${PROPERTIES.get(PROPERTY_NAME).type}> ").append(PROPERTY_NAME).append(";\n")
             }
         }
         PROPERTY_CODE.append("    private boolean        ")
@@ -559,42 +564,48 @@ class FxgTranslator {
         return PROPERTY_CODE.toString()
     }
 
-    private String javaFxPropertyInitialization(final HashMap<String, String> PROPERTIES) {
+    private String javaFxPropertyInitialization(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         int maxLength = 10
         PROPERTIES.keySet().each{String PROPERTY_NAME->
             maxLength = Math.max(PROPERTY_NAME.length(), maxLength)
         }
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleDoubleProperty(0.0);\n")
+                PROPERTY_CODE.append(" = new SimpleDoubleProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else if (TYPE.equals("boolean")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleBooleanProperty(false);\n")
+                PROPERTY_CODE.append(" = new SimpleBooleanProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else if (TYPE.equals("int")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleIntegerProperty(0);\n")
+                PROPERTY_CODE.append(" = new SimpleIntegerProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else if (TYPE.equals("long")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleLongProperty(0l);\n")
+                PROPERTY_CODE.append(" = new SimpleLongProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else if (TYPE.equals("string")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleStringProperty(\"\");\n")
+                PROPERTY_CODE.append(" = new SimpleStringProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else if (TYPE.equals("object")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleObjectProperty();\n")
+                PROPERTY_CODE.append(" = new SimpleObjectProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
             } else {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleObjectProperty<${PROPERTIES.get(PROPERTY_NAME)}>();\n")
+                String defaultValue
+                if (TYPE.equals("color")) {
+                    defaultValue = "Color.web(\"#${PROPERTIES.get(PROPERTY_NAME).defaultValue}\")"
+                } else {
+                    defaultValue = PROPERTIES.get(PROPERTY_NAME).defaultValue
+                }
+                PROPERTY_CODE.append(" = new SimpleObjectProperty<${PROPERTIES.get(PROPERTY_NAME).type}>(${defaultValue});\n")
             }
         }
         PROPERTY_CODE.append("        square")
@@ -610,10 +621,10 @@ class FxgTranslator {
         return PROPERTY_CODE.toString()
     }
 
-    private String javaFxPropertyGetterSetter(final HashMap<String, String> PROPERTIES) {
+    private String javaFxPropertyGetterSetter(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    ").append("public final double get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
@@ -675,7 +686,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(";\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else {
-                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
+                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME).type
                 PROPERTY_CODE.append("    ").append("public final ${ORIGINAL_TYPE} get").append(PROPERTY_NAME.capitalize()).append("() {\n")
                 PROPERTY_CODE.append("        return ").append(PROPERTY_NAME).append(".get();\n")
                 PROPERTY_CODE.append("    }\n\n")
@@ -690,10 +701,10 @@ class FxgTranslator {
         return PROPERTY_CODE.toString()
     }
 
-    private String javaFxPropertySetter(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+    private String javaFxPropertySetter(final String CLASS_NAME, final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (TYPE.equals("double")) {
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final double ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleDoubleProperty(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
@@ -725,7 +736,7 @@ class FxgTranslator {
                 PROPERTY_CODE.append("        return this;\n")
                 PROPERTY_CODE.append("    }\n\n")
             } else {
-                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
+                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME).type
                 PROPERTY_CODE.append("    ").append("public final ").append(CLASS_NAME).append("Builder ").append(PROPERTY_NAME).append("(final ${ORIGINAL_TYPE} ").append(PROPERTY_NAME.toUpperCase()).append(") {\n")
                 PROPERTY_CODE.append("        ").append("properties.put(\"").append(PROPERTY_NAME).append("\", new SimpleObjectProperty<${ORIGINAL_TYPE}>(").append(PROPERTY_NAME.toUpperCase()).append("));\n")
                 PROPERTY_CODE.append("        return this;\n")
@@ -735,12 +746,12 @@ class FxgTranslator {
         return PROPERTY_CODE.toString()
     }
 
-    private String javaFxBuildMethod(final String CLASS_NAME, final HashMap<String, String> PROPERTIES) {
+    private String javaFxBuildMethod(final String CLASS_NAME, final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder BUILD_CODE = new StringBuilder()
         BUILD_CODE.append("        for (String key : properties.keySet()) {\n")
         boolean first = true
         PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).toLowerCase()
+            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
             if (first) {
                 BUILD_CODE.append("            if (")
             } else {
@@ -760,7 +771,7 @@ class FxgTranslator {
             } else if (TYPE.equals("object")) {
                 BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty) properties.get(key)).get());\n")
             } else {
-                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME)
+                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME).type
                 BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty<${ORIGINAL_TYPE}>) properties.get(key)).get());\n")
             }
             first = false
@@ -781,7 +792,7 @@ class FxgTranslator {
         return PREF_SIZE_CODE.toString()
     }
 
-    private String javaFxRegisterListeners(final HashMap<String, String> PROPERTIES) {
+    private String javaFxRegisterListeners(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTY_CODE.append("        // Register listeners\n")
         PROPERTIES.keySet().each{String PROPERTY_NAME->
@@ -791,7 +802,7 @@ class FxgTranslator {
         return PROPERTY_CODE.toString()
     }
 
-    private String javaFxHandlePropertyChanges(final HashMap<String, String> PROPERTIES) {
+    private String javaFxHandlePropertyChanges(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().eachWithIndex{String PROPERTY_NAME, int index->
             if (index == 0) {
@@ -1244,6 +1255,20 @@ class FxgTranslator {
             }
         }
         return cssCode.toString()
+    }
+
+    private String cssColors(final HashMap<String, FxgVariable> PROPERTIES) {
+        final StringBuilder CSS_COLORS = new StringBuilder()
+        PROPERTIES.keySet().each{String PROPERTY_NAME->
+            if (PROPERTIES.get(PROPERTY_NAME).type.toLowerCase().equals("color")) {
+                CSS_COLORS.append("    -fx-")
+                          .append(PROPERTY_NAME.toLowerCase())
+                          .append(": #")
+                          .append(PROPERTIES.get(PROPERTY_NAME).defaultValue)
+                          .append(";\n")
+            }
+        }
+        return CSS_COLORS.toString()
     }
 
 

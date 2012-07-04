@@ -1,5 +1,6 @@
 .$styleClass {
     -fx-skin: "$packageInfo.$classNameSkin";
+$colorDefinitions
 }
 
 $fillAndStrokeDefinitions
