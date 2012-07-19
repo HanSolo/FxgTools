@@ -8,7 +8,6 @@ import java.awt.geom.Point2D
  * User: hansolo
  * Date: 29.08.11
  * Time: 13:40
- * To change this template use File | Settings | File Templates.
  */
 class FxgShadow extends FxgFilter{
     FxgFilterType type     = FxgFilterType.SHADOW
@@ -16,6 +15,7 @@ class FxgShadow extends FxgFilter{
     int           angle
     int           distance
     double        alpha
+    double        alphaDouble
     double        blurX
     double        blurY
     Color         color

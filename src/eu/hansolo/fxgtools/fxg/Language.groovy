@@ -10,6 +10,7 @@ package eu.hansolo.fxgtools.fxg
 enum Language {
     JAVA,
     JAVAFX,
+    JAVAFX_CANVAS,
     GROOVYFX,
     GWT,
     CANVAS,

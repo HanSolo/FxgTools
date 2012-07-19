@@ -16,14 +16,11 @@ public class Demo extends Application {
         StackPane pane = new StackPane();
         pane.getChildren().add(control);
 
-        Scene scene = new Scene(pane, $width, $height);
-        scene.fillProperty().set(Color.DARKGREY);
+        Scene scene = new Scene(pane, $width, $height, Color.DARKGRAY);
 
         stage.setTitle("JavaFX Custom Control");
         stage.setScene(scene);
         stage.show();
-
-        //control.setValue(1.0);
     }
 
     public static void main(String[] args) {

@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ControlBuilder;
+import javafx.scene.paint.Color;
 import javafx.util.Builder;
 
 import java.util.HashMap;
@@ -41,6 +42,16 @@ $propertySetter
     @Override public final B prefHeight(final double PREF_HEIGHT) {
         properties.put("prefHeight", new SimpleDoubleProperty(PREF_HEIGHT));
         return (B)this;
+    }
+
+    @Override public final B layoutX(final double LAYOUT_X) {
+        properties.put("layoutX", new SimpleDoubleProperty(LAYOUT_X));
+        return (B)this;
+    }
+
+    @Override public final B layoutY(final double LAYOUT_Y) {
+        properties.put("layoutY", new SimpleDoubleProperty(LAYOUT_Y));
+        return this;
     }
 
     @Override public final $className build() {

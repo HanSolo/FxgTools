@@ -1,12 +1,8 @@
 package eu.hansolo.fxgtools.fxg
 
 import java.awt.geom.GeneralPath
-import java.awt.geom.PathIterator
-
 import java.awt.geom.Path2D
-import java.awt.Shape
-import java.awt.geom.Ellipse2D
-import java.awt.geom.RoundRectangle2D
+import java.awt.geom.PathIterator
 
 /**
  * Created by IntelliJ IDEA.
@@ -180,6 +176,43 @@ class FxgPath extends FxgShape {
                 appendJavaFxFillAndStroke(code, name)
                 appendJavaFxFilter(code, name)
                 code.append("\n")
+                return code.toString()
+
+            case Language.JAVAFX_CANVAS:
+                code.append("\n")
+                code.append("        //${name}\n")
+                code.append("        CTX.save();\n")
+                if (transformed) {
+                    code.append("        CTX.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * WIDTH, ${transform.translateY / referenceHeight} * HEIGHT);\n")
+                }
+                code.append("        CTX.beginPath();\n")
+                final PathIterator PATH_ITERATOR = path.getPathIterator(null);
+                while (!PATH_ITERATOR.isDone()) {
+                    final double[] COORDINATES = new double[6];
+                    switch (PATH_ITERATOR.currentSegment(COORDINATES)) {
+                        case PathIterator.SEG_MOVETO:
+                            code.append("        CTX.moveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT);\n")
+                            break;
+                        case PathIterator.SEG_LINETO:
+                            code.append("        CTX.lineTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT);\n")
+                            break;
+                        case PathIterator.SEG_QUADTO:
+                            code.append("        CTX.quadraticCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT);\n")
+                            break;
+                        case PathIterator.SEG_CUBICTO:
+                            code.append("        CTX.bezierCurveTo(${COORDINATES[0] / referenceWidth} * WIDTH, ${COORDINATES[1] / referenceHeight} * HEIGHT, ${COORDINATES[2] / referenceWidth} * WIDTH, ${COORDINATES[3] / referenceHeight} * HEIGHT, ${COORDINATES[4] / referenceWidth} * WIDTH, ${COORDINATES[5] / referenceHeight} * HEIGHT);\n")
+                            break;
+                        case PathIterator.SEG_CLOSE:
+                            code.append("        CTX.closePath();\n")
+                            break;
+                    }
+                    PATH_ITERATOR.next();
+                }
+
+                appendJavaFxCanvasFillAndStroke(code, name)
+                appendJavaFxCanvasFilter(code, name)
+
+                code.append("        CTX.restore();\n")
                 return code.toString()
 
             case Language.GWT:

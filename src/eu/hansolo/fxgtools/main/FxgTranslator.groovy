@@ -17,6 +17,7 @@ import javax.swing.event.EventListenerList
  */
 class FxgTranslator {
     private EventListenerList eventListenerList = new EventListenerList()
+    private static final Pattern CANVAS_PATTERN = Pattern.compile("_?(canvas)", Pattern.CASE_INSENSITIVE)
     private StringBuilder     allLayers         = new StringBuilder()
     private StringBuilder     allElements       = new StringBuilder()
     private int               splitCounter      = 0
@@ -371,9 +372,9 @@ class FxgTranslator {
         def template = getClass().getResourceAsStream('/eu/hansolo/fxgtools/resources/javafx_skin.txt')
         StringBuilder codeToExport = new StringBuilder(template.text)
 
-        StringBuilder groupDeclaration = new StringBuilder()
+        StringBuilder groupDeclaration    = new StringBuilder()
         StringBuilder groupInitialization = new StringBuilder()
-        StringBuilder groupUpdate = new StringBuilder()
+        StringBuilder groupUpdate         = new StringBuilder()
 
         int maxLength = 11
         layerMap.keySet().each {String layerName ->
@@ -383,7 +384,7 @@ class FxgTranslator {
         }
 
         layerMap.keySet().each {String layerName ->
-            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties")) {
+            if (layerSelection.contains(layerName) && !layerName.toLowerCase().startsWith("properties") && !layerName.toLowerCase().endsWith("canvas")) {
                 String varName = createVarName(layerName)
                 groupDeclaration.append("    private Group        ${varName};\n")
                 groupInitialization.append("        ${varName}")
@@ -467,9 +468,9 @@ class FxgTranslator {
         StringBuilder layerCode = new StringBuilder()
         String lowerLayerName = createVarName(LAYER_NAME)
         layerCode.append("\n")
-        layerCode.append("    public final void draw${LAYER_NAME}() {\n")
-        layerCode.append("        final double SIZE = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
-        layerCode.append("        final double WIDTH = square ? SIZE : control.getPrefWidth();\n")
+        layerCode.append("    public final void draw${LAYER_NAME.capitalize()}() {\n")
+        layerCode.append("        final double SIZE   = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
+        layerCode.append("        final double WIDTH  = square ? SIZE : control.getPrefWidth();\n")
         layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n\n")
         layerCode.append("        ${lowerLayerName}.getChildren().clear();\n\n")
         layerCode.append("        final Shape IBOUNDS = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
@@ -480,6 +481,24 @@ class FxgTranslator {
 
     private String javaFxLayerMethodStop(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
+        layerCode.append("    }\n")
+        return layerCode.toString()
+    }
+
+    private String javaFxCanvasLayerMethodStart(final String LAYER_NAME) {
+        StringBuilder layerCode = new StringBuilder()
+        String layerName = LAYER_NAME.replaceAll(CANVAS_PATTERN, "")
+        layerCode.append("\n")
+        layerCode.append("    public final Canvas draw${layerName.capitalize()}(final double WIDTH, final double HEIGHT) {\n")
+        layerCode.append("        final Canvas          CANVAS = new Canvas(WIDTH, HEIGHT);\n")
+        layerCode.append("        final GraphicsContext CTX    = CANVAS.getGraphicsContext2D();\n");
+        return layerCode.toString()
+    }
+
+    private String javaFxCanvasLayerMethodStop() {
+        StringBuilder layerCode = new StringBuilder()
+        layerCode.append("\n")
+        layerCode.append("        return CANVAS;\n")
         layerCode.append("    }\n")
         return layerCode.toString()
     }
@@ -750,36 +769,44 @@ class FxgTranslator {
         StringBuilder BUILD_CODE = new StringBuilder()
         BUILD_CODE.append("        for (String key : properties.keySet()) {\n")
         boolean first = true
-        PROPERTIES.keySet().each{String PROPERTY_NAME->
-            final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
-            if (first) {
-                BUILD_CODE.append("            if (")
-            } else {
-                BUILD_CODE.append("            } else if(")
+        if (PROPERTIES.keySet().isEmpty()) {
+            BUILD_CODE.append("            if (\"\".equals(key)) {\n\n")
+        } else {
+            PROPERTIES.keySet().each{String PROPERTY_NAME->
+                final String TYPE = PROPERTIES.get(PROPERTY_NAME).type.toLowerCase()
+                if (first) {
+                    BUILD_CODE.append("            if (")
+                } else {
+                    BUILD_CODE.append("            } else if(")
+                }
+                BUILD_CODE.append("\"").append(PROPERTY_NAME).append("\".equals(key)) {\n")
+                if (TYPE.equals("double")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((DoubleProperty) properties.get(key)).get());\n")
+                } else if (TYPE.equals("boolean")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((BooleanProperty) properties.get(key)).get());\n")
+                } else if (TYPE.equals("int")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((IntegerProperty) properties.get(key)).get());\n")
+                } else if (TYPE.equals("long")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((LongProperty) properties.get(key)).get());\n")
+                } else if (TYPE.equals("string")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((StringProperty) properties.get(key)).get());\n")
+                } else if (TYPE.equals("object")) {
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty) properties.get(key)).get());\n")
+                } else {
+                    final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME).type
+                    BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty<${ORIGINAL_TYPE}>) properties.get(key)).get());\n")
+                }
+                first = false
             }
-            BUILD_CODE.append("\"").append(PROPERTY_NAME).append("\".equals(key)) {\n")
-            if (TYPE.equals("double")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((DoubleProperty) properties.get(key)).get());\n")
-            } else if (TYPE.equals("boolean")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((BooleanProperty) properties.get(key)).get());\n")
-            } else if (TYPE.equals("int")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((IntegerProperty) properties.get(key)).get());\n")
-            } else if (TYPE.equals("long")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((LongProperty) properties.get(key)).get());\n")
-            } else if (TYPE.equals("string")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((StringProperty) properties.get(key)).get());\n")
-            } else if (TYPE.equals("object")) {
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty) properties.get(key)).get());\n")
-            } else {
-                final String ORIGINAL_TYPE = PROPERTIES.get(PROPERTY_NAME).type
-                BUILD_CODE.append("                CONTROL.set").append(PROPERTY_NAME.capitalize()).append("(((ObjectProperty<${ORIGINAL_TYPE}>) properties.get(key)).get());\n")
-            }
-            first = false
         }
         BUILD_CODE.append("            } else if(\"prefWidth\".equals(key)) {\n")
         BUILD_CODE.append("                CONTROL.setPrefWidth(((DoubleProperty) properties.get(key)).get());\n")
         BUILD_CODE.append("            } else if(\"prefHeight\".equals(key)) {\n")
         BUILD_CODE.append("                CONTROL.setPrefHeight(((DoubleProperty) properties.get(key)).get());\n")
+        BUILD_CODE.append("            } else if (\"layoutX\".equals(key)) {\n")
+        BUILD_CODE.append("                CONTROL.setLayoutX(((DoubleProperty) properties.get(key)).get());\n")
+        BUILD_CODE.append("            } else if (\"layoutY\".equals(key)) {\n")
+        BUILD_CODE.append("                CONTROL.setLayoutY(((DoubleProperty) properties.get(key)).get());\n")
         BUILD_CODE.append("            }\n")
         BUILD_CODE.append("        }\n")
         return BUILD_CODE.toString()
@@ -805,6 +832,7 @@ class FxgTranslator {
     private String javaFxHandlePropertyChanges(final HashMap<String, FxgVariable> PROPERTIES) {
         StringBuilder PROPERTY_CODE = new StringBuilder()
         PROPERTIES.keySet().eachWithIndex{String PROPERTY_NAME, int index->
+            /*
             if (index == 0) {
                 PROPERTY_CODE.append("        if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
                 PROPERTY_CODE.append("            // React to ${PROPERTY_NAME} property change here\n")
@@ -813,6 +841,16 @@ class FxgTranslator {
                     PROPERTY_CODE.append(";")
                 }
             } else {
+                PROPERTY_CODE.append(" else if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
+                PROPERTY_CODE.append("            // React to ${PROPERTY_NAME} property change here\n")
+                PROPERTY_CODE.append("        }")
+                if (index == PROPERTIES.size()) {
+                    PROPERTY_CODE.append(";")
+                }
+            }
+            */
+
+            if (index > 0) {
                 PROPERTY_CODE.append(" else if (").append("\"${PROPERTY_NAME.toUpperCase()}\".equals(PROPERTY)) {\n")
                 PROPERTY_CODE.append("            // React to ${PROPERTY_NAME} property change here\n")
                 PROPERTY_CODE.append("        }")
@@ -1118,38 +1156,47 @@ class FxgTranslator {
                 varName = createVarName(layerName)
                 // add language dependend method heads
                 switch(LANGUAGE) {
-                    case Language.JAVA: code.append(javaLayerMethodStart(layerName))
+                    case Language.JAVA         : code.append(javaLayerMethodStart(layerName))
                         break
-                    case Language.JAVAFX: code.append(javaFxLayerMethodStart(layerName))
+                    case Language.JAVAFX       :
+                        if (layerName.toLowerCase().endsWith("canvas")) {
+                            code.append(javaFxCanvasLayerMethodStart(layerName))
+                        } else {
+                            code.append(javaFxLayerMethodStart(layerName))
+                        }
                         break
-                    case Language.GWT: code.append(gwtLayerMethodStart(layerName))
+                    case Language.GWT          : code.append(gwtLayerMethodStart(layerName))
                         break
-                    case Language.CANVAS: code.append(canvasLayerMethodStart(layerName))
+                    case Language.CANVAS       : code.append(canvasLayerMethodStart(layerName))
                         break
-                    case Language.ANDROID: code.append(androidLayerMethodStart(layerName))
+                    case Language.ANDROID      : code.append(androidLayerMethodStart(layerName))
                         break
                 }
 
                 // main translation routine
                 layerMap[layerName].each {FxgElement element ->
                     shapeIndex += 1
-                    code.append(element.shape.translateTo(LANGUAGE, shapeIndex, nameSet))
-                    if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
-                        String name = element.shape.shapeName.toUpperCase()
-                        name = name.startsWith("E_") ? name.replaceFirst("E_", "") : name
-                        name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", "")
-                        name = name.replace("_E_", "");
-                        name = name.startsWith("_") ? name.replaceFirst("_", "") : name
+                    if (layerName.toLowerCase().endsWith("canvas")) {
+                        code.append(element.shape.translateTo(Language.JAVAFX_CANVAS, shapeIndex, nameSet))
+                    } else {
+                        code.append(element.shape.translateTo(LANGUAGE, shapeIndex, nameSet))
+                        if (LANGUAGE == Language.JAVAFX || LANGUAGE == LANGUAGE.GROOVYFX){
+                            String name = element.shape.shapeName.toUpperCase()
+                            name = name.startsWith("E_") ? name.replaceFirst("E_", "") : name
+                            name = name.replaceAll("_?RR[0-9]+_([0-9]+_)?", "")
+                            name = name.replace("_E_", "");
+                            name = name.startsWith("_") ? name.replaceFirst("_", "") : name
 
-                        if (groupNameSet.contains(name)) {
-                            allElements.append("${layerName.toUpperCase()}${element.shape.shapeName.toUpperCase()}${shapeIndex}").append(",\n")
-                        } else {
-                            allElements.append("${name}").append(",\n")
-                            groupNameSet.add(name)
-                        }
+                            if (groupNameSet.contains(name)) {
+                                allElements.append("${layerName.toUpperCase()}${element.shape.shapeName.toUpperCase()}${shapeIndex}").append(",\n")
+                            } else {
+                                allElements.append("${name}").append(",\n")
+                                groupNameSet.add(name)
+                            }
 
-                        for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
-                            allElements.append(" ")
+                            for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
+                                allElements.append(" ")
+                            }
                         }
                     }
 
@@ -1188,15 +1235,20 @@ class FxgTranslator {
                         }
                         break
                     case Language.JAVAFX:
-                        if (allElements.length() > layerName.length() + 32) {
-                            allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+                        if (layerName.toLowerCase().endsWith("canvas")) {
+                            code.append(javaFxCanvasLayerMethodStop())
+                            allLayers.append("draw").append(layerName.capitalize()).append("(control.getPrefWidth(), control.getPrefHeight())").append(",\n                             ")
+                        } else {
+                            if (allElements.length() > layerName.length() + 32) {
+                                allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
+                            }
+                            code.append("        ${varName}.getChildren().addAll(")
+                            code.append(allElements.toString())
+                            code.append(");\n")
+                            allElements.length = 0
+                            code.append(javaFxLayerMethodStop(layerName))
+                            allLayers.append(createVarName(layerName)).append(",\n                             ")
                         }
-                        code.append("        ${varName}.getChildren().addAll(")
-                        code.append(allElements.toString())
-                        code.append(");\n")
-                        allElements.length = 0
-                        code.append(javaFxLayerMethodStop(layerName))
-                        allLayers.append(createVarName(layerName)).append(",\n                             ")
                         break
                     case Language.GWT:
                         code.append(gwtLayerMethodStop())

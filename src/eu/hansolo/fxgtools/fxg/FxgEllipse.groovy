@@ -113,6 +113,29 @@ class FxgEllipse extends FxgShape {
                 importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
+            case Language.JAVAFX_CANVAS:
+                if (NAME_SET.contains(name)) {
+                    name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
+
+                code.append("\n")
+                code.append("        //${name}\n")
+                code.append("        CTX.save();\n")
+                if (transformed) {
+                    code.append("        CTX.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * WIDTH, ${transform.translateY / referenceHeight} * HEIGHT);\n")
+                }
+                code.append("        CTX.scale(${width / height}, 1);\n")
+                code.append("        CTX.beginPath();\n")
+                code.append("        CTX.arc(${center.x / referenceWidth / (width / height)} * WIDTH, ${center.y / referenceHeight} * HEIGHT, ${radiusX / referenceWidth / (width / height)} * WIDTH, ${radiusX / referenceWidth / (width / height)} * WIDTH, 0, 360);\n")
+
+                appendJavaFxCanvasFillAndStroke(code, name)
+                appendJavaFxCanvasFilter(code, name)
+
+                code.append("        CTX.restore();\n")
+                return code.toString()
+
             case Language.GWT:
 
             case Language.CANVAS:

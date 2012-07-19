@@ -119,6 +119,41 @@ class FxgRectangle extends FxgShape {
                 importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
+            case Language.JAVAFX_CANVAS:
+                if (NAME_SET.contains(name)) {
+                name = "${layerName.toUpperCase()}${shapeName.toUpperCase()}${SHAPE_INDEX}"
+                } else {
+                    NAME_SET.add(name)
+                }
+                code.append("\n")
+                code.append("        //${name}\n")
+                code.append("        CTX.save();\n")
+                if (transformed) {
+                    code.append("        CTX.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * WIDTH, ${transform.translateY / referenceHeight} * HEIGHT);\n")
+                }
+                if (radiusX.compareTo(0) == 0 && radiusY.compareTo(0) == 0) {
+                    code.append("        CTX.beginPath();\n")
+                    code.append("        CTX.rect(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${width / referenceWidth} * WIDTH, ${height / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.closePath();\n")
+                } else {
+                    code.append("        CTX.beginPath();\n")
+                    code.append("        CTX.moveTo(${x / referenceWidth} * WIDTH + ${radiusX / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.lineTo(${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH - ${radiusX / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.quadraticCurveTo(${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${radiusX / referenceWidth} * WIDTH);\n")
+                    code.append("        CTX.lineTo(${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT - ${radiusX / referenceWidth} * WIDTH);\n")
+                    code.append("        CTX.quadraticCurveTo(${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT, ${x / referenceWidth} * WIDTH + ${width / referenceWidth} * WIDTH - ${radiusX / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.lineTo(${x / referenceWidth} * WIDTH + ${radiusX / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.quadraticCurveTo(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT, ${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${height / referenceHeight} * HEIGHT - ${radiusX / referenceWidth} * WIDTH);\n")
+                    code.append("        CTX.lineTo(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT + ${radiusX / referenceWidth} * WIDTH);\n")
+                    code.append("        CTX.quadraticCurveTo(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT, ${x / referenceWidth} * WIDTH + ${radiusX / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.closePath();\n")
+                }
+
+                appendJavaFxCanvasFillAndStroke(code, name)
+                appendJavaFxCanvasFilter(code, name)
+
+                code.append("        CTX.restore();\n")
+                return code.toString()
             case Language.GWT:
 
             case Language.CANVAS:

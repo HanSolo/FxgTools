@@ -21,8 +21,8 @@ class FxgLine extends FxgShape {
     double       alpha
 
     Line2D getLine() {
-            return new Line2D.Double(x1, y1, x2, y2)
-        }
+        return new Line2D.Double(x1, y1, x2, y2)
+    }
 
     String translateTo(final Language LANGUAGE, final int SHAPE_INDEX, final HashSet<String> NAME_SET) {
         StringBuilder code = new StringBuilder()
@@ -79,6 +79,25 @@ class FxgLine extends FxgShape {
                 importSet.add("import javafx.scene.transform.Rotate;")
                 importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
+
+            case Language.JAVAFX_CANVAS:
+                code.append("\n")
+                code.append("        //${name}\n")
+                code.append("        CTX.save();\n")
+                if (transformed) {
+                    code.append("        CTX.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * WIDTH, ${transform.translateY / referenceHeight} * HEIGHT);\n")
+                }
+                code.append("        CTX.beginPath();\n")
+                code.append("        CTX.moveTo(${x1 / referenceWidth} * WIDTH, ${y1 / referenceHeight} * HEIGHT);\n")
+                code.append("        CTX.lineTo(${x2 / referenceWidth} * WIDTH, ${y2 / referenceHeight} * HEIGHT);\n")
+                code.append("        CTX.closePath();\n")
+
+                appendJavaFxCanvasFillAndStroke(code, name)
+                appendJavaFxCanvasFilter(code, name)
+
+                code.append("        CTX.restore();\n")
+                return code.toString()
+
 
             case Language.GWT:
 

@@ -151,6 +151,45 @@ class FxgRichText extends FxgShape{
                 importSet.add("import javafx.scene.transform.Scale;")
                 return code.toString()
 
+            case Language.JAVAFX_CANVAS:
+                code.append("\n")
+                code.append("        //${name}\n")
+                code.append("        CTX.save();\n")
+                if (transformed) {
+                    code.append("        CTX.setTransform(${transform.scaleX}, ${transform.shearY}, ${transform.shearX}, ${transform.scaleY}, ${transform.translateX / referenceWidth} * WIDTH, ${transform.translateY / referenceHeight} * HEIGHT);\n")
+                }
+                if (rotation != 0) {
+                    code.append("        CTX.translate(${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                    code.append("        CTX.rotate(${Math.toRadians(rotation)});\n")
+                    code.append("        CTX.translate(${-x / referenceWidth} * WIDTH, ${-y / referenceHeight} * HEIGHT);\n")
+                }
+                if (scaleX != 1 || scaleY != 1) {
+                    code.append("        CTX.scale(${scaleX}, ${scaleY});\n")
+                }
+                if (fill.type != null) {
+                    appendCanvasFill(code, name, LANGUAGE == Language.GWT)
+                    code.append("        CTX.font = '")
+                    italic ? code.append("italic "):code.append("")
+                    bold ? code.append("bold "):code.append("")
+                    code.append("${font.size2D}px ")
+                    code.append("${font.family}';\n")
+                    code.append("        CTX.textBaseline = 'bottom';\n")
+                    code.append("        CTX.fillText('${text.trim()}', ${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                }
+
+                // maybe the next line is not needed
+                appendJavaFxCanvasFillAndStroke(code, name)
+                if (stroked) {
+                    code.append("        CTX.strokeText('${text.trim()}', ${x / referenceWidth} * WIDTH, ${y / referenceHeight} * HEIGHT);\n")
+                }
+                appendJavaFxCanvasFilter(code, name)
+
+                if (scaleX != 1 || scaleY != 1) {
+                    code.append("        CTX.scale(${-scaleX}, ${-scaleY});\n")
+                }
+                code.append("        CTX.restore();\n")
+                return code.toString()
+
             case Language.GWT:
 
             case Language.CANVAS:

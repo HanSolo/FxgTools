@@ -322,46 +322,48 @@ class FxgParser {
         fxgText.layerName = LAYER_NAME
         fxgText.shapeName = elementName
         def fxgLabel = NODE.content[0].p[0]
+        fxgLabel = fxgLabel ?: NODE.content[0].div[0].p[0]
         String text
         double fontSize
         String colorString
         if (fxgLabel.span) {
             // Adobe Illustrator
-            text = NODE.content[0].p[0].span[0].text()
-            fontSize = (NODE.@fontSize ?: 10).toDouble() * scaleFactorX
+            fxgLabel    = fxgLabel ?: NODE.content[0].div[0].p[0].span[0]
+            text        = fxgLabel.text()
+            fontSize    = (NODE.@fontSize ?: 10).toDouble() * scaleFactorX
             colorString = (NODE.@color ?: '#000000')
         } else {
             // Adobe Fireworks
-            text = fxgLabel.text()
-            fontSize = (fxgLabel.@fontSize ?: 10).toDouble() * scaleFactorX
+            text        = fxgLabel.text()
+            fontSize    = (fxgLabel.@fontSize ?: 10).toDouble() * scaleFactorX
             colorString = (NODE.content.p.@color[0] ?: '#000000')
         }
         float x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * (float) scaleFactorX
         float y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * (float) scaleFactorY
-        double rotation = ((NODE.@rotation ?: 0).toDouble())
-        double scaleX = (NODE.@scaleX ?: 1).toDouble()
-        double scaleY = (NODE.@scaleY ?: 1).toDouble()
-        String fontFamily = (fxgLabel.@fontFamily ?: 'sans-serif')
-        String fontStyle = (NODE.@fontStyle ?: 'normal')
+        double rotation       = ((NODE.@rotation ?: 0).toDouble())
+        double scaleX         = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY         = (NODE.@scaleY ?: 1).toDouble()
+        String fontFamily     = (fxgLabel.@fontFamily ?: 'sans-serif')
+        String fontStyle      = (NODE.@fontStyle ?: 'normal')
         String textDecoration = (NODE.@textDecoration ?: 'none')
-        String lineThrough = (NODE.@lineThrough ?: 'false')
-        int alpha = parseAlpha(NODE, 1.0)
-        fxgText.x = x
-        fxgText.y = (y + (float) fontSize)
-        fxgText.rotation = rotation
-        fxgText.scaleX = scaleX
-        fxgText.scaleY = scaleY
-        fxgText.fontSize = fontSize
-        fxgText.fontFamily = fontFamily
-        fxgText.color = parseColor(colorString, alpha)
-        fxgText.bold = (fxgLabel.@fontWeight ?: 'normal') == 'bold'
-        fxgText.italic = fontStyle == 'italic'
-        fxgText.underline = textDecoration == 'underline'
-        fxgText.lineThrough = lineThrough == 'true'
-        int style = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
-        fxgText.font = new Font(fontFamily, style, (float) fontSize)
-        fxgText.font = new Font(fontFamily, style, (float) fontSize)
-        fxgText.text = text
+        String lineThrough    = (NODE.@lineThrough ?: 'false')
+        int alpha             = parseAlpha(NODE, 1.0)
+        fxgText.x             = x
+        fxgText.y             = (y + (float) fontSize)
+        fxgText.rotation      = rotation
+        fxgText.scaleX        = scaleX
+        fxgText.scaleY        = scaleY
+        fxgText.fontSize      = fontSize
+        fxgText.fontFamily    = fontFamily
+        fxgText.color         = parseColor(colorString, alpha)
+        fxgText.bold          = (fxgLabel.@fontWeight ?: 'normal') == 'bold'
+        fxgText.italic        = fontStyle == 'italic'
+        fxgText.underline     = textDecoration == 'underline'
+        fxgText.lineThrough   = lineThrough == 'true'
+        int style             = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
+        fxgText.font          = new Font(fontFamily, style, (float) fontSize)
+        fxgText.font          = new Font(fontFamily, style, (float) fontSize)
+        fxgText.text          = text
         return fxgText
     }
 
@@ -520,10 +522,10 @@ class FxgParser {
                 Color color = parseColor(colorString, alpha)
 
                 if (inner) {  // inner shadow
-                    innerShadowImage = JavaShadow.INSTANCE.createInnerShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 255), color, blurX, angle)
+                    innerShadowImage = JavaShadow.INSTANCE.createInnerShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 256), color, blurX, angle)
                     G2.drawImage(innerShadowImage, (int) SHAPE.bounds2D.x, (int) SHAPE.bounds2D.y, null)
                 } else {  // drop shadow
-                    G2.drawImage(JavaShadow.INSTANCE.createDropShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 255), color, blurX, angle), (int)SHAPE.bounds2D.x - blurX, (int)SHAPE.bounds2D.y - blurX, null)
+                    G2.drawImage(JavaShadow.INSTANCE.createDropShadow(SHAPE, SHAPE_PAINT, distance, (float)(alpha / 256), color, blurX, angle), (int)SHAPE.bounds2D.x - blurX, (int)SHAPE.bounds2D.y - blurX, null)
                     if (innerShadowImage != null) {
                         G2.drawImage(innerShadowImage, (int) SHAPE.bounds2D.x, (int) SHAPE.bounds2D.y, null)
                         innerShadowImage = null
@@ -537,15 +539,16 @@ class FxgParser {
         if (NODE.DropShadowFilter) {
             List<FxgFilter> filters = []
             NODE.DropShadowFilter.each {def shadow->
-                FxgShadow fxgFilter = new FxgShadow()
-                fxgFilter.angle = (shadow.@angle ?: 0).toInteger()
-                String colorString = (shadow.@color ?: '#000000')
-                fxgFilter.distance = (shadow.@distance ?: 0).toDouble() * scaleFactorX
-                fxgFilter.alpha = ((shadow.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
-                fxgFilter.blurX = (shadow.@blurX ?: 0).toDouble() * scaleFactorX
-                fxgFilter.blurY = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
-                fxgFilter.inner = (shadow.@inner ?: false)
-                fxgFilter.color = parseColor(colorString, (int) fxgFilter.alpha)
+                FxgShadow fxgFilter   = new FxgShadow()
+                fxgFilter.angle       = (shadow.@angle ?: 0).toInteger()
+                String colorString    = (shadow.@color ?: '#000000')
+                fxgFilter.distance    = (shadow.@distance ?: 0).toDouble() * scaleFactorX
+                fxgFilter.alpha       = ((shadow.@alpha ?: 1).toDouble() * lastShapeAlpha) * 255
+                fxgFilter.alphaDouble = ((shadow.@alpha ?: 1).toDouble() * lastShapeAlpha)
+                fxgFilter.blurX       = (shadow.@blurX ?: 0).toDouble() * scaleFactorX
+                fxgFilter.blurY       = (shadow.@blurY ?: 0).toDouble() * scaleFactorY
+                fxgFilter.inner       = (shadow.@inner ?: false)
+                fxgFilter.color       = parseColor(colorString, (int) fxgFilter.alpha)
                 filters.add(fxgFilter)
             }
             return filters
@@ -561,9 +564,9 @@ class FxgParser {
 
     private Color parseColor(final String COLOR, final int ALPHA) {
         assert COLOR.size() == 7
-        int red = Integer.valueOf(COLOR[1..2], 16).intValue()
+        int red   = Integer.valueOf(COLOR[1..2], 16).intValue()
         int green = Integer.valueOf(COLOR[3..4], 16).intValue()
-        int blue = Integer.valueOf(COLOR[5..6], 16).intValue()
+        int blue  = Integer.valueOf(COLOR[5..6], 16).intValue()
         new Color(red, green, blue, ALPHA)
     }
 
@@ -709,238 +712,245 @@ class FxgParser {
     private void convertLayer(final LAYER, final String LAYER_NAME, final Graphics2D G2) {
         String elementName
         LAYER.each {Node node->
-            Shape shape
-            Paint paint
-            FxgStroke stroke
-            switch(node.name()) {
-                case FXG.Group:
-                    groupOffsetX = (node.@x ?: 0).toDouble()
-                    groupOffsetY = (node.@y ?: 0).toDouble()
-                    elementName = node.attribute(D.userLabel)
-                    G2.setTransform(oldTransform)
-                    paintShape(G2, null, node)
-                    convertLayer(node, LAYER_NAME, G2)
-                    break
-                case FXG.Rect:
-                    shape = parseRectangle(node)
-                    offsetX = shape.bounds2D.x
-                    offsetY = shape.bounds2D.y
-                    paintShape(G2, shape, node)
-                    G2.setTransform(oldTransform)
-                    break
-                case FXG.Ellipse:
-                    shape = parseEllipse(node)
-                    offsetX = shape.bounds2D.x
-                    offsetY = shape.bounds2D.y
-                    paintShape(G2, shape, node)
-                    G2.setTransform(oldTransform)
-                    break
-                case FXG.Line:
-                    shape = parseLine(node)
-                    offsetX = shape.bounds2D.x
-                    offsetY = shape.bounds2D.y
-                    paintShape(G2, shape, node)
-                    G2.setTransform(oldTransform)
-                    break
-                case FXG.Path:
-                    offsetX = groupOffsetX
-                    offsetY = groupOffsetY
-                    elementName = node.attribute(D.userLabel) ?: elementName
-                    shape = parsePath(node)
-                    if (elementName != null) {
-                        E_MATCHER.reset(elementName)
-                        if (E_MATCHER.matches()) {
-                            shape = new Ellipse2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height)
-                        }
-                        RR_MATCHER.reset(elementName)
-                        if (RR_MATCHER.matches()) {
-                            double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX * 2 : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX * 2
-                            shape = new RoundRectangle2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height, cornerRadius, cornerRadius)
-                        }
-                    }
-                    paintShape(G2, shape, node)
-                    G2.setTransform(oldTransform)
-                    break
-                case FXG.RichText:
-                    def fxgText = parseFxgRichText(node, LAYER_NAME, 0)
-                    final AttributedString STRING = new AttributedString(fxgText.text)
-                    STRING.addAttribute(TextAttribute.FONT, fxgText.font)
-                    if (fxgText.bold){
-                        STRING.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD)
-                    }
-                    if (fxgText.underline) {
-                        STRING.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON)
-                    }
-                    if (fxgText.lineThrough) {
-                        STRING.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON)
-                    }
-                    G2.setFont(fxgText.font)
-                    float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.font, G2.fontRenderContext)).descent
-                    G2.setPaint(fxgText.color)
-                    AffineTransform oldTransform = new AffineTransform()
-                    boolean transformActive = false
-                    if (node.transform) {
-                        oldTransform = G2.getTransform()
-                        G2.setTransform(parseTransform(node))
-                        transformActive = true
-                    }
-                    G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
-                    G2.scale(fxgText.scaleX, fxgText.scaleY)
-
-                    G2.drawString(STRING.iterator, (float) fxgText.x, offsetY)
-
-                    if (transformActive) {
+            if ('false' != node.@visible) {
+                Shape shape
+                Paint paint
+                FxgStroke stroke
+                switch(node.name()) {
+                    case FXG.Group:
+                        groupOffsetX = (node.@x ?: 0).toDouble()
+                        groupOffsetY = (node.@y ?: 0).toDouble()
+                        elementName = node.attribute(D.userLabel)
                         G2.setTransform(oldTransform)
-                    }
-                    if (fxgText.rotation != 0) {
-                        G2.rotate(Math.toRadians(-fxgText.rotation), fxgText.x, offsetY)
-                    }
-                    break
+                        paintShape(G2, null, node)
+                        convertLayer(node, LAYER_NAME, G2)
+                        break
+                    case FXG.Rect:
+                        shape = parseRectangle(node)
+                        offsetX = shape.bounds2D.x
+                        offsetY = shape.bounds2D.y
+                        paintShape(G2, shape, node)
+                        G2.setTransform(oldTransform)
+                        break
+                    case FXG.Ellipse:
+                        shape = parseEllipse(node)
+                        offsetX = shape.bounds2D.x
+                        offsetY = shape.bounds2D.y
+                        paintShape(G2, shape, node)
+                        G2.setTransform(oldTransform)
+                        break
+                    case FXG.Line:
+                        shape = parseLine(node)
+                        offsetX = shape.bounds2D.x
+                        offsetY = shape.bounds2D.y
+                        paintShape(G2, shape, node)
+                        G2.setTransform(oldTransform)
+                        break
+                    case FXG.Path:
+                        offsetX = groupOffsetX
+                        offsetY = groupOffsetY
+                        elementName = node.attribute(D.userLabel) ?: elementName
+                        shape = parsePath(node)
+                        if (elementName != null) {
+                            E_MATCHER.reset(elementName)
+                            if (E_MATCHER.matches()) {
+                                shape = new Ellipse2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height)
+                            }
+                            RR_MATCHER.reset(elementName)
+                            if (RR_MATCHER.matches()) {
+                                double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX * 2 : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX * 2
+                                shape = new RoundRectangle2D.Double(shape.bounds2D.x, shape.bounds2D.y, shape.bounds2D.width, shape.bounds2D.height, cornerRadius, cornerRadius)
+                            }
+                        }
+                        paintShape(G2, shape, node)
+                        G2.setTransform(oldTransform)
+                        break
+                    case FXG.RichText:
+                        def fxgText = parseFxgRichText(node, LAYER_NAME, 0)
+                        final AttributedString STRING = new AttributedString(fxgText.text)
+                        STRING.addAttribute(TextAttribute.FONT, fxgText.font)
+                        if (fxgText.bold){
+                            STRING.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD)
+                        }
+                        if (fxgText.underline) {
+                            STRING.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON)
+                        }
+                        if (fxgText.lineThrough) {
+                            STRING.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON)
+                        }
+                        G2.setFont(fxgText.font)
+                        float offsetY = fxgText.y - (new TextLayout(fxgText.text, G2.font, G2.fontRenderContext)).descent
+                        G2.setPaint(fxgText.color)
+                        AffineTransform oldTransform = new AffineTransform()
+                        boolean transformActive = false
+                        if (node.transform) {
+                            oldTransform = G2.getTransform()
+                            G2.setTransform(parseTransform(node))
+                            transformActive = true
+                        }
+                        G2.rotate(Math.toRadians(fxgText.rotation), fxgText.x, offsetY)
+                        G2.scale(fxgText.scaleX, fxgText.scaleY)
+
+                        G2.drawString(STRING.iterator, (float) fxgText.x, offsetY)
+
+                        if (transformActive) {
+                            G2.setTransform(oldTransform)
+                        }
+                        if (fxgText.rotation != 0) {
+                            G2.rotate(Math.toRadians(-fxgText.rotation), fxgText.x, offsetY)
+                        }
+                        break
+                }
             }
         }
     }
 
     private int convertLayer(final String LAYER_NAME, final Node LAYER, Map<String, List<FxgElement>> elements, List shapes, int index) {
         LAYER.eachWithIndex {Node node, int i->
-            Paint paint
-            FxgStroke stroke
-            FxgShape fxgShape = null
-            index += 1
-            switch(node.name()) {
-                case FXG.Group:
-                    elementName = node.attribute(D.userLabel)?:"Group"
-                    lastNodeType = "Group"
-                    groupOffsetX = (node.@x ?: 0).toDouble()
-                    groupOffsetY = (node.@y ?: 0).toDouble()
-                    // Take group transforms into account
+            if ('visible' != node.@visible) {
+                Paint paint
+                FxgStroke stroke
+                FxgShape fxgShape = null
+                index += 1
+                switch(node.name()) {
+                    case FXG.Group:
+                        elementName = node.attribute(D.userLabel)?:"Group"
+                        lastNodeType = "Group"
+                        groupOffsetX = (node.@x ?: 0).toDouble()
+                        groupOffsetY = (node.@y ?: 0).toDouble()
+                        // Take group transforms into account
+                        if (node.transform) {
+                            groupTransform = parseTransform(node)
+                        } else {
+                            groupTransform = null
+                        }
+                        convertLayer(LAYER_NAME, node, elements, shapes, index)
+                        break
+                    case FXG.Rect:
+                        fxgShape = parseFxgRectangle(node, LAYER_NAME, i)
+                        offsetX = fxgShape.x
+                        offsetY = fxgShape.y
+                        fxgShape.elementX = fxgShape.x
+                        fxgShape.elementY = fxgShape.y
+                        fxgShape.elementWidth = fxgShape.width
+                        fxgShape.elementHeight = fxgShape.height
+                        lastNodeType = "Rect"
+                        break
+                    case FXG.Ellipse:
+                        fxgShape = parseFxgEllipse(node, LAYER_NAME, i)
+                        offsetX = fxgShape.x
+                        offsetY = fxgShape.y
+                        fxgShape.elementX = fxgShape.x
+                        fxgShape.elementY = fxgShape.y
+                        fxgShape.elementWidth = fxgShape.width
+                        fxgShape.elementHeight = fxgShape.height
+                        lastNodeType = "Ellipse"
+                        break
+                    case FXG.Line:
+                        fxgShape = parseFxgLine(node, LAYER_NAME, i)
+                        offsetX = fxgShape.x1
+                        offsetY = fxgShape.y1
+                        fxgShape.elementX = fxgShape.x1
+                        fxgShape.elementY = fxgShape.y1
+                        fxgShape.elementWidth = Math.abs(fxgShape.x2 - fxgShape.x1)
+                        fxgShape.elementHeight = Math.abs(fxgShape.y2 - fxgShape.y1)
+                        lastNodeType = "Line"
+                        break
+                    case FXG.Path:
+                        elementName = lastNodeType == "Group" ?  elementName : (node.attribute(D.userLabel)?:"Path")
+                        if (elementName != null) {
+                            elementName = validateElementName(LAYER_NAME, elementName, i)
+                        }
+                        fxgShape = parseFxgPath(node, LAYER_NAME, elementName)
+                        if (elementName != null) {
+                            E_MATCHER.reset(elementName)
+                            if (E_MATCHER.matches()) {
+                                fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
+                                fxgShape.elementX = fxgShape.x
+                                fxgShape.elementY = fxgShape.y
+                                fxgShape.elementWidth = fxgShape.width
+                                fxgShape.elementHeight = fxgShape.height
+                                break
+                            }
+                            RR_MATCHER.reset(elementName)
+                            if (RR_MATCHER.matches()) {
+                                double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
+                                fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, radiusX: cornerRadius, radiusY: cornerRadius, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
+                                fxgShape.elementX = fxgShape.x
+                                fxgShape.elementY = fxgShape.y
+                                fxgShape.elementWidth = fxgShape.width
+                                fxgShape.elementHeight = fxgShape.height
+                                break
+                            }
+                        }
+                        offsetX = groupOffsetX
+                        offsetY = groupOffsetY
+                        fxgShape.elementX = fxgShape.path.bounds2D.x
+                        fxgShape.elementY = fxgShape.path.bounds2D.y
+                        fxgShape.elementWidth = fxgShape.path.bounds2D.width
+                        fxgShape.elementHeight = fxgShape.path.bounds2D.height
+                        lastNodeType = "Path"
+                        break
+                    case FXG.RichText:
+                        elementName = validateElementName(LAYER_NAME, node.attribute(D.userLabel)?:"Text", i)
+                        fxgShape = parseFxgRichText(node, LAYER_NAME, i)
+                        FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 256), color: fxgShape.color)
+                        lastNodeType = "RichText"
+                        fxgShape.fill = fxgFill
+                        fxgShape.elementX = fxgShape.x
+                        fxgShape.elementY = fxgShape.y
+                        fxgShape.elementWidth = 0
+                        fxgShape.elementHeight = 0
+                        break
+                }
+                if (fxgShape != null) {
                     if (node.transform) {
-                        groupTransform = parseTransform(node)
-                    } else {
-                        groupTransform = null
+                        fxgShape.transform = parseTransform(node)
+                        fxgShape.transformed = true
+                    } else if (groupTransform != null) {
+                        fxgShape.transform = groupTransform
+                        fxgShape.transformed = true
                     }
-                    convertLayer(LAYER_NAME, node, elements, shapes, index)
-                    break
-                case FXG.Rect:
-                    fxgShape = parseFxgRectangle(node, LAYER_NAME, i)
-                    offsetX = fxgShape.x
-                    offsetY = fxgShape.y
-                    fxgShape.elementX = fxgShape.x
-                    fxgShape.elementY = fxgShape.y
-                    fxgShape.elementWidth = fxgShape.width
-                    fxgShape.elementHeight = fxgShape.height
-                    lastNodeType = "Rect"
-                    break
-                case FXG.Ellipse:
-                    fxgShape = parseFxgEllipse(node, LAYER_NAME, i)
-                    offsetX = fxgShape.x
-                    offsetY = fxgShape.y
-                    fxgShape.elementX = fxgShape.x
-                    fxgShape.elementY = fxgShape.y
-                    fxgShape.elementWidth = fxgShape.width
-                    fxgShape.elementHeight = fxgShape.height
-                    lastNodeType = "Ellipse"
-                    break
-                case FXG.Line:
-                    fxgShape = parseFxgLine(node, LAYER_NAME, i)
-                    offsetX = fxgShape.x1
-                    offsetY = fxgShape.y1
-                    fxgShape.elementX = fxgShape.x1
-                    fxgShape.elementY = fxgShape.y1
-                    fxgShape.elementWidth = Math.abs(fxgShape.x2 - fxgShape.x1)
-                    fxgShape.elementHeight = Math.abs(fxgShape.y2 - fxgShape.y1)
-                    lastNodeType = "Line"
-                    break
-                case FXG.Path:
-                    elementName = lastNodeType == "Group" ?  elementName : (node.attribute(D.userLabel)?:"Path")
-                    if (elementName != null) {
-                        elementName = validateElementName(LAYER_NAME, elementName, i)
-                    }
-                    fxgShape = parseFxgPath(node, LAYER_NAME, elementName)
-                    if (elementName != null) {
-                        E_MATCHER.reset(elementName)
-                        if (E_MATCHER.matches()) {
-                            fxgShape = new FxgEllipse(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
-                            fxgShape.elementX = fxgShape.x
-                            fxgShape.elementY = fxgShape.y
-                            fxgShape.elementWidth = fxgShape.width
-                            fxgShape.elementHeight = fxgShape.height
-                            break
+                    if (node.fill) {
+                        FxgFill fxgFill
+                        paint = parseFill(node).paint
+                        if (paint instanceof Color) {
+                            fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int) ((Color) paint).RGB & 0x00ffffff), alpha: (float)(((Color) paint).alpha / 256), color: (Color) paint)
+                        } else if (paint instanceof LinearGradientPaint) {
+                            fxgFill = new FxgLinearGradient(layerName: LAYER_NAME, shapeName: elementName, start: ((LinearGradientPaint) paint).startPoint, stop: ((LinearGradientPaint) paint).endPoint, fractions: ((LinearGradientPaint) paint).fractions, colors: ((LinearGradientPaint) paint).colors)
+                        } else if (paint instanceof RadialGradientPaint) {
+                            fxgFill = new FxgRadialGradient(layerName: LAYER_NAME, shapeName: elementName, center: ((RadialGradientPaint) paint).centerPoint, radius: ((RadialGradientPaint) paint).radius, fractions: ((RadialGradientPaint) paint).fractions, colors: ((RadialGradientPaint) paint).colors)
+                        } else {
+                            fxgFill = new FxgNoFill()
                         }
-                        RR_MATCHER.reset(elementName)
-                        if (RR_MATCHER.matches()) {
-                            double cornerRadius = RR_MATCHER.group(4) == null ? RR_MATCHER.group(2).toDouble() * scaleFactorX : (RR_MATCHER.group(2) + "." + RR_MATCHER.group(5)).toDouble() * scaleFactorX
-                            fxgShape = new FxgRectangle(layerName: LAYER_NAME, shapeName: fxgShape.shapeName, x: fxgShape.path.bounds2D.x, y: fxgShape.path.bounds2D.y, width: fxgShape.path.bounds2D.width, height: fxgShape.path.bounds2D.height, radiusX: cornerRadius, radiusY: cornerRadius, alpha: lastShapeAlpha, rotation: fxgShape.rotation, scaleX: fxgShape.scaleX, scaleY: fxgShape.scaleY)
-                            fxgShape.elementX = fxgShape.x
-                            fxgShape.elementY = fxgShape.y
-                            fxgShape.elementWidth = fxgShape.width
-                            fxgShape.elementHeight = fxgShape.height
-                            break
-                        }
-                    }
-                    offsetX = groupOffsetX
-                    offsetY = groupOffsetY
-                    fxgShape.elementX = fxgShape.path.bounds2D.x
-                    fxgShape.elementY = fxgShape.path.bounds2D.y
-                    fxgShape.elementWidth = fxgShape.path.bounds2D.width
-                    fxgShape.elementHeight = fxgShape.path.bounds2D.height
-                    lastNodeType = "Path"
-                    break
-                case FXG.RichText:
-                    elementName = validateElementName(LAYER_NAME, node.attribute(D.userLabel)?:"Text", i)
-                    fxgShape = parseFxgRichText(node, LAYER_NAME, i)
-                    FxgFill fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int)(fxgShape.color.RGB) & 0x00ffffff), alpha: (float)(fxgShape.color.alpha / 255), color: fxgShape.color)
-                    lastNodeType = "RichText"
-                    fxgShape.fill = fxgFill
-                    fxgShape.elementX = fxgShape.x
-                    fxgShape.elementY = fxgShape.y
-                    fxgShape.elementWidth = 0
-                    fxgShape.elementHeight = 0
-                    break
-            }
-            if (fxgShape != null) {
-                if (node.transform) {
-                    fxgShape.transform = parseTransform(node)
-                    fxgShape.transformed = true
-                } else if (groupTransform != null) {
-                    fxgShape.transform = groupTransform
-                    fxgShape.transformed = true
-                }
-                if (node.fill) {
-                    FxgFill fxgFill
-                    paint = parseFill(node).paint
-                    if (paint instanceof Color) {
-                        fxgFill = new FxgColor(layerName: LAYER_NAME, shapeName: elementName, hexColor: Integer.toHexString((int) ((Color) paint).RGB & 0x00ffffff), alpha: (float)(((Color) paint).alpha / 255), color: (Color) paint)
-                    } else if (paint instanceof LinearGradientPaint) {
-                        fxgFill = new FxgLinearGradient(layerName: LAYER_NAME, shapeName: elementName, start: ((LinearGradientPaint) paint).startPoint, stop: ((LinearGradientPaint) paint).endPoint, fractions: ((LinearGradientPaint) paint).fractions, colors: ((LinearGradientPaint) paint).colors)
-                    } else if (paint instanceof RadialGradientPaint) {
-                        fxgFill = new FxgRadialGradient(layerName: LAYER_NAME, shapeName: elementName, center: ((RadialGradientPaint) paint).centerPoint, radius: ((RadialGradientPaint) paint).radius, fractions: ((RadialGradientPaint) paint).fractions, colors: ((RadialGradientPaint) paint).colors)
-                    } else {
-                        fxgFill = new FxgNoFill()
-                    }
-                    fxgShape.fill = fxgFill
-                    fxgShape.filled = true
-                } else {
-                    if (node.name() != FXG.RichText) {
-                        fxgShape.fill = new FxgNoFill()
+                        fxgShape.fill = fxgFill
                         fxgShape.filled = true
+                    } else {
+                        if (node.name() != FXG.RichText) {
+                            fxgShape.fill = new FxgNoFill()
+                            fxgShape.filled = true
+                        }
                     }
-                }
-                if (node.filters) {
-                    fxgShape.filters = parseFilter(node.filters)
-                }
-                if (node.stroke) {
-                    FxgStroke fxgStroke = parseStroke(node)
-                    fxgShape.stroke = new eu.hansolo.fxgtools.fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke, width: fxgStroke.width)
-                    fxgShape.stroked = true
-                }
-                fxgShape.referenceWidth = originalWidth
-                fxgShape.referenceHeight = originalHeight
-                shapes.add(new FxgElement(name: elementName, shape: fxgShape))
+                    if (node.filters) {
+                        fxgShape.filters = parseFilter(node.filters)
+                    }
+                    if (node.stroke) {
+                        FxgStroke fxgStroke = parseStroke(node)
+                        fxgShape.stroke = new eu.hansolo.fxgtools.fxg.FxgStroke(name: elementName, color: fxgStroke.color, stroke: fxgStroke.stroke, width: fxgStroke.width)
+                        fxgShape.stroked = true
+                    }
+                    fxgShape.referenceWidth = originalWidth
+                    fxgShape.referenceHeight = originalHeight
+                    shapes.add(new FxgElement(name: elementName, shape: fxgShape))
 
-                groupTransform = null
+                    groupTransform = null
+                }
             }
         }
-        elements.put(LAYER_NAME, shapes)
+        if (!shapes.isEmpty()) {
+            elements.put(LAYER_NAME, shapes)
+        }
+
         return index
     }
 
