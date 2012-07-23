@@ -51,7 +51,7 @@ $propertySetter
 
     @Override public final B layoutY(final double LAYOUT_Y) {
         properties.put("layoutY", new SimpleDoubleProperty(LAYOUT_Y));
-        return this;
+        return (B)this;
     }
 
     @Override public final $className build() {
