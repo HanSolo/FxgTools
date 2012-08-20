@@ -563,11 +563,15 @@ class FxgParser {
     }
 
     private Color parseColor(final String COLOR, final int ALPHA) {
-        assert COLOR.size() == 7
         int red   = Integer.valueOf(COLOR[1..2], 16).intValue()
         int green = Integer.valueOf(COLOR[3..4], 16).intValue()
         int blue  = Integer.valueOf(COLOR[5..6], 16).intValue()
-        new Color(red, green, blue, ALPHA)
+        if (COLOR.size() == 7) {
+            new Color(red, green, blue, ALPHA)
+        } else {
+            int alpha = Integer.valueOf(COLOR[7..8], 16).intValue()
+            new Color(red, green, blue, alpha)
+        }
     }
 
     private int parseAlpha(final NODE, final double LAST_SHAPE_ALPHA) {
