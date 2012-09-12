@@ -7,8 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="groovy-all-2.0.1" level="application" />
     <orderEntry type="library" exported="" name="groovy-2.0.0" level="application" />
   </component>
+  <component name="POM File Configuration" pomFile="" />
   <component name="PluginUploader.PluginUploadConfigurable">
     <option name="ARCHIVE_PATH" />
     <option name="PLUGIN_ID" />

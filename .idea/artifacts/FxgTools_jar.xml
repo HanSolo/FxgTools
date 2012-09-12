@@ -17,7 +17,7 @@
           </element>
         </element>
       </element>
-      <element id="file-copy" path="/Users/hansolo/dev/groovy-2.0.0/embeddable/groovy-all-2.0.0.jar" />
+      <element id="file-copy" path="$USER_HOME$/dev/groovy-2.0.0/embeddable/groovy-all-2.0.0.jar" />
     </root>
   </artifact>
 </component>

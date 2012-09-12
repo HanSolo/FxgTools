@@ -23,10 +23,6 @@ $propertyDeclaration
     // ******************** Constructors **************************************
     public $className() {
 $propertyInitialization
-        init();
-    }
-
-    private void init() {
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
 

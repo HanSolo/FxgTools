@@ -68,11 +68,11 @@ $groupInitialization
         }
 
 $registerListeners
-        this.registerChangeListener(control.prefWidthProperty(), "PREF_WIDTH");
-        this.registerChangeListener(control.prefHeightProperty(), "PREF_HEIGHT");
+        registerChangeListener(control.prefWidthProperty(), "PREF_WIDTH");
+        registerChangeListener(control.prefHeightProperty(), "PREF_HEIGHT");
 
         initialized = true;
-        paint();
+        repaint();
     }
 
 
@@ -80,26 +80,29 @@ $registerListeners
     @Override protected void handleControlPropertyChanged(final String PROPERTY) {
         super.handleControlPropertyChanged(PROPERTY);
         if ("PREF_WIDTH".equals(PROPERTY)) {
-            paint();
+            repaint();
         } else if ("PREF_HEIGHT".equals(PROPERTY)) {
-            paint();
+            repaint();
         }$handlePropertyChanges
     }
 
-    public final void paint() {
+    public final void repaint() {
+        isDirty = true;
+        requestLayout();
+    }
+
+    @Override public void layoutChildren() {
+        if (!isDirty) {
+            return;
+        }
         if (!initialized) {
             init();
         }
         getChildren().clear();
 $groupUpdate
         getChildren().addAll($layerList);
-    }
+        isDirty = false;
 
-    @Override public void layoutChildren() {
-        if (isDirty) {
-            paint();
-            isDirty = false;
-        }
         super.layoutChildren();
     }
 
