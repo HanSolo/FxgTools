@@ -21,7 +21,7 @@ class FxgTranslator {
     private StringBuilder     allLayers         = new StringBuilder()
     private StringBuilder     allElements       = new StringBuilder()
     private int               splitCounter      = 0
-    private int               nextSplit         = 50000
+    private int               nextSplit         = 70000
     private int               splitNumber       = 0
     private String            packageInfo       = "eu.hansolo.fx"
     private List<String>      layerSelection    = []
@@ -50,7 +50,7 @@ class FxgTranslator {
         }
 
         splitCounter = 0
-        nextSplit = 40000
+        nextSplit = 70000
 
         StringBuilder codeToExport = new StringBuilder()
 
@@ -112,7 +112,7 @@ class FxgTranslator {
     }
 
     String getDrawingCode(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
-        String result = code(layerMap, LANGUAGE)
+        String result = createCode(layerMap, LANGUAGE)
         fireTranslationEvent(new TranslationEvent(this, TranslationState.FINISHED))
         return result
     }
@@ -186,7 +186,7 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$propertyInitialization", javaPropertyInitialization(PROPERTIES))
         replaceAll(codeToExport, "\$propertyGetterSetter", javaPropertyGetterSetter(PROPERTIES))
 
-        replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$creationMethods", createCode(layerMap, LANGUAGE))
 
         return codeToExport.toString()
     }
@@ -403,7 +403,8 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$groupUpdate", groupUpdate.toString())
         replaceAll(codeToExport, "\$registerListeners", javaFxRegisterListeners(PROPERTIES))
         replaceAll(codeToExport, "\$handlePropertyChanges", javaFxHandlePropertyChanges(PROPERTIES))
-        replaceAll(codeToExport, "\$drawingCode", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$drawingCode", createCode(layerMap, LANGUAGE))
+        replaceAll(allLayers, "_Canvas", "")
         if (allLayers.length() > 31) {
             allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
         }
@@ -466,16 +467,14 @@ class FxgTranslator {
 
     private String javaFxLayerMethodStart(final String LAYER_NAME) {
         StringBuilder layerCode = new StringBuilder()
-        String lowerLayerName = createVarName(LAYER_NAME)
+        //String lowerLayerName = createVarName(LAYER_NAME)
         layerCode.append("\n")
         layerCode.append("    public final void draw${LAYER_NAME.capitalize()}() {\n")
         layerCode.append("        final double SIZE   = control.getPrefWidth() < control.getPrefHeight() ? control.getPrefWidth() : control.getPrefHeight();\n")
         layerCode.append("        final double WIDTH  = square ? SIZE : control.getPrefWidth();\n")
         layerCode.append("        final double HEIGHT = square ? SIZE : control.getPrefHeight();\n\n")
-        layerCode.append("        ${lowerLayerName}.getChildren().clear();\n\n")
         layerCode.append("        final Shape IBOUNDS = new Rectangle(0, 0, WIDTH, HEIGHT);\n")
         layerCode.append("        IBOUNDS.setOpacity(0.0);\n")
-        layerCode.append("        ${lowerLayerName}.getChildren().add(IBOUNDS);\n\n")
         return layerCode.toString()
     }
 
@@ -509,20 +508,20 @@ class FxgTranslator {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
-            code.append("        ${varName}.getChildren().addAll(")
+            code.append("        ${varName}.getChildren().setAll(")
             code.append(allElements.toString())
             code.append(");\n\n")
             allElements.length = 0
 
             code.append("        continue${layerName}${splitNumber}(${varName}, WIDTH, HEIGHT);\n\n")
-            //code.append("        return ${varName};\n")
+            //createCode.append("        return ${varName};\n")
             code.append("    }\n\n")
             code.append("    private void continue${layerName}${splitNumber}(Group ${varName}, final double WIDTH, final double HEIGHT) {\n")
         } else {
             if (allElements.length() > layerName.length() + 32) {
                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
             }
-            code.append("        ${varName}.getChildren().addAll(")
+            code.append("        ${varName}.getChildren().setAll(")
             code.append(allElements.toString())
             code.append(");\n\n")
             allElements.length = 0
@@ -610,7 +609,7 @@ class FxgTranslator {
             } else if (TYPE.equals("string")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
-                PROPERTY_CODE.append(" = new SimpleStringProperty(${PROPERTIES.get(PROPERTY_NAME).defaultValue});\n")
+                PROPERTY_CODE.append(" = new SimpleStringProperty(\"${PROPERTIES.get(PROPERTY_NAME).defaultValue}\");\n")
             } else if (TYPE.equals("object")) {
                 PROPERTY_CODE.append("        ").append(PROPERTY_NAME)
                 appendBlanks(PROPERTY_CODE, (maxLength - PROPERTY_NAME.length()))
@@ -880,7 +879,7 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$originalWidth", WIDTH)
         replaceAll(codeToExport, "\$originalHeight", HEIGHT)
         replaceAll(codeToExport, "\$drawImagesToContext", drawImagesToContext.toString())
-        replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$creationMethods", createCode(layerMap, LANGUAGE))
 
         return codeToExport.toString()
     }
@@ -938,7 +937,7 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$createBuffers", createBuffers.toString())
         replaceAll(codeToExport, "\$drawImagesToBuffer", drawImagesToBuffer.toString())
         replaceAll(codeToExport, "\$drawImagesToCanvas", drawImagesToCanvas.toString())
-        replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$creationMethods", createCode(layerMap, LANGUAGE))
         replaceAll(codeToExport, "\$width", WIDTH)
         replaceAll(codeToExport, "\$height", HEIGHT)
         replaceAll(codeToExport, "\$clearBuffers", clearBuffers.toString())
@@ -993,7 +992,7 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$className", CLASS_NAME)
         replaceAll(codeToExport, "\$groupDeclaration", groupDeclaration.toString())
         replaceAll(codeToExport, "\$groupInitialization", groupInitialization.toString())
-        replaceAll(codeToExport, "\$drawingCode", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$drawingCode", createCode(layerMap, LANGUAGE))
         if (allLayers.length() > 31) {
             allLayers.replace(allLayers.length() - 31, allLayers.length(), "")
         }
@@ -1092,7 +1091,7 @@ class FxgTranslator {
         replaceAll(codeToExport, "\$resizeImages", resizeImages.toString())
         replaceAll(codeToExport, "\$imageCreation", imageCreation.toString())
         replaceAll(codeToExport, "\$drawImage", drawImage.toString())
-        replaceAll(codeToExport, "\$creationMethods", code(layerMap, LANGUAGE))
+        replaceAll(codeToExport, "\$creationMethods", createCode(layerMap, LANGUAGE))
 
        return codeToExport.toString()
     }
@@ -1142,7 +1141,7 @@ class FxgTranslator {
 
 
     // ******************** CREATE CODE ***************************************
-    private String code(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
+    private String createCode(Map<String, List<FxgElement>> layerMap, final Language LANGUAGE) {
         StringBuilder code = new StringBuilder()
         allLayers.length = 0
         allElements.length = 0
@@ -1194,7 +1193,7 @@ class FxgTranslator {
                                 groupNameSet.add(name)
                             }
 
-                            for(def n = 0 ; n < layerName.length() + 30 ; n+=1) {
+                            for(int n = 0 ; n < layerName.length() + 30 ; n+=1) {
                                 allElements.append(" ")
                             }
                         }
@@ -1203,14 +1202,14 @@ class FxgTranslator {
                     // split methods if they become too long
                     splitCounter = code.length()
                     if (splitCounter.compareTo(nextSplit) > 0) {
-                        nextSplit = splitCounter + 50000
+                        nextSplit = splitCounter + 70000
                         splitCounter = 0
                         splitNumber += 1
 
                         if (LANGUAGE == Language.JAVA) {
                             javaSplitLayer(layerName, splitNumber, code)
                         }
-                        if (LANGUAGE == Language.JAVAFX) {
+                        if (LANGUAGE == Language.JAVAFX && !layerName.toLowerCase().endsWith("canvas")) {
                             javaFxSplitLayer(layerName, splitNumber, code, allElements)
                         }
                         if (LANGUAGE == Language.GROOVYFX) {
@@ -1242,7 +1241,10 @@ class FxgTranslator {
                             if (allElements.length() > layerName.length() + 32) {
                                 allElements.replace(allElements.length() - (layerName.length() + 32), allElements.length(), "")
                             }
-                            code.append("        ${varName}.getChildren().addAll(")
+                            code.append("        ${varName}.getChildren().setAll(IBOUNDS,\n")
+                            for(int n = 0 ; n < layerName.length() + 30 ; n+=1) {
+                                code.append(" ")
+                            }
                             code.append(allElements.toString())
                             code.append(");\n")
                             allElements.length = 0

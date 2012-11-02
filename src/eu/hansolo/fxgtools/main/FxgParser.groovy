@@ -54,24 +54,25 @@ import java.util.regex.Pattern
 class FxgParser {
 
     // Variable declarations
-    private final Namespace              D              = new Namespace("http://ns.adobe.com/fxg/2008/dt")
-    private final Namespace              FXG            = new Namespace("http://ns.adobe.com/fxg/2008")
-    private final Pattern                E_PATTERN      = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern                RR_PATTERN     = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
-    private final Pattern                VAR_PATTERN    = Pattern.compile("[\\n\\r\\t\\.:;]*")
-    private final Pattern                SPACE_PATTERN  = Pattern.compile("[\\s\\-]+")
-    private final Matcher                E_MATCHER      = E_PATTERN.matcher("")
-    private final Matcher                RR_MATCHER     = RR_PATTERN.matcher("")
+    private final Namespace              D               = new Namespace("http://ns.adobe.com/fxg/2008/dt")
+    private final Namespace              FXG             = new Namespace("http://ns.adobe.com/fxg/2008")
+    private final Pattern                E_PATTERN       = Pattern.compile("^(E_)(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern                RR_PATTERN      = Pattern.compile("^(RR)([0-9]+)(_){1}(([0-9]*)(_){1})?(.)*", Pattern.CASE_INSENSITIVE)
+    private final Pattern                VAR_PATTERN     = Pattern.compile("[\\n\\r\\t\\.:;]*")
+    private final Pattern                SPACE_PATTERN   = Pattern.compile("[\\s\\-]+")
+    private final Matcher                E_MATCHER       = E_PATTERN.matcher("")
+    private final Matcher                RR_MATCHER      = RR_PATTERN.matcher("")
+    private boolean                      useOriginalSize = false;
     private String                       lastNodeType
     private String                       elementName
-    private HashSet<String>              elementNameSet = []
+    private HashSet<String>              elementNameSet  = []
     String                               fxgVersion
     double                               originalWidth
     double                               originalHeight
     private double                       width
     private double                       height
-    private double                       scaleFactorX   = 1.0
-    private double                       scaleFactorY   = 1.0
+    private double                       scaleFactorX    = 1.0
+    private double                       scaleFactorY    = 1.0
     double                               aspectRatio
     private double                       offsetX
     private double                       offsetY
@@ -132,7 +133,12 @@ class FxgParser {
 
 
     // ********************   M E T H O D S   **************************************************************************
-    Map<String, BufferedImage> parse(final Node FXG, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+    Map<String, BufferedImage> parse(final String FILE_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT, final boolean USE_ORIGINAL_SIZE) {
+        return parse(new XmlParser().parse(new File(FILE_NAME)), WIDTH, HEIGHT, KEEP_ASPECT, USE_ORIGINAL_SIZE)
+    }
+
+    Map<String, BufferedImage> parse(final Node FXG, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT, final boolean USE_ORIGINAL_SIZE) {
+        useOriginalSize = USE_ORIGINAL_SIZE
         Map<String, BufferedImage> images = [:]
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
 
@@ -167,11 +173,12 @@ class FxgParser {
         return images
     }
 
-    Map<String, BufferedImage> parse(final String FILE_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        return parse(new XmlParser().parse(new File(FILE_NAME)), WIDTH, HEIGHT, KEEP_ASPECT)
+    BufferedImage parseLayer(final String FILE_NAME, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT, final boolean USE_ORIGINAL_SIZE) {
+        return parseLayer(new XmlParser().parse(new File(FILE_NAME)), LAYER_NAME, WIDTH, HEIGHT, KEEP_ASPECT, USE_ORIGINAL_SIZE)
     }
 
-    BufferedImage parseLayer(final Node FXG, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
+    BufferedImage parseLayer(final Node FXG, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT, final boolean USE_ORIGINAL_SIZE) {
+        useOriginalSize = USE_ORIGINAL_SIZE
         prepareParameters(FXG, WIDTH, HEIGHT, KEEP_ASPECT)
 
         def layer = FXG.Group.find {('layer' == it.attribute(D.type)) && (LAYER_NAME == it.attribute(D.userLabel))}
@@ -185,10 +192,6 @@ class FxgParser {
         G2.dispose()
 
         return IMAGE
-    }
-
-    BufferedImage parseLayer(final String FILE_NAME, final String LAYER_NAME, final double WIDTH, final double HEIGHT, final boolean KEEP_ASPECT) {
-        return parseLayer(new XmlParser().parse(new File(FILE_NAME)), LAYER_NAME, WIDTH, HEIGHT, KEEP_ASPECT)
     }
 
     Map<String, List<FxgElement>> getElements(final Node FXG) {
@@ -231,9 +234,9 @@ class FxgParser {
     }
 
     Dimension getDimension(final Node FXG) {
-        originalWidth = (int)(FXG.@viewWidth ?: 100).toDouble()
+        originalWidth  = (int)(FXG.@viewWidth ?: 100).toDouble()
         originalHeight = (int)(FXG.@viewHeight ?: 100).toDouble()
-        fxgVersion = FXG.@version
+        fxgVersion     = FXG.@version
         return new Dimension((int) originalWidth, (int) originalHeight)
     }
 
@@ -249,56 +252,56 @@ class FxgParser {
     // ********************   P A R S E   T O   F X G   -   S H A P E S   **********************************************
     private FxgRectangle parseFxgRectangle(final NODE, final String LAYER_NAME, final int INDEX) {
         String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Rectangle", INDEX)
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
-        double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 1).toDouble()
-        double scaleY = (NODE.@scaleY ?: 1).toDouble()
-        double rotation = (NODE.@rotation ?: 0).toDouble()
-        lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
-        double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
-        double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
+        double x           = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y           = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double width       = (NODE.@width ?: 0).toDouble() * scaleFactorX
+        double height      = (NODE.@height ?: 0).toDouble() * scaleFactorY
+        double scaleX      = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY      = (NODE.@scaleY ?: 1).toDouble()
+        double rotation    = (NODE.@rotation ?: 0).toDouble()
+        lastShapeAlpha     = (NODE.@alpha ?: 1).toDouble()
+        double radiusX     = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
+        double radiusY     = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
 
         return new FxgRectangle(layerName: LAYER_NAME, shapeName: elementName, x: x, y: y, width: width, height: height, radiusX: radiusX, radiusY: radiusY, alpha: lastShapeAlpha, rotation: rotation, scaleX: scaleX, scaleY: scaleY)
     }
 
     private FxgEllipse parseFxgEllipse(final NODE, final String LAYER_NAME, final int INDEX) {
         String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Ellipse", INDEX)
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
-        double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 1).toDouble()
-        double scaleY = (NODE.@scaleY ?: 1).toDouble()
-        double rotation = (NODE.@rotation ?: 0).toDouble()
-        lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
+        double x           = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y           = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double width       = (NODE.@width ?: 0).toDouble() * scaleFactorX
+        double height      = (NODE.@height ?: 0).toDouble() * scaleFactorY
+        double scaleX      = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY      = (NODE.@scaleY ?: 1).toDouble()
+        double rotation    = (NODE.@rotation ?: 0).toDouble()
+        lastShapeAlpha     = (NODE.@alpha ?: 1).toDouble()
 
         return new FxgEllipse(layerName: LAYER_NAME, shapeName: elementName, x: x, y: y, width: width, height: height, alpha: lastShapeAlpha, rotation: rotation, scaleX: scaleX, scaleY: scaleY)
     }
 
     private FxgLine parseFxgLine(final NODE, final String LAYER_NAME, final int INDEX) {
         String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Line", INDEX)
-        double xFrom = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double yTo = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
-        double scaleX = (NODE.@scaleX ?: 1).toDouble()
-        double scaleY = (NODE.@scaleY ?: 1).toDouble()
-        double rotation = (NODE.@rotation ?: 0).toDouble()
-        lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
+        double xFrom       = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double yFrom       = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double xTo         = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double yTo         = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
+        double scaleX      = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY      = (NODE.@scaleY ?: 1).toDouble()
+        double rotation    = (NODE.@rotation ?: 0).toDouble()
+        lastShapeAlpha     = (NODE.@alpha ?: 1).toDouble()
         return new FxgLine(layerName: LAYER_NAME, shapeName: elementName, x1: xFrom, y1: yFrom, x2: xTo, y2: yTo, alpha: lastShapeAlpha, rotation: rotation, scaleX: scaleX, scaleY: scaleY)
     }
 
     private FxgPath parseFxgPath(final NODE, final String LAYER_NAME, final String ELEMENT_NAME) {
-        String data = NODE.@data ?: ''
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double scaleX = (NODE.@scaleX ?: 1).toDouble()
-        double scaleY = (NODE.@scaleY ?: 1).toDouble()
+        String data     = NODE.@data ?: ''
+        double x        = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y        = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double scaleX   = (NODE.@scaleX ?: 1).toDouble()
+        double scaleY   = (NODE.@scaleY ?: 1).toDouble()
         double rotation = (NODE.@rotation ?: 0).toDouble()
-        lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
-        String winding = (NODE.@winding ?: 'evenOdd')
+        lastShapeAlpha  = (NODE.@alpha ?: 1).toDouble()
+        String winding  = (NODE.@winding ?: 'evenOdd')
         final GeneralPath PATH = new GeneralPath()
 
         if (winding == 'evenOdd') {
@@ -317,12 +320,12 @@ class FxgParser {
     }
 
     private FxgRichText parseFxgRichText(final NODE, final String LAYER_NAME, final int INDEX) {
-        String elementName = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Font", INDEX)
+        String elementName  = validateElementName(LAYER_NAME, NODE.attribute(D.userLabel)?:"Font", INDEX)
         FxgRichText fxgText = new FxgRichText()
-        fxgText.layerName = LAYER_NAME
-        fxgText.shapeName = elementName
-        def fxgLabel = NODE.content[0].p[0]
-        fxgLabel = fxgLabel ?: NODE.content[0].div[0].p[0]
+        fxgText.layerName   = LAYER_NAME
+        fxgText.shapeName   = elementName
+        def fxgLabel        = NODE.content[0].p[0]
+        fxgLabel            = fxgLabel ?: NODE.content[0].div[0].p[0]
         String text
         double fontSize
         String colorString
@@ -370,10 +373,10 @@ class FxgParser {
 
     // ********************   P A R S E   T O   J A V A 2 D   -   S H A P E S   ****************************************
     private RoundRectangle2D parseRectangle(final NODE) {
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
-        double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
+        double x       = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y       = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double width   = (NODE.@width ?: 0).toDouble() * scaleFactorX
+        double height  = (NODE.@height ?: 0).toDouble() * scaleFactorY
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         double radiusX = (NODE.@radiusX ?: 0).toDouble() * scaleFactorX
         double radiusY = (NODE.@radiusY ?: 0).toDouble() * scaleFactorY
@@ -382,29 +385,29 @@ class FxgParser {
     }
 
     private Ellipse2D parseEllipse(final NODE) {
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double width = (NODE.@width ?: 0).toDouble() * scaleFactorX
-        double height = (NODE.@height ?: 0).toDouble() * scaleFactorY
+        double x       = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y       = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double width   = (NODE.@width ?: 0).toDouble() * scaleFactorX
+        double height  = (NODE.@height ?: 0).toDouble() * scaleFactorY
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
 
         return new Ellipse2D.Double(x, y, width, height)
     }
 
     private Line2D parseLine(final NODE) {
-        double xFrom = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double yFrom = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
-        double xTo = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double yTo = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
+        double xFrom   = ((NODE.@xFrom ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double yFrom   = ((NODE.@yFrom ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        double xTo     = ((NODE.@xTo ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double yTo     = ((NODE.@yTo ?: 0).toDouble() + groupOffsetY) * scaleFactorX
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
 
         return new Line2D.Double(xFrom, yFrom, xTo, yTo)
     }
 
     private GeneralPath parsePath(final NODE) {
-        String data = NODE.@data ?: ''
-        double x = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
-        double y = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
+        String data    = NODE.@data ?: ''
+        double x       = ((NODE.@x ?: 0).toDouble() + groupOffsetX) * scaleFactorX
+        double y       = ((NODE.@y ?: 0).toDouble() + groupOffsetY) * scaleFactorY
         lastShapeAlpha = (NODE.@alpha ?: 1).toDouble()
         String winding = (NODE.@winding ?: 'evenOdd')
         final GeneralPath PATH = new GeneralPath()
@@ -415,8 +418,8 @@ class FxgParser {
             PATH.setWindingRule(Path2D.WIND_NON_ZERO)
         }
 
-        data = data.replaceAll(/([A-Za-z])/, / $1 /) // alle einzelnen Grossbuchstaben in blanks huellen
-        def pathList = data.tokenize()
+        data           = data.replaceAll(/([A-Za-z])/, / $1 /) // alle einzelnen Grossbuchstaben in blanks huellen
+        def pathList   = data.tokenize()
         def pathReader = new FxgPathReader(pathList, scaleFactorX, scaleFactorY)
 
         processPath(pathList, pathReader, PATH, x, y)
@@ -974,8 +977,13 @@ class FxgParser {
 
         aspectRatio    = originalHeight / originalWidth
 
-        scaleFactorX   = width / originalWidth
-        scaleFactorY   = height / originalHeight
+        if (useOriginalSize) {
+            scaleFactorX = 1.0
+            scaleFactorY = 1.0
+        } else {
+            scaleFactorX   = width / originalWidth
+            scaleFactorY   = height / originalHeight
+        }
     }
 
     private BufferedImage createImage(final int WIDTH, final int HEIGHT, final int TRANSPARENCY) {

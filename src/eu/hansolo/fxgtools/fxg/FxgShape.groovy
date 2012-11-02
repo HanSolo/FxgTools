@@ -494,14 +494,14 @@ abstract class FxgShape {
 
         importSet.add("import javafx.scene.shape.Shape;")
 
-        code.append("        CTX.setFill(")
-
         switch(fill.type) {
             case FxgFillType.SOLID_COLOR:
                 importSet.add("import javafx.scene.paint.Paint;")
                 importSet.add("import javafx.scene.paint.Color;")
+                code.append("        CTX.setFill(")
                 appendJavaFxColor(code, fill.color)
                 code.append(");\n")
+                code.append("        CTX.fill();\n")
                 break
             case FxgFillType.LINEAR_GRADIENT:
                 importSet.add("import javafx.scene.paint.Paint;")
@@ -509,6 +509,7 @@ abstract class FxgShape {
                 importSet.add("import javafx.scene.paint.LinearGradient;")
                 importSet.add("import javafx.scene.paint.CycleMethod;")
                 importSet.add("import javafx.scene.paint.Stop;")
+                code.append("        CTX.setFill(")
                 code.append("new LinearGradient(${fill.start.x / referenceWidth} * WIDTH, ${fill.start.y / referenceHeight} * HEIGHT,\n")
                 intendCode(code, 8, 0, 31)
                 code.append("${fill.stop.x / referenceWidth} * WIDTH, ${fill.stop.y / referenceHeight} * HEIGHT,\n")
@@ -517,6 +518,7 @@ abstract class FxgShape {
                 intendCode(code, 8, 0, 31)
                 appendJavaFxStops(code, fill.fractions, fill.colors, (39))
                 code.append("));\n")
+                code.append("        CTX.fill();\n")
                 break
             case FxgFillType.RADIAL_GRADIENT:
                 importSet.add("import javafx.scene.paint.Paint;")
@@ -525,6 +527,7 @@ abstract class FxgShape {
                 importSet.add("import javafx.scene.paint.CycleMethod;")
                 importSet.add("import javafx.scene.paint.Stop;")
                 importSet.add("import javafx.scene.paint.RadialGradient;")
+                code.append("        CTX.setFill(")
                 code.append("new RadialGradient(0, 0,\n")
                 intendCode(code, 8, 0, 31)
                 code.append("${fill.center.x / referenceWidth} * WIDTH, ${fill.center.y / referenceHeight} * HEIGHT,\n")
@@ -535,13 +538,12 @@ abstract class FxgShape {
                 intendCode(code, 8, 0, 31)
                 appendJavaFxStops(code, fill.fractions, fill.colors, (39))
                 code.append("));\n")
+                code.append("        CTX.fill();\n")
                 break
             case FxgFillType.NONE:
                 importSet.add("import javafx.scene.paint.Paint;")
-                code.append("null);\n")
                 break
         }
-        code.append("        CTX.fill();\n")
     }
 
     protected void appendJavaFxCanvasFilter(StringBuilder code, String elementName) {
