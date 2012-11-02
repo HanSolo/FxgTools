@@ -365,7 +365,6 @@ class FxgParser {
         fxgText.lineThrough   = lineThrough == 'true'
         int style             = fxgText.italic ? Font.PLAIN | Font.ITALIC : Font.PLAIN
         fxgText.font          = new Font(fontFamily, style, (float) fontSize)
-        fxgText.font          = new Font(fontFamily, style, (float) fontSize)
         fxgText.text          = text
         return fxgText
     }
